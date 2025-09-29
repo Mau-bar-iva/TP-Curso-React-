@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="root">
+        <header class="hero-container">
+            <div class="hero-wrapper">
+                <div class="hero-logo-container">
+                    <img src="./assets/logo.png" alt="logo-ModeaVelour" class="hero-logo">
+                </div>
+                <div class="hero-navbar-container">
+                    <nav class="nav">
+                        <ul class="nav-list-container">
+                            <li class="nav-list-item home-item">
+                                <a href="/index.html" data-discover="true">Home</a>
+                            </li>
+                            <li class="nav-list-item products-item">
+                                <a href="/productos" data-discover="true">Productos</a>
+                            </li>
+                            <li class="nav-list-item about-item">
+                                <a href="/about" data-discover="true">About</a>
+                            </li>
+                            <li class="nav-list-item contacts-item">
+                                <a href="/contacto.html" data-discover="true">Contactos</a>
+                            </li>
+                            <li class="nav-list-item login-item">
+                                <a href="/login" data-discover="true">
+                                    <img src="./assets/login.svg" alt="" class="login-icon">
+                                    Login
+                                </a>
+                            </li>
+                            <li class="nav-list-item carrito-item">
+                                <a href="/carrito" data-discover="true" style="display: flex; align-items: center; justify-content: center; padding: 8px 10px;">
+                                    <img src="./assets/carrito.svg" alt="" style="color: rgb(0, 0, 0); border: none; border-radius: 10px;">
+                                    <span style="color: rgb(255, 111, 97); font-size: 20px;">0</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </header>
+        <main class="main-contact-section">
+            <section class="contact-section">
+              <div class="contact-intro">
+                <h1 class="contact-title">Estamos para ayudarte</h1>
+                <p class="contact-description">
+                  Si tienes alguna pregunta o necesitas asistencia, no dudes en contactarnos.
+                  Nuestro equipo de atención al cliente está aquí para ayudarte en todo lo que necesites.
+                </p>
+              </div>
+
+              <div class="contact-form-container">
+                <div class="contact-info">
+                    <h2 class="contact-info-title">Información de Contacto</h2>
+                </div>
+                <form action="https://formspree.io/f/xrbyqglr" method="POST" class="contact-form">
+                  <h1 class="form-title">Contáctanos</h1>
+
+                  <label for="nombre" class="form-label">Nombre:</label>
+                  <input type="text" id="nombre" name="nombre" class="form-input" required />
+
+                  <label for="email" class="form-label">Email:</label>
+                  <input type="email" id="email" name="email" class="form-input" required />
+
+                  <label for="mensaje" class="form-label">Mensaje:</label>
+                  <textarea id="mensaje" name="mensaje" class="form-textarea" required></textarea>
+
+                  <button type="submit" class="form-button">Enviar</button>
+                </form>
+              </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
