@@ -1,0 +1,21 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family:"Nunito", sans-serif;
+    
+}
+body{
+  background: #D9D9D9;
+}
+
+
+/* <weight>: Use a value from 200 to 1000
+   <uniquifier>: Use a unique and descriptive class name
+*/
+.nunito-font {
+  font-family: "Nunito", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  font-style: normal;
+}

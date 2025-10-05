@@ -1,0 +1,8 @@
+.productListBtnDetail{
+    
+    text-decoration: none;
+    color: inherit;
+}
+.productListBtnDetail button{
+    width: 100%;
+}

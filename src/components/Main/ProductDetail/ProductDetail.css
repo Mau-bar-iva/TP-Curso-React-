@@ -1,0 +1,11 @@
+
+.btn-addproduct{
+    cursor: pointer;
+    height: 4vh;
+    border-radius: 10px;
+    border: none;
+    background: #ff6f61;
+}
+.btn-addproduct:hover{
+    filter: brightness(.9);
+}
