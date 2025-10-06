@@ -5,8 +5,6 @@
   "type": "module",
   "homepage": "https://mau-bar-iva.github.io/TP-Curso-React-/",
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
