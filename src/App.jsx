@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Hero from './components/Header/Hero.jsx'
 import Carrito from './components/Main/Carrito/Carrito.jsx';
