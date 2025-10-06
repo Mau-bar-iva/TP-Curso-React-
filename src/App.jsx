@@ -19,8 +19,8 @@ function App() {
       <CarritoProvider>
         <Router>
           <Hero/>
+          <MainApp/>
           <Routes>
-            <Route path="/" element={<MainApp />} />
             <Route path="/section-home" element={<Home/>}/>
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/carrito" element={<Carrito/>}/>
