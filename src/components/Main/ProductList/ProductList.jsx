@@ -1,6 +1,6 @@
 import Product from '../Product/Product.jsx'
 import { CarritoContext } from '../Carrito/CarritoContextDef.jsx'
-import { Link } from 'react-router-dom'
+import { HashRouter as Link } from 'react-router-dom'
 import ProductDetail from "../ProductDetail/ProductDetail.jsx"
 import './ProductList.css'
 const ProductList = ({ list }) => {
@@ -10,7 +10,7 @@ const ProductList = ({ list }) => {
             {list.length ? (
                 list.map((prod)=>(
                     <Product key={prod.id} {...prod}>
-                        <Link to="/productdetailcontainer" className='productListBtnDetail'><button>Ver Detalle</button></Link>
+                        <Link to={`/producto/${prod.id}`} className='productListBtnDetail'><button>Ver Detalle</button></Link>
                     </Product>
                 ))
             ):(

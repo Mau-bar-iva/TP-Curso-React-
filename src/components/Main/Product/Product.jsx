@@ -8,9 +8,7 @@ export default function Product({ id, name, price, description, imageUrl, childr
                 <img src={imageUrl} alt={id} className="product-img" />
             </div>
             <div className="product-info">
-                <Link to={`/producto/${id}`} className="product-link">
-                    <h1 className="product-title">{name}</h1>
-                </Link>
+                <h1 className="product-title">{name}</h1>
                 <p className='product-descripcion'>{description}</p>
                 <span className="product-precio">${price}</span>
                 {children}
