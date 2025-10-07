@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { HashRouter as Link } from 'react-router-dom'
 import './Product.css'
 
 export default function Product({ id, name, price, description, imageUrl, children}){
