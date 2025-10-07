@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 
-import { HashRouter as Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './Navbar.css';
 import { CarritoContext } from '../../Main/Carrito/CarritoContextDef';
 

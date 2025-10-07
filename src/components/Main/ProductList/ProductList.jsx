@@ -1,6 +1,6 @@
 import Product from '../Product/Product.jsx'
 import { CarritoContext } from '../Carrito/CarritoContextDef.jsx'
-import { HashRouter as Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import ProductDetail from "../ProductDetail/ProductDetail.jsx"
 import './ProductList.css'
 const ProductList = ({ list }) => {
