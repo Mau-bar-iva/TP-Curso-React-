@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 
 function Banner({Titulo="", Descripcion="" }){
     const imagenes = [
-        "/assets/slide1.png",
-        "/assets/slide2.png",
-        "/assets/slide3.png"
+        "./assets/slide1.png",
+        "./assets/slide2.png",
+        "./assets/slide3.png"
     ];
 
     const [indice, setIndice] = useState(0);
