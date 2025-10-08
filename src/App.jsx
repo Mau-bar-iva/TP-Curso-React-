@@ -17,19 +17,17 @@ function App() {
   return(
     <ProductProvider>
       <CarritoProvider>
-        <BroweserRouter>
-          <Router>
-            <Hero/>
-            <Routes>
-              <Route path="/" element={<MainApp/>}/>
-              <Route path="/products" element={<ProductListContainer titulo={"Productos"}/>}/>
-              <Route path="/products/:id" element={<ProductDetailContainer />} />
-              <Route path="/about" element={<About/>}/>
-              <Route path="/contact" element={<Contact/>}/>
-              <Route path="/carrito" element={<Carrito/>}/>
-            </Routes>
-          </Router>
-        </BroweserRouter>
+        <Router basename='/TP-Curso-React-'>
+          <Hero/>
+          <Routes>
+            <Route path="/" element={<MainApp/>}/>
+            <Route path="/products" element={<ProductListContainer titulo={"Productos"}/>}/>
+            <Route path="/products/:id" element={<ProductDetailContainer />} />
+            <Route path="/about" element={<About/>}/>
+            <Route path="/contact" element={<Contact/>}/>
+            <Route path="/carrito" element={<Carrito/>}/>
+          </Routes>
+        </Router>
       </CarritoProvider>
     </ProductProvider>
   )
