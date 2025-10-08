@@ -7,10 +7,13 @@ export default function ProductDetail({ detail }){
     const { setCarritoCompra } = useContext(CarritoContext)
 
     return(
-        <Product {...detail}>
-            <button onClick={() => setCarritoCompra(prev => [...prev, detail])} className='btn-addproduct'>
-                <span>Agregar al carrito</span>
-            </button>
-        </Product>
+        <div className='product-container'>
+            <Product {...detail}>
+                <button onClick={() => setCarritoCompra(prev => [...prev, detail])} className='btn-addproduct'>
+                    <span>Agregar al carrito</span>
+                </button>
+            </Product>
+        </div>
+        
     )
 }

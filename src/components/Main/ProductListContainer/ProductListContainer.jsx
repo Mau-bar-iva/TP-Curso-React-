@@ -4,12 +4,12 @@ import ProductList from '../ProductList/ProductList.jsx'
 import './ProductListContainer.css'
 
 export default function ProductListContainer({ titulo }){
-    const { productos } = useContext(ProductContext);
+    const { products } = useContext(ProductContext);
 
     return(
-        <section id="section-product" className="product-container">
+        <section id="section-products" className="section-products">
             <h1 className='section-product-title'>{titulo}</h1>
-            <ProductList list={productos}/>
+            <ProductList list={products}/>
         </section>
     )
 }

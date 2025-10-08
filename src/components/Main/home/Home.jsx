@@ -6,7 +6,7 @@ import CategoriesBar from './CategoriesNav.jsx';
 function Home() {
 
     return (
-        <section id="section-home" className='main-home-container'>
+        <section id='section-home' className='main-home-container'>
             <section className='home-container'>
                 <Banner 
                 Titulo="Moda Sostenible" 

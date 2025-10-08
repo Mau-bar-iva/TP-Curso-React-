@@ -1,6 +1,7 @@
 import React from 'react'
 import './Banner.css';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'
 
 function Banner({Titulo="", Descripcion="" }){
     const imagenes = [
@@ -32,7 +33,9 @@ function Banner({Titulo="", Descripcion="" }){
             <div className='banner-text-container'>
               <p className='banner-title'>{Titulo}</p>
               <h3 className='banner-description'>{Descripcion}</h3>
-              <button className="banner-btn">Descubrir productos</button>
+              <Link to="/#section-products">
+                <button className="banner-btn">Descubrir productos</button>
+              </Link>
             </div>
         </div>
     )

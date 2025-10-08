@@ -1,8 +1,7 @@
 import Product from '../Product/Product.jsx'
-import { CarritoContext } from '../Carrito/CarritoContextDef.jsx'
 import { Link } from 'react-router-dom'
-import ProductDetail from "../ProductDetail/ProductDetail.jsx"
 import './ProductList.css'
+
 const ProductList = ({ list }) => {
 
     return(
@@ -10,7 +9,7 @@ const ProductList = ({ list }) => {
             {list.length ? (
                 list.map((prod)=>(
                     <Product key={prod.id} {...prod}>
-                        <Link to={`/producto/${prod.id}`} className='productListBtnDetail'><button>Ver Detalle</button></Link>
+                        <Link to={`/products/${prod.id}`} className='productListBtnDetail'><button>Ver Detalle</button></Link>
                     </Product>
                 ))
             ):(

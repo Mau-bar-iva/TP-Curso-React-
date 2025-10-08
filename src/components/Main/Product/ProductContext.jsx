@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { ProductContext } from './ProductContextDef'
 
 export default function ProductProvider({ children }) {
-    const [productos, setProductos] = useState([])  // Estado para almacenar los productos
+    const [products, setProducts] = useState([])  // Estado para almacenar los productos
     const [cargando, setCargando] = useState(true) // Estado para manejar la carga
     const [error, setError] = useState(null) // Estado para manejar errores
 
@@ -18,7 +18,7 @@ export default function ProductProvider({ children }) {
         .then((datos)=>{
           const found = datos.find((p)=>p.id === "3")
           if(found){
-            setProductos(datos)
+            setProducts(datos)
             setCargando(false)
           }else{
             throw new Error("producto no encontrado")
@@ -32,7 +32,7 @@ export default function ProductProvider({ children }) {
     },[])
 
     return(
-        <ProductContext.Provider value={{ productos, cargando, error }}>
+        <ProductContext.Provider value={{ products, cargando, error }}>
             {children}
         </ProductContext.Provider>
     )

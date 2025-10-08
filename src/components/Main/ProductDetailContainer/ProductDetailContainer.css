@@ -1,0 +1,51 @@
+.section-product-detail{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 60px;
+}
+.product-detail-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: #fff;
+    width: 100%;
+    height: 500px;
+}
+
+.products-detail-container{
+    display: flex;
+    flex-direction: column;
+    margin-top: 2rem;
+    padding: 1rem;
+}
+.products-title{
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+.products-carousel-container {
+    width: 90vw;
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    position: relative;
+}
+.products-carousel-container::after{
+    content: "";
+    top: 0;
+    right: 0;
+    box-shadow: 1px 1px 12px 5px #7d7d7d;
+    position:sticky;
+}
+
+/* Ajuste de los productos dentro del carrusel */
+.products-carousel-container > * {
+    flex: 0 0 auto; /* para que no se encojan */
+    width: 220px; /* o el ancho de tus cards */
+}

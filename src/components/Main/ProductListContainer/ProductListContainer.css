@@ -1,11 +1,11 @@
-.product-container{
+.section-products{
     width: 100%;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     justify-items: center;
     align-items: center;
     gap: 20px;
-    padding: 0 100px;
+    padding: 10px 100px;
 }
 .section-product-title{
     grid-column:1/6;

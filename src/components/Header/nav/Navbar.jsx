@@ -9,10 +9,10 @@ function Navbar(){
     return (
         <nav className='nav'>
             <ul className='nav-list-container'>
-                <li className='nav-list-item home-item'><Link to="/#section-home">Home</Link></li>
-                <li className='nav-list-item products-item'><a href="#section-product">Products</a></li>
-                <li className='nav-list-item about-item'><a href="#section-about">About</a></li>
-                <li className='nav-list-item contacts-item'><a href="#section-contact">Contact</a></li>
+                <li className='nav-list-item home-item'><Link to="/">Home</Link></li>
+                <li className='nav-list-item products-item'><Link to="/products">Products</Link></li>
+                <li className='nav-list-item about-item'><Link to="/about">About</Link></li>
+                <li className='nav-list-item contacts-item'><Link to="/contact">Contact</Link></li>
                 <li className='nav-list-item login-item'>
                     <Link to="/">
                         <img src="assets/login.svg" alt="" className='login-icon'/>
