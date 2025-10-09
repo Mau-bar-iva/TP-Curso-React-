@@ -10,7 +10,7 @@ export default function Hero(){
         <header className='hero-container'>
             <div className='hero-wrapper'>
                 <div className='hero-logo-container'>
-                    <img src="assets/logo.png" alt="logo-ModeaVelour" className='hero-logo'/>
+                    <img src={`${import.meta.env.BASE_URL}/assets/logo.png`} alt="logo-ModeaVelour" className='hero-logo'/>
                 </div>
                 <div className="hero-searchbar-container">
                     <input type="text" placeholder='Search product...' className='searchbar'/>

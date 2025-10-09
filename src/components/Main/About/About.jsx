@@ -12,15 +12,15 @@ export default function About(){
                 </div>
                 <div className='about-features'>
                     <div className='about-feature-item'>
-                        <h4 className='feature-item-title'><img src="./assets/category.svg" alt="" />Variety</h4>
+                        <h4 className='feature-item-title'><img src={`${import.meta.env.BASE_URL}/assets/category.svg`} alt="" />Variety</h4>
                         <p className='feature-item-text'>Versatile Styles. Your Style, Your Rules. From Casual to Chic.</p>
                     </div>
                     <div className='about-feature-item'>
-                        <h4 className='feature-item-title'><img src="./assets/handshake.svg" alt="" />Customer proximity</h4>
+                        <h4 className='feature-item-title'><img src={`${import.meta.env.BASE_URL}/assets/handshake.svg`} alt="" />Customer proximity</h4>
                         <p className='feature-item-text'>Personalized Support. A Partnership in Style. Here for You.</p>
                     </div>
                     <div className='about-feature-item'>
-                        <h4 className='feature-item-title'><img src="./assets/delivery_truck.svg" alt="" />Fast Shipping</h4>
+                        <h4 className='feature-item-title'><img src={`${import.meta.env.BASE_URL}/assets/delivery_truck.svg`} alt="" />Fast Shipping</h4>
                         <p className='feature-item-text'>Swift Shipping. Fast & Reliable Delivery. Your Order, Your Way, On Time.</p>
                     </div>
                 </div>
