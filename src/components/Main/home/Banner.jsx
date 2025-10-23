@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom'
 
 function Banner({Titulo="", Descripcion="" }){
     const imagenes = [
-        "/TP-Curso-React-/assets/slide1.png",
-        "/TP-Curso-React-/assets/slide2.png",
-        "/TP-Curso-React-/assets/slide3.png"
+        "./assets/slide1.png",
+        "./assets/slide2.png",
+        "./assets/slide3.png"
     ];
 
     const [indice, setIndice] = useState(0);
