@@ -17,7 +17,7 @@ function App() {
   return(
     <ProductProvider>
       <CarritoProvider>
-        <Router basename='/TP-Curso-React-'>
+        <Router>
           <Hero/>
           <Routes>
             <Route path="/" element={<MainApp/>}/>
