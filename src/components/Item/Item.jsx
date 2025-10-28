@@ -1,15 +1,15 @@
-import './Product.css'
+import './Item.css'
 
-export default function Product({ id, name, price, description, imageUrl, children}){
+export default function Item({ id, name, price, description, imageUrl, children}){
     return(
         <article id={id} className="product-item">
             <div className="product-img-container">
-                <img src={imageUrl} alt={name} className="product-img" />
+                <img src={imageUrl} alt={description} className="product-img" />
             </div>
             <div className="product-info">
-                <h1 className="product-title">{name}</h1>
+                <h2 className="product-title">{name}</h2>
+                <p>Precio: ${price}</p>
                 <p className='product-descripcion'>{description}</p>
-                <span className="product-precio">${price}</span>
                 {children}
             </div>
         </article>

@@ -1,16 +1,16 @@
-import Product from '../Product/Product.jsx'
+import Item from '../Item/Item.jsx'
 import { Link } from 'react-router-dom'
-import './ProductList.css'
+import './ItemList.css'
 
-const ProductList = ({ list }) => {
+const ItemList = ({ list }) => {
 
     return(
         <>
             {list.length ? (
                 list.map((prod)=>(
-                    <Product key={prod.id} {...prod}>
+                    <Item key={prod.id} {...prod}>
                         <Link to={`/products/${prod.id}`} className='productListBtnDetail'><button>Ver Detalle</button></Link>
-                    </Product>
+                    </Item>
                 ))
             ):(
                 <p>No hay productos</p>
@@ -19,4 +19,4 @@ const ProductList = ({ list }) => {
     )
 }
 
-export default ProductList
+export default ItemList

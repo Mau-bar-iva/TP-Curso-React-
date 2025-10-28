@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 
 import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
-import { CarritoContext } from '../../Main/Carrito/CarritoContextDef';
+import { CarritoContext } from '../Carrito/CarritoContextDef';
 
 function Navbar(){
     const { carritoCompra } = useContext(CarritoContext)
@@ -30,13 +30,13 @@ function Navbar(){
                 </li>
                 <li className='nav-list-item login-item'>
                     <Link to="/">
-                        <img src={`${import.meta.env.BASE_URL}/assets/login.svg`} alt="" className='login-icon'/>
+                        <img src="./assets/login.svg" alt="" className='login-icon'/>
                             Login
                     </Link>
                 </li>
                 <li className='nav-list-item carrito-item'>
                     <Link to="/carrito" style={{display:"flex", alignItems:"center",justifyContent:"center",padding:"8px 10px"}}>
-                        <img src={`${import.meta.env.BASE_URL}/assets/carrito.svg`} style={{color:"#000", border:"none", borderRadius:"10px"}} alt="" />
+                        <img src="./assets/carrito.svg" style={{color:"#000", border:"none", borderRadius:"10px"}} alt="" />
                         <span style={{color:"#ff6f61", fontSize:"20px"}}>{carritoCompra.length}</span>
                     </Link>
                 </li>

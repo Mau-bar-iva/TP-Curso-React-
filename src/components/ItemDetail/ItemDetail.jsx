@@ -1,18 +1,18 @@
-import Product from '../Product/Product.jsx'
+import Item from '../Item/Item.jsx'
 import { CarritoContext } from '../Carrito/CarritoContextDef.jsx'
 import { useContext } from 'react'
-import './ProductDetail.css'
+import './ItemDetail.css'
 
-export default function ProductDetail({ detail }){
+export default function ItemDetail({ detail }){
     const { setCarritoCompra } = useContext(CarritoContext)
 
     return(
-        <div className='product-container'>
-            <Product {...detail}>
+        <div className='productItem-container'>
+            <Item {...detail}>
                 <button onClick={() => setCarritoCompra(prev => [...prev, detail])} className='btn-addproduct'>
                     <span>Agregar al carrito</span>
                 </button>
-            </Product>
+            </Item>
         </div>
         
     )

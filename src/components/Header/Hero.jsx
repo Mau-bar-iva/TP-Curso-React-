@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
-import Navbar from './nav/Navbar'
+import Navbar from '../Nav/Navbar.jsx'
 import './Hero.css';
-import { CarritoContext } from '../Main/Carrito/CarritoContextDef.jsx';
+import { CarritoContext } from '../Carrito/CarritoContextDef.jsx';
 
 // Componente que representa el encabezado de la aplicación, incluyendo el logo y la barra de navegación
 export default function Hero(){
@@ -10,7 +10,7 @@ export default function Hero(){
         <header className='hero-container'>
             <div className='hero-wrapper'>
                 <div className='hero-logo-container'>
-                    <img src={`${import.meta.env.BASE_URL}/assets/logo.png`} alt="logo-ModeaVelour" className='hero-logo'/>
+                    <img src="./assets/logo.png" alt="logo-ModeaVelour" className='hero-logo'/>
                 </div>
                 <div className="hero-searchbar-container">
                     <input type="text" placeholder='Search product...' className='searchbar'/>

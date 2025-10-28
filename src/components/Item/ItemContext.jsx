@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { ProductContext } from './ProductContextDef'
+import { ItemContext } from './ItemContextDef'
 
-export default function ProductProvider({ children }) {
+export default function ItemProvider({ children }) {
     const [products, setProducts] = useState([])  // Estado para almacenar los productos
     const [cargando, setCargando] = useState(true) // Estado para manejar la carga
     const [error, setError] = useState(null) // Estado para manejar errores
@@ -32,8 +32,8 @@ export default function ProductProvider({ children }) {
     },[])
 
     return(
-        <ProductContext.Provider value={{ products, cargando, error }}>
+        <ItemContext.Provider value={{ products, cargando, error }}>
             {children}
-        </ProductContext.Provider>
+        </ItemContext.Provider>
     )
 }

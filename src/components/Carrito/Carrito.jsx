@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { CarritoContext } from './CarritoContextDef.jsx';
 import './Carrito.css';
-import ProductList from '../ProductList/ProductList.jsx'
+import ItemList from '../ItemList/ItemList.jsx'
 
 export default function Carrito(){
     const { carritoCompra } = useContext(CarritoContext);
@@ -15,7 +15,7 @@ export default function Carrito(){
                         </div>
                         <div className='carrito-hero-productos'>
                             {carritoCompra.length < 1 ? <span>El carrito está vacío</span> :(/* si existen productos los mostramos, sino mostramos mensaje */
-                                <ProductList list={carritoCompra}/>)}
+                                <ItemList list={carritoCompra}/>)}
                         </div>
                         <div className='carrito-hero-subtotal'>
                             <h2>Subtotal({carritoCompra.length} {carritoCompra.length > 1 ? "items":"item"}): ${carritoCompra.reduce((total, product) => total + product.price, 0)}</h2>

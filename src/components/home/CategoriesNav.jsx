@@ -9,7 +9,7 @@ function CategoriesNav() {
                 <li className='categories-list-item'>
                     <Link to={"/category/jacket"}>
                         <button className='list-item-btn'>
-                            <img src={`${import.meta.env.BASE_URL}/assets/jacket-img.png`} className="list-item-img" alt="Jacket" />
+                            <img src="./assets/jacket-img.png" className="list-item-img" alt="Jacket" />
                         </button>
                         <span>Jacket</span>
                     </Link>
@@ -17,7 +17,7 @@ function CategoriesNav() {
                 <li className='categories-list-item'>
                     <Link to={"/category/shirt"}>
                         <button className='list-item-btn'>
-                            <img src={`${import.meta.env.BASE_URL}/assets/shirt-img.png`} className="list-item-img" alt="Shirt" />
+                            <img src="./assets/shirt-img.png" className="list-item-img" alt="Shirt" />
                         </button>
                         <span>Shirt</span>
                 
@@ -26,7 +26,7 @@ function CategoriesNav() {
                 <li className='categories-list-item'>
                     <Link to={"/category/jeans"}>
                         <button className='list-item-btn'>
-                            <img src={`${import.meta.env.BASE_URL}/assets/jeans-img.png`} className="list-item-img" alt="Jeans" />
+                            <img src="./assets/jeans-img.png" className="list-item-img" alt="Jeans" />
                         </button>
                         <span>Jeans</span>
                     </Link>
@@ -34,7 +34,7 @@ function CategoriesNav() {
                 <li className='categories-list-item'>
                     <Link to={"/category/bag"}>
                         <button className='list-item-btn'>
-                            <img src={`${import.meta.env.BASE_URL}/assets/bag-img.png`} className="list-item-img" alt="Bag" />
+                            <img src="./assets/bag-img.png" className="list-item-img" alt="Bag" />
                         </button>
                         <span>Bag</span>
                     </Link>
@@ -42,7 +42,7 @@ function CategoriesNav() {
                 <li className='categories-list-item'>
                     <Link to={"/category/shoes"}>
                         <button className='list-item-btn'>
-                            <img src={`${import.meta.env.BASE_URL}/assets/shoes-img.png`} className="list-item-img" alt="Shoes" />
+                            <img src="./assets/shoes-img.png" className="list-item-img" alt="Shoes" />
                         </button>
                         <span>Shoes</span>
                     </Link>
@@ -50,7 +50,7 @@ function CategoriesNav() {
                 <li className='categories-list-item'>
                     <Link to={"/category/watches"}>
                         <button className='list-item-btn'>
-                            <img src={`${import.meta.env.BASE_URL}/assets/watches-img.png`} className="list-item-img" alt="Watches" />
+                            <img src="./assets/watches-img.png" className="list-item-img" alt="Watches" />
                         </button>
                         <span>Watches</span>
                     </Link>
@@ -58,7 +58,7 @@ function CategoriesNav() {
                 <li className='categories-list-item'>
                     <Link to={"/category/cap"}>
                         <button className='list-item-btn'>
-                            <img src={`${import.meta.env.BASE_URL}/assets/cap-img.png`} className="list-item-img" alt="Cap" />
+                            <img src="./assets/cap-img.png" className="list-item-img" alt="Cap" />
                         </button>
                         <span>Cap</span>
                     </Link>
@@ -66,7 +66,7 @@ function CategoriesNav() {
                 <li className='categories-list-item'>
                     <Link to={"/category/allcategories"}>
                         <button className='list-item-btn'>
-                            <img src={`${import.meta.env.BASE_URL}/assets/category_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg`} className="list-item-img" alt="All Categories" />
+                            <img src="./assets/category_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" className="list-item-img" alt="All Categories" />
                         </button>
                         <span>All Categories</span>
                     </Link>

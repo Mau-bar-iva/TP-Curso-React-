@@ -1,6 +1,6 @@
 import React from 'react';
 import './Home.css';
-import Banner from './Banner';
+import Banner from './Banner.jsx';
 import CategoriesBar from './CategoriesNav.jsx';
 
 function Home() {
