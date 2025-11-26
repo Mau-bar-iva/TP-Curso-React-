@@ -9,7 +9,7 @@ import { ProductFormContainer } from "./components/AdminComponents/ProductFormCo
 import RutaProtegida from "./components/RutaProtegida/RutaProtegida.jsx";
 import Login from "./components/Login/Login.jsx";
 import { MainLayoout } from "./layouts/MainLayout.jsx";
-import { AdminLayout } from "./layouts/Adminlayout.jsx";
+import { AdminLayout } from "./layouts/AdminLayout.jsx";
 import Banner from "./components/Banner/Banner.jsx";
 function App() {
   return (
