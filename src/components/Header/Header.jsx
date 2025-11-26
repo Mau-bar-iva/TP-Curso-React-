@@ -8,7 +8,7 @@ export function Header(){
         <header className='hero-container'>
             <div className='hero-wrapper'>
                 <div className='hero-logo-container'>
-                    <img src="./public/assets/logo.png" alt="logo-ModeaVelour" className='hero-logo'/>
+                    <img src="/assets/logo.png" alt="logo-ModeaVelour" className='hero-logo'/>
                 </div>
 
                 <div className='hero-navbar-container'>
