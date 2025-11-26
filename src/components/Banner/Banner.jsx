@@ -1,7 +1,5 @@
-import React from 'react'
 import './Banner.css';
 import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
 
 function Banner({Titulo="", Descripcion="" }){
     const imagenes = [
