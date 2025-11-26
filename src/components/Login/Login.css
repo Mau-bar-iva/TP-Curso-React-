@@ -1,0 +1,38 @@
+form{
+    display: flex;
+    flex-direction: column;
+    width: 40vw;
+    height: fit-content;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 50px;
+    align-items: center;
+    gap: 20px;
+}
+
+form div{
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+}
+form div label{
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+form div input{
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid #d1d1d3;
+    padding: 5px 10px;
+    font-size: 1rem;
+}
+form button{
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #000;
+    color: #fff;
+    cursor: pointer;
+}

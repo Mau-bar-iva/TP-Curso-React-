@@ -1,19 +1,48 @@
-import Item from '../Item/Item.jsx'
-import { CarritoContext } from '../Carrito/CarritoContextDef.jsx'
-import { useContext } from 'react'
-import './ItemDetail.css'
+//import Item from '../Item/Item.jsx'
+//import { CarritoContext } from '../Carrito/CarritoContextDef.jsx'
+//import { useContext } from 'react'
+//import './ItemDetail.css'
+//
+//export default function ItemDetail({ detail }){
+//    const { setCarritoCompra } = useContext(CarritoContext)
+//
+//    return(
+//        <div className='productItem-container'>
+//            <Item {...detail}>
+//                <button onClick={() => setCarritoCompra(prev => [...prev, detail])} className='btn-addproduct'>
+//                    <span>Agregar al carrito</span>
+//                </button>
+//            </Item>
+//        </div>
+//        
+//    )
+//}
 
-export default function ItemDetail({ detail }){
-    const { setCarritoCompra } = useContext(CarritoContext)
+import { useCartContext } from "../../context/CartContext/useCartContext";
+import { Count } from "../Count/Count";
+import { Item } from "../Item/Item";
 
-    return(
-        <div className='productItem-container'>
-            <Item {...detail}>
-                <button onClick={() => setCarritoCompra(prev => [...prev, detail])} className='btn-addproduct'>
-                    <span>Agregar al carrito</span>
-                </button>
-            </Item>
-        </div>
-        
-    )
-}
+export const ItemDetail = ({ detail }) => {
+  const { addItem } = useCartContext();
+
+  const handleAdd = (quantity) => {
+    addItem({ ...detail, quantity });
+  };
+
+  return (
+    //Si ustedes deciden NO reutilizar el componente Item y aca hacer
+    //una seccion totalmente nueva, pueden despreocuparse del Link en ItemList.
+
+    //En el caso de optar por la NO reutilizacion, pueden colocar el Link envolviendo el <article>
+    //en Item y dejar como estaba el ItemList, sin modificaciones
+
+    <Item {...detail}>
+      <div className="item-detail-container">
+
+        <Count btnText={"Agregar al carrito"} onConfirm={handleAdd} />
+      </div>
+      
+      {/* <button onClick={() => addItem(detail)}>Enviar al carrito</button> */}
+    </Item>
+  );
+};

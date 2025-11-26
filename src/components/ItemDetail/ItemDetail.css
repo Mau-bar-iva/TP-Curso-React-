@@ -1,3 +1,10 @@
-.product-container{
+/*.product-container{
     border: 1px solid #D3D3D3;
 }
+*/
+.detail-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+

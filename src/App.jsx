@@ -1,33 +1,58 @@
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-import Hero from './components/Header/Hero.jsx'
-import Carrito from './components/Carrito/Carrito.jsx';
-import ItemDetailContainer from './components/ItemDetailContainer/ItemDetailContainer.jsx';
-import MainApp from './components/Main/MainApp.jsx';
-import Contact from './components/Contact/Contact.jsx';
-import About from './components/About/About.jsx'
-import ItemProvider from './components/Item/ItemContext.jsx';
-import CarritoProvider from './components/Carrito/CarritoContext.jsx';
-import ItemListContainer from './components/ItemListContainer/ItemListContainer.jsx';
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./App.css";
+import { Footer } from "./components/Footer/Footer.jsx";
+import { ItemDetailContainer } from "./components/ItemDetailContainer/ItemDetailContainer";
+import { ItemListContainer } from "./components/ItemListContainer/ItemListContainer";
+import { CartProvider } from "./context/CartContext/CartProvider";
+import { Cart } from "./components/Cart/Cart";
+import { ProductFormContainer } from "./components/AdminComponents/ProductFormContainer/ProductFormContainer";
+import RutaProtegida from "./components/RutaProtegida/RutaProtegida.jsx";
+import Login from "./components/Login/Login.jsx";
+import { MainLayoout } from "./layouts/MainLayout.jsx";
+import { AdminLayout } from "./layouts/Adminlayout.jsx";
+import Banner from "./components/Banner/Banner.jsx";
 function App() {
-  // Estado para manejar la autenticación
-
-  return(
-    <ItemProvider>
-      <CarritoProvider>
-        <Router>
-          <Hero/>
+  return (
+    <BrowserRouter>
+        <CartProvider>
+          {/* Dejamos fuera del Routes lo que queremos que no se vuelva a renderizar al navegar */}
           <Routes>
-            <Route path="/" element={<MainApp/>}/>
-            <Route path="/products/:id" element={<ItemDetailContainer />} />
-            <Route path="/carrito" element={<Carrito/>}/>
+            <Route element={<MainLayoout/>}>
+              <Route
+                path="/"
+                element={
+                  <>
+                    <Banner 
+                      Titulo="Moda Sostenible" 
+                      Descripcion="Descubre las últimas tendencias en moda sostenible con nuestra nueva colección ecológica." />
+                    <ItemListContainer 
+                      titulo={"Bienvenidos"} />
+                  </>
+                  }
+              />
+              <Route
+                path="/category/:category"
+                element={<ItemListContainer titulo={"Bienvenidos"} />}
+              />
+              <Route path="/detail/:id" element={<ItemDetailContainer />} />
+              <Route path="/carrito" element={<Cart />} />
+            </Route>
+            
+            <Route path="/admin" element={<AdminLayout/>}>
+              <Route index element={<Login/>}></Route>
+              <Route path="alta-productos"
+                element={
+                  <RutaProtegida>
+                    <ProductFormContainer/>
+                  </RutaProtegida>
+                }/>
+            </Route>
           </Routes>
-        </Router>
-      </CarritoProvider>
-    </ItemProvider>
-  )
+          {/* Dejamos fuera del Routes lo que queremos que no se vuelva a renderizar al navegar */}
+          <Footer/>
+        </CartProvider>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
