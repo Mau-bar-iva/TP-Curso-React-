@@ -1,14 +1,15 @@
 import { Outlet } from "react-router-dom";
-import {Header} from "../components/Header/Header";
+import { Header } from "../components/Header/Header";
+import { Footer } from "../components/Footer/Footer";
 
-export const MainLayoout = () => {
+export const MainLayout = () => {
     return (
-        <>
-            <Header/>
-            <main style={{flex:1, paddingTop: "90px"}}>
-                <Outlet/>
-                
+        <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+            <Header />
+            <main id="home" style={{ flex: 1, paddingTop: "90px", marginBottom: "90px" }}>
+                <Outlet />
             </main>
-        </>
+            <Footer />
+        </div>
     )
 }

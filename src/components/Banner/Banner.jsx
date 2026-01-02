@@ -1,42 +1,42 @@
 import './Banner.css';
 import { useState, useEffect } from 'react';
 
-function Banner({Titulo="", Descripcion="" }){
-    const imagenes = [
-        "./assets/slide1.png",
-        "./assets/slide2.png",
-        "./assets/slide3.png"
-    ];
+function Banner({ Titulo = "", Descripcion = "" }) {
+  const imagenes = [
+    "./assets/slide1.png",
+    "./assets/slide2.png",
+    "./assets/slide3.png"
+  ];
 
-    const [indice, setIndice] = useState(0);
-        
-    useEffect(() => {
-        const intervalo = setInterval(()=>{
-            setIndice((prev)=>(prev + 1) % imagenes.length)
-        }, 3000)
+  const [indice, setIndice] = useState(0);
 
-        return ()=> clearInterval(intervalo)
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      setIndice((prev) => (prev + 1) % imagenes.length)
+    }, 3000)
 
-    }, [imagenes.length]);
+    return () => clearInterval(intervalo)
 
-    return(
-        <div className='banner-container'>
-            <div className='banner-img-container'>
-              <div 
-                className="banner-bg"
-                style={{ backgroundImage: `url(${imagenes[indice]})` }}
-              ></div>
-              <img src={imagenes[indice]} alt={Titulo} className='banner-image'/>
-            </div>
-            <div className='banner-text-container'>
-              <p className='banner-title'>{Titulo}</p>
-              <h3 className='banner-description'>{Descripcion}</h3>
-              <a href="#section-products">
-                <button className="banner-btn">Descubrir productos</button>
-              </a>
-            </div>
-        </div>
-    )
+  }, [imagenes.length]);
+
+  return (
+    <section className='banner-container'>
+      <div className='banner-img-container'>
+        <div
+          className="banner-bg"
+          style={{ backgroundImage: `url(${imagenes[indice]})` }}
+        ></div>
+        <img src={imagenes[indice]} alt={Titulo} className='banner-image' />
+      </div>
+      <div className='banner-text-container'>
+        <p className='banner-title'>{Titulo}</p>
+        <h3 className='banner-description'>{Descripcion}</h3>
+        <a href="#section-products">
+          <button className="banner-btn">Descubrir productos</button>
+        </a>
+      </div>
+    </section>
+  )
 }
 
 export default Banner

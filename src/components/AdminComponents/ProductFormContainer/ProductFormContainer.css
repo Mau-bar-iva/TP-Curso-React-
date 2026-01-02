@@ -1,6 +1,10 @@
 /* Contenedor del formulario */
+.product-form-container{
+  width: 100%;
+}
+
 .product-form {
-  max-width: 720px;
+  width: 50%;
   margin: 2rem auto;
   padding: 1.25rem 1.5rem;
   background: #2c2c2c; /* gris oscuro */
@@ -18,6 +22,7 @@
 
 /* Filas del formulario (tus <div>) */
 .product-form > div {
+  width: 100%;
   display: grid;
   gap: 0.5rem;
   margin-bottom: 1rem;

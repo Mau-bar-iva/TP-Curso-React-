@@ -1,57 +1,64 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
-import { Footer } from "./components/Footer/Footer.jsx";
+import { AuthProvider } from "./context/AuthContext/AuthProvider.jsx";
 import { ItemDetailContainer } from "./components/ItemDetailContainer/ItemDetailContainer";
-import { ItemListContainer } from "./components/ItemListContainer/ItemListContainer";
+import CategoryPage from "./components/CategoryPage/CategoryPage.jsx";
 import { CartProvider } from "./context/CartContext/CartProvider";
 import { Cart } from "./components/Cart/Cart";
+import { FavoriteProvider } from "./context/FavoriteContext/FavoriteProvider.jsx";
+import Favorite from "./components/Favorite/Favorite.jsx";
 import { ProductFormContainer } from "./components/AdminComponents/ProductFormContainer/ProductFormContainer";
 import RutaProtegida from "./components/RutaProtegida/RutaProtegida.jsx";
 import Login from "./components/Login/Login.jsx";
-import { MainLayoout } from "./layouts/MainLayout.jsx";
+import { MainLayout } from "./layouts/MainLayout";
 import { AdminLayout } from "./layouts/AdminLayout.jsx";
-import Banner from "./components/Banner/Banner.jsx";
+import Home from "./components/Home/Home.jsx";
 function App() {
   return (
-    <BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
         <CartProvider>
-          {/* Dejamos fuera del Routes lo que queremos que no se vuelva a renderizar al navegar */}
-          <Routes>
-            <Route element={<MainLayoout/>}>
-              <Route
-                path="/"
-                element={
-                  <>
-                    <Banner 
-                      Titulo="Moda Sostenible" 
-                      Descripcion="Descubre las últimas tendencias en moda sostenible con nuestra nueva colección ecológica." />
-                    <ItemListContainer 
-                      titulo={"Bienvenidos"} />
-                  </>
+          <FavoriteProvider>
+            {/* Dejamos fuera del Routes lo que queremos que no se vuelva a renderizar al navegar */}
+            <Routes>
+              <Route element={<MainLayout />}>
+                <Route index element={<Home />} />
+                <Route
+                  path="/category/:category"
+                  element={<CategoryPage />}
+                />
+                <Route path="/detail/:id" element={<ItemDetailContainer />} />
+                <Route
+                  path="/favorite"
+                  element={
+                    <RutaProtegida>
+                      <Favorite />
+                    </RutaProtegida>} />
+                <Route
+                  path="/carrito"
+                  element={
+                    <RutaProtegida>
+                      <Cart />
+                    </RutaProtegida>
                   }
-              />
-              <Route
-                path="/category/:category"
-                element={<ItemListContainer titulo={"Bienvenidos"} />}
-              />
-              <Route path="/detail/:id" element={<ItemDetailContainer />} />
-              <Route path="/carrito" element={<Cart />} />
-            </Route>
-            
-            <Route path="/admin" element={<AdminLayout/>}>
-              <Route index element={<Login/>}></Route>
-              <Route path="alta-productos"
-                element={
-                  <RutaProtegida>
-                    <ProductFormContainer/>
-                  </RutaProtegida>
-                }/>
-            </Route>
-          </Routes>
-          {/* Dejamos fuera del Routes lo que queremos que no se vuelva a renderizar al navegar */}
-          <Footer/>
+                />
+              </Route>
+
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Login />}></Route>
+                <Route path="alta-productos"
+                  element={
+                    <RutaProtegida role="admin">
+                      <ProductFormContainer />
+                    </RutaProtegida>
+                  } />
+              </Route>
+            </Routes>
+            {/* Dejamos fuera del Routes lo que queremos que no se vuelva a renderizar al navegar */}
+          </FavoriteProvider>
         </CartProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

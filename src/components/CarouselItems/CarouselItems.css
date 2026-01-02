@@ -1,0 +1,49 @@
+.carousel-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.carousel {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 10px 40px;
+}
+
+.carousel::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* Flechas */
+.carousel>* {
+    flex: 0 0 auto;
+}
+
+.nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    color: rgb(0, 0, 0);
+    border: none;
+    height: 50px;
+    width: 50px;
+    font-size: 104px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.nav.left {
+    left: 5px;
+}
+
+.nav.right {
+    right: 5px;
+}

@@ -1,44 +1,58 @@
-import React, { useState } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Navigate, useLocation } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext/useAuthContext";
 import "./Login.css";
 
 export default function Login() {
-  const [userForm, setUserForm] = useState({ name: "", password: "" });
+  const [userForm, setUserForm] = useState({ email: "", password: "" });
   const { user, login } = useAuthContext();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  if (user) {
-    return <Navigate to="/admin/alta-productos" replace />;
-  }
+  const from = location.state?.from;
 
+  useEffect(() => {
+    if (user) {
+      if (user.role === "admin") {
+        navigate(from || "/admin/alta-productos", { replace: true });
+      } else {
+        navigate(from || "/", { replace: true });
+      }
+    }
+  }, [user, navigate, from]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserForm({ ...userForm, [name]: value });
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const success = login(userForm.name, userForm.password);
-    if(success){
+    const success = await login(userForm.email, userForm.password);
+    if (success) {
       navigate("/admin/alta-productos");
-    }else{
+    } else {
       alert("Credenciales incorrectas");
-      setUserForm({ name: "", password: "" });
+      setUserForm({ email: "", password: "" });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Iniciar Sesión</h2>
+    <form onSubmit={handleSubmit} className="login-form">
+      <div className='login-logo-container'>
+        <img src="/assets/logo.png" alt="logo-ModeaVelour" className='login-logo' />
+      </div>
+
+      <h2>Inicio de Sesión</h2>
 
       <div>
-        <label>Usuario:</label>
+        <label>Email:</label>
         <input
-          type="text"
-          value={userForm.name}
-          name="name"
+          type="email"
+          value={userForm.email}
+          name="email"
+          placeholder="Ingresa tu usuario"
           onChange={handleChange}
+          className="form-input"
         />
       </div>
 
@@ -47,12 +61,16 @@ export default function Login() {
         <input
           type="password"
           name="password"
+          placeholder="Ingresa tu contraseña"
           value={userForm.password}
           onChange={handleChange}
+          className="form-input"
         />
       </div>
 
-      <button type="submit">Iniciar Sesión</button>
+      <div>
+        <button type="submit">Iniciar Sesión</button>
+      </div>
     </form>
   );
 }

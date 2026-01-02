@@ -4,7 +4,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    
+
 }
 
 .banner-img-container {
@@ -25,6 +25,7 @@
     background-repeat: no-repeat;
     filter: blur(50px);
     transform: scale(1.1);
+    transition: all 0.5s ease;
 }
 
 .banner-image {
@@ -45,23 +46,28 @@
     flex-direction: column;
     gap: 15px;
 }
+
 .banner-title {
     font-size: 25px;
 }
+
 .banner-description {
     font-size: 30px;
     line-height: 1.4;
     font-weight: bold;
 }
-.banner-btn{
+
+.banner-btn {
     width: fit-content;
     padding: 10px 50px;
-    border-radius: 5px;
-    background-color: #ff6f61;
+    background-color: #000000;
     color: #fff;
     border: none;
     cursor: pointer;
+    transition: all 0.1s ease;
 }
-.banner-btn:hover{
-    background-color: #ff6e61c1;
+
+.banner-btn:hover {
+    color: #000000;
+    background-color: #e6d3bb;
 }

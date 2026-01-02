@@ -2,7 +2,6 @@
   background: #111;
   color: #eee;
   padding: 40px 20px;
-  margin-top: auto;
 }
 
 .footer-content {
@@ -29,12 +28,14 @@
   list-style: none;
   padding: 0;
 }
-.footer-socials a{
-    color: #eee;
-    margin-right: 15px;
-    font-size: 1rem;
-    text-decoration: none;
+
+.footer-socials a {
+  color: #eee;
+  margin-right: 15px;
+  font-size: 1rem;
+  text-decoration: none;
 }
+
 .footer-copy {
   text-align: center;
   margin-top: 30px;
