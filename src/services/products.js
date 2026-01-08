@@ -1,4 +1,4 @@
-const BASE_URL = "https://68cda302da4697a7f30695ae.mockapi.io/productos";
+const BASE_URL = "/api/productos";
 
 export const createProduct = async (product) => {
   const res = await fetch(BASE_URL, {
@@ -25,7 +25,7 @@ export const getProducts = async (category) => {
   if (!res.ok) {
     throw new Error("No se pudieron obtener los productos");
   }
-  
+
   const results = await res.json();
   return results;
 };

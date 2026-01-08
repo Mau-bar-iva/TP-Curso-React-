@@ -1,6 +1,6 @@
 import './Banner.css';
 import { useState, useEffect } from 'react';
-
+import { Link } from "react-router-dom"
 function Banner({ Titulo = "", Descripcion = "" }) {
   const imagenes = [
     "./assets/slide1.png",
@@ -31,9 +31,9 @@ function Banner({ Titulo = "", Descripcion = "" }) {
       <div className='banner-text-container'>
         <p className='banner-title'>{Titulo}</p>
         <h3 className='banner-description'>{Descripcion}</h3>
-        <a href="#section-products">
+        <Link to="/offers">
           <button className="banner-btn">Descubrir productos</button>
-        </a>
+        </Link>
       </div>
     </section>
   )

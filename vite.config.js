@@ -3,5 +3,15 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: "./"
+  base: "./",
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://68cda302da4697a7f30695ae.mockapi.io",
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, ""),
+        secure: false
+      }
+    }
+  }
 })

@@ -13,6 +13,7 @@ import Login from "./components/Login/Login.jsx";
 import { MainLayout } from "./layouts/MainLayout";
 import { AdminLayout } from "./layouts/AdminLayout.jsx";
 import Home from "./components/Home/Home.jsx";
+import OffersPage from "./components/OffersPage/OffersPage.jsx"
 function App() {
   return (
     <AuthProvider>
@@ -24,10 +25,16 @@ function App() {
               <Route element={<MainLayout />}>
                 <Route index element={<Home />} />
                 <Route
+                  path="/offers"
+                  element={<OffersPage />}
+                />
+                <Route
                   path="/category/:category"
                   element={<CategoryPage />}
                 />
-                <Route path="/detail/:id" element={<ItemDetailContainer />} />
+                <Route
+                  path="/detail/:id"
+                  element={<ItemDetailContainer />} />
                 <Route
                   path="/favorite"
                   element={

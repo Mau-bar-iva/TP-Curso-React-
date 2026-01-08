@@ -1,12 +1,11 @@
-.nav{
+.nav {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding: 0 20px;
     height: 70px;
 }
 
-.nav-list-container{
+.nav-list-container {
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -14,7 +13,8 @@
     margin-right: 20px;
     padding: 0;
 }
-.nav-list-item{
+
+.nav-list-item {
     height: 100%;
     display: flex;
     justify-content: center;
@@ -22,7 +22,8 @@
     padding: 0 10px;
     position: relative;
 }
-.nav-list-item::before{
+
+.nav-list-item::before {
     content: "";
     position: absolute;
     width: 0;
@@ -31,33 +32,70 @@
     background: #e6d3bb;
     transition: .5s ease-out;
 }
-.nav-list-item, .nav-list-item a{
+
+.nav-list-item,
+.nav-list-item a {
     list-style-type: none;
     font-size: 20px;
     text-decoration: none;
     color: black;
 }
 
-.nav-list-item:hover::before{
+.nav-list-item:hover::before {
     width: 100%;
 }
-.login-item a{
+
+.login-item a {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 5px;
 }
-.login-icon{
-    font-size: 25px;
-    color: black;
+
+.list-icon {
+    width: 30px;
+    height: 30px;
     cursor: pointer;
 }
 
-.in-cart{
+.in-cart {
     color: #000;
     padding: 5px 10px;
     border-radius: 10px;
     margin-left: 2px;
     background-color: #e6d3bb;
     cursor: pointer;
+}
+
+.nav-list-searchbar {
+    padding: 0 10px;
+    list-style-type: none;
+}
+
+.searchbar-result-container {
+    transform: translateX(-45%);
+    margin-right: 20px;
+    margin-top: 10px;
+    position: absolute;
+    background-color: #D9D9D9;
+}
+
+.searchbar-container {
+    flex: 1;
+    padding: 0 1rem;
+    display: flex;
+    width: 100%;
+    border: none;
+    background: #fff;
+    border: 1px solid #cecece;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+.searchbar {
+    border: none;
+}
+
+.searchbar:focus {
+    outline: none;
 }

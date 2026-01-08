@@ -5,9 +5,29 @@ export default function CategoryPage() {
     const { category } = useParams();
 
     return (
-        <ItemListContainer
-            category={category}
-            titulo={category ? category : "Bienvenidos"}
-        />
+        <section>
+            <div>
+                <h3>{category}</h3>
+            </div>
+            <div>
+                <h5>Filters</h5>
+                <ul>
+                    <li><input type="checkbox" /></li>
+                    <li><input type="checkbox" /></li>
+                    <li><input type="checkbox" /></li>
+                    <li><input type="checkbox" /></li>
+                    <li><input type="checkbox" /></li>
+                    <li><input type="checkbox" /></li>
+                    <li><input type="checkbox" /></li>
+                    <li><input type="checkbox" /></li>
+                </ul>
+            </div>
+            <div>
+                <ItemListContainer
+                    category={category}
+                    titulo={category ? category : "Bienvenidos"}
+                />
+            </div>
+        </section>
     );
 }

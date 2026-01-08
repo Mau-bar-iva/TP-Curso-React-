@@ -46,7 +46,7 @@ export default function CarouselItems({ children }) {
     return (
         <div className="carousel-wrapper">
             {showLeft && (
-                <button className="nav left" onClick={() => scroll("left")}>
+                <button className="nav-arrow left" onClick={() => scroll("left")}>
                     ‹
                 </button>
             )}
@@ -56,7 +56,7 @@ export default function CarouselItems({ children }) {
             </div>
 
             {showRight && (
-                <button className="nav right" onClick={() => scroll("right")}>
+                <button className="nav-arrow right" onClick={() => scroll("right")}>
                     ›
                 </button>
             )}

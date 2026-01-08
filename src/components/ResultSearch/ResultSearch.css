@@ -1,0 +1,41 @@
+.result-container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+}
+
+.product-link {
+    color: #000;
+}
+
+.product-link:hover {
+    text-decoration: none;
+}
+
+.result-container a {
+    color: #000;
+}
+
+.result-title {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.result-product {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    justify-items: center;
+}
+
+.product-img {
+    object-fit: cover;
+}
+
+.product-name {}
+
+.product-price {}
+
+.result-all {
+    font-weight: 600;
+}

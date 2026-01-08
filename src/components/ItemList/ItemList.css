@@ -14,3 +14,30 @@
   margin: 0 !important;
   text-align: start !important;
 }
+
+.favorite-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.favorite-icon .fill {
+  fill: #000000;
+  opacity: 0;
+}
+
+.favorite-icon .stroke {
+  fill: none;
+  stroke: rgb(0, 0, 0);
+  stroke-width: 80;
+}
+
+.favorite-icon:hover .fill {
+  opacity: 1;
+}

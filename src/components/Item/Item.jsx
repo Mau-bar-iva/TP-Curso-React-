@@ -8,14 +8,14 @@ export const Item = ({ name, price, description, imageUrl, children }) => {
   return (
     <article className="product-item">
       <div className="product-img-container">
-        <img src={imageUrl} alt={description} className="product-img"/>
+        <img src={imageUrl} alt={description} className="product-img" />
       </div>
 
       <div className="product-info">
+        <p className="product-precio">${price}</p>
         <h2 className="product-title">
           {name}
         </h2>
-        <p className="product-precio">${price}</p>
         <p className="product-descripcion">
           {description}
         </p>

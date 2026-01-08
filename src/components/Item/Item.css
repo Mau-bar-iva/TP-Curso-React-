@@ -1,20 +1,24 @@
-.product-item{
+.product-item {
     display: flex;
-    flex-direction:column;
+    flex-direction: column;
     background-color: rgb(255, 255, 255);
     list-style-type: none;
     border-radius: 10px;
     width: 250px;
     height: 400px;
     overflow: hidden;
+    position: relative;
 }
-.product-item:first-child{
+
+.product-item:first-child {
     margin-left: 0;
 }
-.product-item:last-child{
+
+.product-item:last-child {
     margin-right: 0;
 }
-.product-img-container{
+
+.product-img-container {
     height: 50%;
     border-bottom: #d1d1d3 solid 1px;
     position: relative;
@@ -24,49 +28,48 @@
     padding: 0 10px;
 }
 
-.product-img{
+.product-img {
     height: 150px;
     width: 100%;
     object-fit: contain;
 }
 
-.product-info{
+.product-info {
     height: 50%;
     width: 100%;
-    color:rgb(15, 15, 15);
+    color: rgb(15, 15, 15);
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     gap: 10px;
     padding: 10px 10px 20px;
 }
-.product-link{
+
+.product-link {
     text-decoration: none;
     color: inherit;
 }
-.product-link:hover{
+
+.product-link:hover {
     text-decoration: underline;
 }
-.product-title{
+
+.product-title {
     font-size: 20px;
     max-width: fit-content;
     word-wrap: break-word;
 }
-.product-descripcion{
+
+.product-descripcion {
     font-size: 18px;
     max-width: fit-content;
     word-wrap: break-word;
     text-overflow: ellipsis;
 }
-.product-precio{
+
+.product-precio {
     font-size: 30px;
 }
-.product-info button{
-    cursor: pointer;
-    height: 4vh;
-    border-radius: 10px;
-    border: none;
-    background: #e8d7c2;
-}
-.product-info button:hover{
+
+.product-info button:hover {
     filter: brightness(.9);
 }
