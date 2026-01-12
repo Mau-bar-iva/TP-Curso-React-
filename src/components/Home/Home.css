@@ -72,7 +72,7 @@
 }
 
 .img-container:first-child {
-    background-image: url("./assets/Home-section-1-pic-1.png");
+    background-image: url("/assets/Home-section-1-pic-1.png");
 }
 
 .img-container:first-child::after {
@@ -91,7 +91,7 @@
 }
 
 .img-container:last-child {
-    background-image: url("./assets/Home-section-1-pic-2.png");
+    background-image: url("/assets/Home-section-1-pic-2.png");
 }
 
 .img-container:last-child::after {

@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import { AuthProvider } from "./context/AuthContext/AuthProvider.jsx";
 import { ItemDetailContainer } from "./components/ItemDetailContainer/ItemDetailContainer";
-import CategoryPage from "./components/CategoryPage/CategoryPage.jsx";
+import ProductPage from "./components/ProductPage/ProductPage.jsx";
 import { CartProvider } from "./context/CartContext/CartProvider";
 import { Cart } from "./components/Cart/Cart";
 import { FavoriteProvider } from "./context/FavoriteContext/FavoriteProvider.jsx";
@@ -14,6 +14,7 @@ import { MainLayout } from "./layouts/MainLayout";
 import { AdminLayout } from "./layouts/AdminLayout.jsx";
 import Home from "./components/Home/Home.jsx";
 import OffersPage from "./components/OffersPage/OffersPage.jsx"
+
 function App() {
   return (
     <AuthProvider>
@@ -30,7 +31,7 @@ function App() {
                 />
                 <Route
                   path="/category/:category"
-                  element={<CategoryPage />}
+                  element={<ProductPage />}
                 />
                 <Route
                   path="/detail/:id"

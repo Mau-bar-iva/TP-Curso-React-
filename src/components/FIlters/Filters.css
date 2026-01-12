@@ -1,0 +1,21 @@
+.aside-filters-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.filters-container {
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+}
+
+.filters-title {
+    font-size: 1rem;
+}
+
+.filters-item {
+    list-style-type: none;
+    display: flex;
+    gap: .3rem;
+}

@@ -28,14 +28,10 @@
     justify-items: center;
 }
 
-.product-img {
+.result-product .product-img {
     object-fit: cover;
 }
 
-.product-name {}
-
-.product-price {}
-
-.result-all {
+.result-product .result-all {
     font-weight: 600;
 }
