@@ -1,12 +1,14 @@
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getProducts } from "../../services/products";
+import { getProducts, getCollections } from "../../services/products";
 import { ItemList } from "../ItemList/ItemList.jsx";
 import Filters from "../FIlters/Filters.jsx"
 import "./ProductPage.css"
 
-export default function CategoryPage() {
-    const { category } = useParams();
+export default function ProductPage({ type }) {
+    const { collection } = useParams()
+    const [searchParams] = useSearchParams();
+
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1)
 
@@ -18,19 +20,70 @@ export default function CategoryPage() {
     const pageCount = Math.ceil(products.length / itemsPerPage)
     const pages = Array.from({ length: pageCount }, (_, i) => i + 1)
 
-
     useEffect(() => {
-        getProducts(category)
-            .then((data) => { setProducts(data); })
-            .catch((error) => { console.error(error); });
-    }, [category]);
+        const loadData = async () => {
+            const filtersSearch = {
+                season: searchParams.get("season"),
+                category: searchParams.getAll("category"),
+                collection: searchParams.get("collection"),
+            };
 
-    const currentitems = products.slice(startIndex, enIndex)
+            try {
+                let data;
+
+                if (type === "category") {
+                    data = await getProducts();
+
+
+                    Object.entries(filtersSearch).forEach(([key, value]) => {
+                        if (!value) return;
+
+                        if (key === "category") {
+                            const categories = Array.isArray(value) ? value : [value];
+
+                            data = data.filter(item => {
+                                if (Array.isArray(item.category)) {
+                                    return categories.every(cat =>
+                                        Array.isArray(item.category) && item.category.includes(cat)
+                                    )
+                                }
+                                return categories.includes(item.category);
+                            });
+
+                            return;
+                        }
+
+                        data = data.filter(item => {
+                            if (Array.isArray(item[key])) {
+                                return item[key].includes(value);
+                            }
+                            return item[key] === value;
+                        });
+                    });
+
+                    setProducts(data);
+                }
+                if (type === "collection") {
+                    data = await getCollections(collection);
+                    setProducts(data);
+                }
+
+
+            }
+            catch (error) {
+                console.error(error)
+            }
+        }
+        setCurrentPage(1)
+        loadData()
+    }, [searchParams, type, collection])
+
+    const currentItems = products.slice(startIndex, enIndex)
 
     return (
         <section className="productPage-container">
             <div className="productPage-title-container">
-                <h3>{category}</h3>
+                <h3>Products</h3>
             </div>
             <div className="productPage-filters-container">
                 <h5>Filters</h5>
@@ -38,7 +91,7 @@ export default function CategoryPage() {
             </div>
             <div className="productPage-products-container">
                 <div>
-                    <ItemList lista={currentitems} />
+                    <ItemList lista={currentItems} />
                 </div>
                 <div className="productPage-pagination-container">
                     {pages.map((page) => (

@@ -1,12 +1,13 @@
-*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    font-family:"Nunito", sans-serif;
-    
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Nunito", sans-serif;
+
 }
-body{
-  background: #D9D9D9;
+
+body {
+  background: #ececec;
 }
 
 
@@ -30,63 +31,4 @@ body{
 
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-/* vista ItemDetailContainer */
-.detail-container .product-item{
-  width: 100% !important;
-  flex-direction: row !important;
-  height: fit-content !important;
-}
-.detail-container .product-img-container{
-  height: 100% !important;
-  width: 100% !important;
-  border-bottom: none !important;
-  border-right: #d1d1d3 solid 1px !important;
-  padding: 10px !important;
-}
-.detail-container .product-img{
-  height: auto !important;
-  width: 100% !important;
-}
-.detail-container .product-info{
-  height: initial !important;
-  justify-content: center !important;
-  align-items: flex-start !important;
-  padding: 20px 40px !important;
-}
-
-.detail-container .product-title{
-  font-size: 3rem !important;
-}
-.detail-container .product-descripcion{
-  display: block;
-  font-size: 18px;
-  max-width: fit-content;
-  word-wrap: break-word;
-  overflow: visible;
-}
-
-.detail-container .item-detail-container{
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: flex-end;
-}
-
-/* Vista pantalla Cart */
-.cart-container .product-item{
-  flex-direction: row !important;
-  width: 100% !important;
-  height: initial !important;
-  align-items: center !important;
-}
-
-.cart-container .product-img-container{
-  height: 100% !important;
-  width: 300px !important;
-  border-bottom: none !important;
-  padding: 10px !important;
-  align-items: center !important;
 }

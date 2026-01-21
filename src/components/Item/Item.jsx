@@ -12,13 +12,13 @@ export const Item = ({ name, price, description, imageUrl, children }) => {
       </div>
 
       <div className="product-info">
-        <p className="product-precio">${price}</p>
         <h2 className="product-title">
           {name}
         </h2>
         <p className="product-descripcion">
           {description}
         </p>
+        <p className="product-precio">${price}</p>
         {children}
       </div>
     </article>

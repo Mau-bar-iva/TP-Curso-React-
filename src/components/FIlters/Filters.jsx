@@ -10,8 +10,8 @@ export default function Filters({ products }) {
         <aside className="aside-filters-container">
             <ul className="filters-container">
                 <h5 className="filters-title">Colors</h5>
-                {colors.map((c) => (
-                    <li className="filters-item">
+                {colors.map((c, index) => (
+                    <li key={index} className="filters-item">
                         <input type="checkbox" />
                         {c}
                     </li>))}
@@ -19,8 +19,8 @@ export default function Filters({ products }) {
 
             <ul className="filters-container">
                 <h5 className="filters-title">Brands</h5>
-                {brands.map((b) => (
-                    <li className="filters-item">
+                {brands.map((b, index) => (
+                    <li key={index} className="filters-item">
                         <input type="checkbox" />
                         {b}
                     </li>))}
@@ -28,8 +28,8 @@ export default function Filters({ products }) {
 
             <ul className="filters-container">
                 <h5 className="filters-title">Sizes</h5>
-                {sizes.map((s) => (
-                    <li className="filters-item">
+                {sizes.map((s, index) => (
+                    <li key={index} className="filters-item">
                         <input type="checkbox" />
                         {s}
                     </li>))}

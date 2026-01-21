@@ -9,46 +9,37 @@ export const Cart = () => {
 
   return (
     <section className="cart-container">
-
-      {cart.length ? (
-        <>
-          <h2 className="products-title">Carrito de Compras</h2>
-
-          {
-            cart.map((prod) => (
+      <h2 className="cart-title">Shopping cart</h2>
+      <div className="cart-products-container">
+        {cart.length ? (
+          cart.map((prod) => (
+            <Link to={`/detail/${prod.id}`} key={prod.id}>
               <Item key={prod.id} {...prod}>
-                <span>Cantidad: {prod.quantity}</span>
-                <button className="btn btn-delete" onClick={() => deleteItem(prod.id)}>
-                  Eliminar
+                <span>Quantity: {prod.quantity}</span>
+                <button className="btn btn-delete" onClick={(e) => deleteItem(e, prod.id)}>
+                  Remove from cart
                 </button>
               </Item>
-            ))
+            </Link>
 
-          }
-        </>
+          ))
+        ) : (
+          <p className="cart-empty">Your cart is empty</p>
+        )}
+      </div>
 
-      ) : (
-        <p className="cart-empty">Tu carrito está vacío</p>
-      )}
+      <div className="btn-container">
+        <div className="total-pagar">
+          <p>Total to pay ({getTotalItems()} products): ${total()}</p>
 
-      {cart.length ? (
-        <div className="btn-container">
-          <div className="total-pagar">
-            <p>Total a pagar ({getTotalItems()} productos): ${total()}</p>
-
-          </div>
-          <button className="btn" onClick={checkout}>
-            Finalizar compra
-          </button>
-          <button className="btn" onClick={clearCart}>
-            Vaciar carrito
-          </button>
         </div>
-      ) : (
-        <Link className="btn btn-back" to="/">
-          Volver al inicio
-        </Link>
-      )}
+        <button className="btn" onClick={clearCart}>
+          Clear cart
+        </button>
+        <button className="btn" onClick={checkout}>
+          Checkout
+        </button>
+      </div>
     </section>
   );
 };

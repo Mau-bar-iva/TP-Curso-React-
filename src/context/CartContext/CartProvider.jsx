@@ -36,7 +36,9 @@ export const CartProvider = ({ children }) => {
   /* -------------------------------------------------------------------------- */
   /*                        Eliminar producto con filter                        */
   /* -------------------------------------------------------------------------- */
-  const deleteItem = (id) => {
+  const deleteItem = (e, id) => {
+    e.preventDefault()
+    e.stopPropagation();
     const filtered = cart.filter((p) => p.id !== id);
     setCart(filtered);
     alert("Producto eliminado");
@@ -71,11 +73,14 @@ export const CartProvider = ({ children }) => {
   };
 
   const checkout = () => {
-    const ok = confirm("¿Serguro que quiere finalizar la compra?");
 
-    if (ok) {
-      alert("¡Compra realizada con éxito!");
-      clearCart();
+    if (cart.length > 0) {
+      const ok = confirm("¿Serguro que quiere finalizar la compra?");
+
+      if (ok) {
+        alert("¡Compra realizada con éxito!");
+        clearCart();
+      }
     }
   };
 

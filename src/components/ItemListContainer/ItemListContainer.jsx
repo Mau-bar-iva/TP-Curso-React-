@@ -6,12 +6,34 @@ import "./ItemListContainer.css";
 
 export const ItemListContainer = ({ category }) => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getProducts(category)
-      .then((data) => { setProducts(data); })
-      .catch((error) => { console.error(error); });
+    setLoading(true);
+
+    const filters = {};
+
+    if (category) {
+      filters.category = category;
+    }
+
+    getProducts()
+      .then((data) => {
+        if (category) {
+          const filtered = data.filter(p =>
+            p.category?.includes(category)
+          );
+          setProducts(filtered);
+        } else {
+          setProducts(data);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+
   }, [category]);
 
-  return <ItemList lista={products} />
+  if (loading) return <p>Cargando productos...</p>;
+
+  return <ItemList lista={products} />;
 };

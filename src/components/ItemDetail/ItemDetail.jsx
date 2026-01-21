@@ -1,6 +1,7 @@
 import { useCartContext } from "../../context/CartContext/useCartContext";
 import { Count } from "../Count/Count";
 import { Item } from "../Item/Item";
+import "./ItemDetail.css"
 
 export const ItemDetail = ({ detail }) => {
   const { addItem } = useCartContext();
@@ -10,19 +11,33 @@ export const ItemDetail = ({ detail }) => {
   };
 
   return (
-    //Si ustedes deciden NO reutilizar el componente Item y aca hacer
-    //una seccion totalmente nueva, pueden despreocuparse del Link en ItemList.
-
-    //En el caso de optar por la NO reutilizacion, pueden colocar el Link envolviendo el <article>
-    //en Item y dejar como estaba el ItemList, sin modificaciones
-
-    <Item {...detail}>
-      <div className="item-detail-container">
-
-        <Count btnText={"Agregar al carrito"} onConfirm={handleAdd} />
+    <article className="detail-product">
+      <div className="product-img-container">
+        <img src={detail.imageUrl} alt={detail.description} className="product-img" />
       </div>
 
-      {/* <button onClick={() => addItem(detail)}>Enviar al carrito</button> */}
-    </Item>
+      <div className="product-info">
+        <p>{detail.category}</p>
+
+        <h2 className="product-title">
+          {detail.name}
+        </h2>
+
+        <p className="product-descripcion">
+          {detail.description}
+        </p>
+
+        <div>
+          <p>Color: {detail.color}</p>
+        </div>
+
+        <p className="product-precio">${detail.price}</p>
+
+        <div className="product-button-container">
+          <Count btnText={"Agregar al carrito"} onConfirm={handleAdd} />
+        </div>
+      </div>
+    </article>
+
   );
 };

@@ -30,8 +30,12 @@ function App() {
                   element={<OffersPage />}
                 />
                 <Route
-                  path="/category/:category"
-                  element={<ProductPage />}
+                  path="/category"
+                  element={<ProductPage type="category" />}
+                />
+                <Route
+                  path="/collection/:collection"
+                  element={<ProductPage type="collection" />}
                 />
                 <Route
                   path="/detail/:id"

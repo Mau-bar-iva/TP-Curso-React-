@@ -47,6 +47,11 @@
     justify-content: center;
 }
 
+.section-1-imgs-container>a {
+    width: 100%;
+}
+
+
 .img-container {
     width: 100%;
     padding: 300px;
@@ -60,6 +65,14 @@
     cursor: pointer;
 }
 
+.section-1-imgs-container a:first-child .img-container {
+    background-image: url("/assets/Home-section-1-pic-1.png");
+}
+
+.section-1-imgs-container a:last-child .img-container {
+    background-image: url("/assets/Home-section-1-pic-2.png");
+}
+
 .img-container::before {
     content: "";
     position: absolute;
@@ -71,11 +84,8 @@
     transition: all 0.3s ease-in-out;
 }
 
-.img-container:first-child {
-    background-image: url("/assets/Home-section-1-pic-1.png");
-}
 
-.img-container:first-child::after {
+.section-1-imgs-container a:first-child .img-container::after {
     content: "Elegant sustainable fashion";
     width: 100%;
     text-align: center;
@@ -90,11 +100,8 @@
     transition: all 0.3s ease-in-out;
 }
 
-.img-container:last-child {
-    background-image: url("/assets/Home-section-1-pic-2.png");
-}
 
-.img-container:last-child::after {
+.section-1-imgs-container a:last-child .img-container::after {
     content: "Sporty sustainable wear";
     width: 100%;
     text-align: center;
@@ -113,8 +120,8 @@
     filter: brightness(0.6);
 }
 
-.img-container:first-child:hover::after,
-.img-container:last-child:hover::after {
+.section-1-imgs-container a:first-child .img-container:hover::after,
+.section-1-imgs-container a:last-child .img-container:hover::after {
     opacity: 1;
 }
 
@@ -184,6 +191,10 @@
 
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.season-card a {
+    text-decoration: none;
 }
 
 .season-card::before {

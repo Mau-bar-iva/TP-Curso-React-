@@ -10,6 +10,7 @@
 
 .productPage-title-container {
     grid-area: 1 / 1 / 2 / 3;
+    text-transform: capitalize;
 }
 
 .productPage-filters-container {
@@ -33,10 +34,12 @@
 }
 
 .productPage-products-container div>div {
+    height: 100%;
     width: 100%;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     justify-content: flex-start;
+    align-items: flex-start;
 }
 
 .productPage-pagination-container {
@@ -52,4 +55,8 @@
     border: none;
     font-size: 1rem;
     cursor: pointer;
+}
+
+.productPage-container .product-info button:hover {
+    filter: brightness(.9);
 }

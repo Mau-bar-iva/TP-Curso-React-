@@ -6,6 +6,7 @@ import carritoIcon from "../../assets/carrito.svg";
 import favoriteIcon from "../../assets/favorite.svg";
 import userIcon from "../../assets/user.svg"
 import searchIcon from "../../assets/search.svg";
+import closeIcon from "../../assets/close.svg";
 import ResultSearch from "../ResultSearch/ResultSearch.jsx"
 
 export const Nav = () => {
@@ -32,18 +33,18 @@ export const Nav = () => {
     <nav className="nav">
       <ul className="nav-list-container">
         <li className="nav-list-item">
-          <Link to={"/category/men"}>Men</Link>
+          <Link to={"/category?category=men"}>Men</Link>
         </li>
         <li className="nav-list-item">
-          <Link to={"/category/women"}>Women</Link>
+          <Link to={"/category?category=women"}>Women</Link>
         </li>
         <li className="nav-list-item">
-          <Link to={"/category/kids"}>Kids</Link>
+          <Link to={"/category?category=kids"}>Kids</Link>
         </li>
         <li className="nav-list-searchbar ">
           <label htmlFor="searchbar" className="searchbar-container">
             <input type="text" id="searchbar" placeholder="Search product..." className="searchbar" value={search} onChange={handleSearch} />
-            <img src={searchIcon} alt="" />
+            {search === "" ? (<img src={searchIcon} alt="" />) : (<img src={closeIcon} alt="" onClick={() => setSearch("")} />)}
           </label>
           <div className="searchbar-result-container">
             <ResultSearch search={debouncedSearch} />

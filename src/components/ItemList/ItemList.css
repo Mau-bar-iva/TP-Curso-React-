@@ -41,3 +41,7 @@
 .favorite-icon:hover .fill {
   opacity: 1;
 }
+
+.favorite-icon .fill-active {
+  opacity: 1;
+}

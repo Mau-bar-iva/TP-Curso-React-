@@ -1,6 +1,7 @@
 import { ItemListContainer } from "../ItemListContainer/ItemListContainer.jsx";
 import Banner from "../Banner/Banner.jsx";
 import CarouselItems from "../CarouselItems/CarouselItems.jsx";
+import { Link } from "react-router-dom";
 import "./Home.css";
 
 export default function Home() {
@@ -16,10 +17,13 @@ export default function Home() {
                     <p className="section-1-subtitulo">Explore our selection of clothing and accessories designed with recycled materials and ethical processes.</p>
                 </div>
                 <div className="section-1-imgs-container">
-                    <div className="img-container">
-                    </div>
-                    <div className="img-container">
-                    </div>
+                    {/* si no muestra productos es porque hay que agregarle la colección */}
+                    <Link to="/collection/elegant sustainable fashion" >
+                        <div className="img-container"></div>
+                    </Link>
+                    <Link to="/collection/sporty sustainable wear">
+                        <div className="img-container"></div>
+                    </Link>
                 </div>
             </section>
             <section className="home-section-2-container">
@@ -36,22 +40,40 @@ export default function Home() {
                     <h2 className="section-2-title">Browse by Category</h2>
                     <ul className="section-2-category-container">
                         <li>
-                            <img src="./assets/shirt-img.png" />
+                            <Link to="/category?category=clothes&category=shirt">
+                                <img src="./assets/shirt-img.png" />
+                            </Link>
+
                         </li>
                         <li>
-                            <img src="./assets/jacket-img.png" />
+                            <Link to="/category?category=clothes&category=jacket">
+                                <img src="./assets/jacket-img.png" />
+                            </Link>
+
                         </li>
                         <li>
-                            <img src="./assets/shoes-img.png" />
+                            <Link to="/category?category=clothes&category=shoes">
+                                <img src="./assets/shoes-img.png" />
+                            </Link>
+
                         </li>
                         <li>
-                            <img src="./assets/cap-img.png" />
+                            <Link to="/category?category=accessories&category=cap">
+                                <img src="./assets/cap-img.png" />
+                            </Link>
+
                         </li>
                         <li>
-                            <img src="./assets/bag-img.png" />
+                            <Link to="/category?category=accessories&category=bag">
+                                <img src="./assets/bag-img.png" />
+                            </Link>
+
                         </li>
                         <li>
-                            <img src="./assets/watches-img.png" />
+                            <Link to="/category?category=accessories&category=watch">
+                                <img src="./assets/watches-img.png" />
+                            </Link>
+
                         </li>
                     </ul>
                 </div>
@@ -61,16 +83,28 @@ export default function Home() {
                     <div className="season-section">
                         <ul className="season-list">
                             <li className="season-card summer">
-                                <h3>Summer</h3>
+                                <Link to="/category?category=season&category=summer">
+                                    <h3>Summer</h3>
+                                </Link>
+
                             </li>
                             <li className="season-card fall">
-                                <h3>Fall</h3>
+                                <Link to="/category?season=fall">
+                                    <h3>Fall</h3>
+                                </Link>
+
                             </li>
                             <li className="season-card winter">
-                                <h3>Winter</h3>
+                                <Link to="/category?season=winter">
+                                    <h3>Winter</h3>
+                                </Link>
+
                             </li>
                             <li className="season-card spring">
-                                <h3>Spring</h3>
+                                <Link to="/category?season=spring">
+                                    <h3>Spring</h3>
+                                </Link>
+
                             </li>
                         </ul>
                     </div>
