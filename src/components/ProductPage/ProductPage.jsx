@@ -10,12 +10,17 @@ export default function ProductPage({ type }) {
     const [searchParams] = useSearchParams();
 
     const [products, setProducts] = useState([]);
+    const [filters, setFilters] = useState({
+        color: [],
+        sizes: [],
+        brand: [],
+    });
     const [currentPage, setCurrentPage] = useState(1)
 
     const itemsPerPage = 12
 
     const startIndex = (currentPage - 1) * itemsPerPage
-    const enIndex = startIndex + itemsPerPage
+    const endIndex = startIndex + itemsPerPage
 
     const pageCount = Math.ceil(products.length / itemsPerPage)
     const pages = Array.from({ length: pageCount }, (_, i) => i + 1)
@@ -78,7 +83,27 @@ export default function ProductPage({ type }) {
         loadData()
     }, [searchParams, type, collection])
 
-    const currentItems = products.slice(startIndex, enIndex)
+    const filteredProducts = products.filter(product => {
+        //si el filtro de color y sizes del producto esta incluido en el estado filters.color entonces devuelve true y crea un array con esos productos
+        const matchColor =
+            filters.color.length === 0 ||
+            product.variants.some(c => filters.color.includes(c.color));
+
+        const matchSize =
+            filters.sizes.length === 0 ||
+            product.variants.some(s => filters.sizes.includes(s.sizes[0]));
+
+        const matchBrand =
+            filters.brand.length === 0 ||
+            filters.brand.some(b =>
+                b.toLowerCase() === product.brand.toLowerCase()
+            );
+
+        return matchColor && matchSize && matchBrand;
+    });
+
+    const currentItems = filteredProducts.slice(startIndex, endIndex);
+
 
     return (
         <section className="productPage-container">
@@ -87,7 +112,7 @@ export default function ProductPage({ type }) {
             </div>
             <div className="productPage-filters-container">
                 <h5>Filters</h5>
-                <Filters products={products} />
+                <Filters products={products} setFilters={setFilters} />
             </div>
             <div className="productPage-products-container">
                 <div>
