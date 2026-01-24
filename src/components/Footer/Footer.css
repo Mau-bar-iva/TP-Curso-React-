@@ -42,3 +42,26 @@
   opacity: 0.6;
   font-size: 0.8rem;
 }
+
+@media (width < 480px) {
+  .footer-content {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer-section {
+    text-align: center;
+  }
+
+  .footer-socials {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .footer-socials a {
+    margin: 0;
+  }
+}

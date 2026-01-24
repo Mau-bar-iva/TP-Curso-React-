@@ -27,6 +27,10 @@
   cursor: pointer;
 }
 
+.favorite-btn:focus {
+  outline: none;
+}
+
 .favorite-icon .fill {
   fill: #000000;
   opacity: 0;

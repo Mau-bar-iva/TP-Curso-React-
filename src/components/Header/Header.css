@@ -30,3 +30,20 @@
 .hero-logo {
     height: 50px;
 }
+
+@media (width < 480px) {
+    .hero-logo-container {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-65%, -50%);
+    }
+
+    .hero-wrapper {
+        padding: 0 10px;
+    }
+
+    .hero-navbar-container {
+        width: 100%;
+    }
+}

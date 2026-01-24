@@ -32,7 +32,7 @@ function Banner({ Titulo = "", Descripcion = "" }) {
         <p className='banner-title'>{Titulo}</p>
         <h3 className='banner-description'>{Descripcion}</h3>
         <Link to="/offers">
-          <button className="banner-btn">Descubrir productos</button>
+          <button className="banner-btn">Explore products</button>
         </Link>
       </div>
     </section>

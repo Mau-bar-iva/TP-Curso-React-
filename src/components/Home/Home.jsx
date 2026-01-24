@@ -9,8 +9,8 @@ export default function Home() {
     return (
         <section className="Home">
             <Banner
-                Titulo="Moda Sostenible"
-                Descripcion="Descubre las últimas tendencias en moda sostenible con nuestra nueva colección ecológica." />
+                Titulo="Sustainable Fashion"
+                Descripcion="Discover the latest trends in sustainable fashion with our new eco-friendly collection." />
             <section className="home-section-1-container">
                 <div className="section-1-text-container">
                     <h2 className="section-1-titulo">Our new collection</h2>

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./CarouselItems.css";
+import ChevronRightIcon from "../../assets/chevronRight.svg"
+import ChevronLeftIcon from "../../assets/chevronLeft.svg"
 
 export default function CarouselItems({ children }) {
     const carouselRef = useRef(null);
@@ -47,7 +49,7 @@ export default function CarouselItems({ children }) {
         <div className="carousel-wrapper">
             {showLeft && (
                 <button className="nav-arrow left" onClick={() => scroll("left")}>
-                    ‹
+                    <img src={ChevronLeftIcon} alt="" />
                 </button>
             )}
 
@@ -57,7 +59,7 @@ export default function CarouselItems({ children }) {
 
             {showRight && (
                 <button className="nav-arrow right" onClick={() => scroll("right")}>
-                    ›
+                    <img src={ChevronRightIcon} alt="" />
                 </button>
             )}
         </div>
