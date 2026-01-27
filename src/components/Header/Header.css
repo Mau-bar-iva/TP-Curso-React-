@@ -28,15 +28,19 @@
 }
 
 .hero-logo {
+    width: 100%;
     height: 50px;
 }
 
 @media (width < 480px) {
     .hero-logo-container {
+        width: 100%;
+        padding: 1rem 3rem;
         position: absolute;
         left: 50%;
         top: 50%;
-        transform: translate(-65%, -50%);
+        justify-content: center;
+        transform: translate(-50%, -50%);
     }
 
     .hero-wrapper {

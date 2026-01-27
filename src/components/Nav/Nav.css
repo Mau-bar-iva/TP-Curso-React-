@@ -125,6 +125,11 @@
         padding: 0 .3rem;
     }
 
+    .user-icon-container,
+    .favorite-icon-container {
+        display: none;
+    }
+
     .menu-container {
         display: flex;
         margin-right: auto;
@@ -203,8 +208,7 @@
 
     .searchbar-container img {
         height: 80%;
-        position: absolute;
-        right: 0;
+        width: auto;
     }
 
 

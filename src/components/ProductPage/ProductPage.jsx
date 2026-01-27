@@ -111,7 +111,6 @@ export default function ProductPage({ type }) {
                 <h3>Products</h3>
             </div>
             <div className="productPage-filters-container">
-                <h5>Filters</h5>
                 <Filters products={products} setFilters={setFilters} />
             </div>
             <div className="productPage-products-container">
