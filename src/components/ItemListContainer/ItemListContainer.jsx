@@ -4,7 +4,7 @@ import { getProducts } from "../../services/products";
 
 import "./ItemListContainer.css";
 
-export const ItemListContainer = ({ category }) => {
+export const ItemListContainer = ({ category, orderBy }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -19,6 +19,7 @@ export const ItemListContainer = ({ category }) => {
 
     getProducts()
       .then((data) => {
+
         if (category) {
           const filtered = data.filter(p =>
             p.category?.includes(category)
@@ -27,11 +28,30 @@ export const ItemListContainer = ({ category }) => {
         } else {
           setProducts(data);
         }
+
+        if (orderBy) {
+          const sorted = [...data].sort((a, b) => {
+            if (orderBy === "price-asc") {
+              return a.price - b.price;
+            } else if (orderBy === "price-desc") {
+              return b.price - a.price;
+            } else if (orderBy === "name-asc") {
+              return a.name.localeCompare(b.name);
+            } else if (orderBy === "name-desc") {
+              return b.name.localeCompare(a.name);
+            } else if (orderBy === "newest") {
+              return new Date(b.createdAt) - new Date(a.createdAt);
+            } else if (orderBy === "oldest") {
+              return new Date(a.createdAt) - new Date(b.createdAt);
+            }
+          });
+          setProducts(sorted);
+        }
       })
       .catch(console.error)
       .finally(() => setLoading(false));
 
-  }, [category]);
+  }, [category, orderBy]);
 
   if (loading) return <p>Cargando productos...</p>;
 

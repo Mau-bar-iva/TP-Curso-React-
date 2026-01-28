@@ -72,8 +72,6 @@ export default function ProductPage({ type }) {
                     data = await getCollections(collection);
                     setProducts(data);
                 }
-
-
             }
             catch (error) {
                 console.error(error)

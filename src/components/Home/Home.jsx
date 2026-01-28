@@ -31,7 +31,7 @@ export default function Home() {
                     <h2 className="section-2-title">The new of our indumentary</h2>
                     <div className="section-2-itemlist-container">
                         <CarouselItems>
-                            <ItemListContainer />
+                            <ItemListContainer orderBy="newest" />
                         </CarouselItems>
                     </div>
                 </div>

@@ -63,7 +63,6 @@
     flex-direction: column;
     justify-content: flex-end;
     gap: 1rem;
-    border-radius: 10px;
     padding: 20px;
     margin-top: 2rem;
 }
@@ -114,4 +113,119 @@
     width: 200px;
     border: none;
     padding: .5rem;
+}
+
+@media (width < 480px) {
+    .cart-container {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        height: 100%;
+    }
+
+    .cart-title {
+        align-self: start;
+        font-weight: lighter;
+        font-size: 2.2rem;
+        margin-bottom: 2rem;
+        width: 100%;
+    }
+
+    .cart-container .cart-products-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        flex: 1;
+    }
+
+    .cart-container .cart-products-container>a {
+        text-decoration: none;
+        width: 100%;
+    }
+
+    .cart-container .cart-products-container .product-item {
+        flex-direction: row;
+        width: 100%;
+        height: 250px;
+        align-items: center;
+        justify-self: center;
+    }
+
+    .cart-container .product-img-container {
+        height: 100%;
+        width: 300px;
+        border-bottom: none;
+        padding: 10px;
+        align-items: center;
+    }
+
+    .cart-empty {
+        grid-column: 1 / span 2;
+        font-size: 1.5rem;
+        font-weight: lighter;
+        text-align: start;
+        margin-top: 0;
+    }
+
+    .btn-container {
+        background-color: #fff;
+        height: fit-content;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        gap: 1rem;
+        padding: 20px;
+        margin-top: 2rem;
+    }
+
+    .btn-container .btn {
+        width: 100%;
+        padding: .5rem;
+        font-size: 1rem;
+        color: #000;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-back {
+        grid-column: span 2;
+        grid-row: 4;
+        width: 40%;
+        padding: 10px 5px;
+        font-size: 1rem;
+        background-color: #e8d7c2;
+        color: #000;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-container .btn:hover,
+    .product-info .btn:hover,
+    .cart-container .btn-back:hover {
+        background-color: #e8d7c2;
+    }
+
+    .total-pagar {
+        width: 100%;
+        font-size: 1.2rem;
+        text-align: start;
+    }
+
+    .cart-container .product-info {
+        height: fit-content !important;
+    }
+
+    .btn-delete {
+        cursor: pointer;
+        width: 200px;
+        border: none;
+        padding: .5rem;
+    }
 }
