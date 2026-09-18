@@ -34,14 +34,22 @@ export default function CarouselItems({ children }) {
         const resizeObserver = new ResizeObserver(() => {
             updateArrows();
         });
-
         resizeObserver.observe(el);
+
+        // Recalcular cuando las imágenes lazy terminen de cargar
+        const images = el.querySelectorAll("img");
+        images.forEach((img) => {
+            if (!img.complete) {
+                img.addEventListener("load", updateArrows);
+            }
+        });
 
         el.addEventListener("scroll", updateArrows);
 
         return () => {
             resizeObserver.disconnect();
             el.removeEventListener("scroll", updateArrows);
+            images.forEach((img) => img.removeEventListener("load", updateArrows));
         };
     }, [children]);
 
