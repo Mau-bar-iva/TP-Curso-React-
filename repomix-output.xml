@@ -40,6 +40,25 @@ The content is organized as follows:
 </file_summary>
 
 <directory_structure>
+.github/
+  ISSUES/
+    01-refactor-monorepo-typescript.md
+    02-security-env-secrets.md
+    03-persistence-users-sqlite.md
+    04-logout-endpoint.md
+    05-fix-requireAuth-error-handling.md
+    06-avoid-sync-bcrypt.md
+    07-cors-configurable-env.md
+    08-logging-error-middleware.md
+    09-config-module.md
+    10-auth-services-repositories.md
+    11-tests-auth.md
+    12-docs-api-env.md
+    13-backend-checkout-atomic-prisma.md
+  workflows/
+    ci.yml
+    deploy.yml
+  copilot-instructions.md
 backend/
   src/
     modules/
@@ -51,6 +70,9 @@ backend/
     app.js
     server.js
   package.json
+docs/
+  Arquitectura-del-proyecto-historial.md
+  Arquitectura-del-proyecto.md
 public/
   assets/
     1697531980255-06b4b296ef2f46f68a89c8557cfc329e-goods.avif
@@ -192,6 +214,7 @@ src/
   index.css
   main.jsx
 .gitignore
+BACKLOG.md
 eslint.config.js
 index.html
 package.json
@@ -203,91 +226,553 @@ vite.config.js
 <files>
 This section contains the contents of the repository's files.
 
-<file path="scripts/create_issues.js">
-const token = process.env.GITHUB_TOKEN;
-if (!token) {
-    console.error('GITHUB_TOKEN no está definido en el entorno.');
-    process.exit(1);
-}
+<file path=".github/workflows/ci.yml">
+name: CI
 
-const repo = 'Mau-bar-iva/TP-Curso-React-';
-const api = `https://api.github.com/repos/${repo}/issues`;
+on:
+  pull_request:
+  push:
+    branches:
+      - main
 
-const issues = [
-    {
-        title: 'Refactor: Migrar proyecto a TypeScript, Express y estructura monorepo (crear "frontend" carpeta)',
-        body: `Historia de usuario:\nComo desarrollador del proyecto quiero una base de código consistente en TypeScript con un backend en Express separado y una estructura backend/frontend clara, para facilitar mantenimiento y despliegues.\n\nAlcance:\n- Migrar backend a TypeScript usando Express.\n- Mantener frontend en React + Vite y mover los archivos actuales a la carpeta \"frontend/\" para concordar con README.\n- Configurar scripts de arranque/build para ambos paquetes.\n\nRestricciones:\n- No introducir servicios de pago.\n- Mantener compatibilidad funcional con la UI actual.\n\nDoD:\n- Repositorio reestructurado con carpetas \"backend/\" y \"frontend/\".\n- Backend escrito en TypeScript y se compila.\n- Scripts para dev y build funcionan (npm run dev en cada paquete).\n\nCriterios de aceptación:\n- Clonar repo, instalar deps y ejecutar ambos servidores localmente siguiendo README actualizado.\n- No se añade código funcional nuevo que rompa la app.\n\nDependencias:\n- Puede depender de: \"Extraer configuración en módulo config\" y \"Persistencia de usuarios\"`
-    },
-    {
-        title: 'Seguridad: Mover secrets (JWT, password) a variables de entorno',
-        body: `Historia de usuario:\nComo administrador quiero que las claves y credenciales no estén hardcodeadas en el código para evitar fugas.\n\nAlcance:\n- Leer JWT secret desde env (e.g., JWT_SECRET).\n- Eliminar contraseñas en texto plano del repo.\n\nRestricciones:\n- No crear un servicio externo de pago.\n\nDoD:\n- JWT secret y configuración leídos desde archivo .env o variables de entorno.\n- Documentación en README con variables necesarias.\n\nCriterios de aceptación:\n- La app levanta usando las variables y no contiene valores secretos en los archivos del repo.\n\nDependencias:\n- Debe implementarse junto con "Refactor: Migrar proyecto a TypeScript..." si se migra el backend.\n\nPrompt sugerido:\nProporciona un patch y pasos para extraer secretos a variables de entorno en un backend Express existente y cómo documentarlo en README.`
-    },
-    {
-        title: 'Feature: Añadir persistencia de usuarios y endpoint de registro',
-        body: `Historia de usuario:\nComo usuario quiero poder registrarme y que mis credenciales se almacenen de forma segura para poder iniciar sesión posteriormente.\n\nAlcance:\n- Añadir endpoint POST /api/auth/register.\n- Persistir usuarios en una base de datos local (SQLite) o en Supabase (opción gratis).\n\nRestricciones:\n- Debe ser desplegable sin coste (usar SQLite por defecto, opción Supabase documentada).\n\nDoD:\n- Registro crea usuario con password hasheado.\n- Login utiliza la tabla/colección de usuarios.\n\nCriterios de aceptación:\n- Registro + login funcionan en local.\n- Documentación sobre cómo cambiar a Supabase.\n\nDependencias:\n- Depende de: "Refactor: Migrar proyecto a TypeScript..." y "Seguridad: Mover secrets..."\n\nPrompt sugerido:\nDiseña la estructura de datos y endpoints necesarios para implementar registro y autenticación con SQLite en un backend Express. Incluye migraciones y ejemplos de consultas.`
-    },
-    {
-        title: 'Feature: Añadir endpoint POST /api/auth/logout',
-        body: `Historia de usuario:\nComo usuario quiero cerrar sesión para que mi token no sea válido y mi cookie sea eliminada.\n\nAlcance:\n- Endpoint POST /api/auth/logout que borre la cookie \"token\".\n\nRestricciones:\n- Compatible con SameSite y secure según entorno.\n\nDoD:\n- Endpoint implementado y documentado.\n\nCriterios de aceptación:\n- Llamar al endpoint borra la cookie y devuelve 200.\n\nDependencias:\n- Depende de la implementación actual de auth y configuración de cookies.\n\nPrompt sugerido:\nProvee el código para un endpoint Express que borre la cookie de sesión de manera segura y muestre ejemplos curl para probarlo.`
-    },
-    {
-        title: 'Bug: Manejo de error en requireAuth y filtrado de errores',
-        body: `Historia de usuario:\nComo desarrollador quiero que middleware de auth no filtre detalles de errores al cliente y maneje correctamente excepciones.\n\nAlcance:\n- Cambiar res.status(401).send('Unauthorized', err) por respuesta segura y logging interno.\n\nRestricciones:\n- No exponer stack traces en producción.\n\nDoD:\n- Middleware devuelve 401 sin detalles y registra error en servidor.\n\nCriterios de aceptación:\n- Token inválido devuelve 401 y no muestra stack trace.\n\nDependencias:\n- Ninguna crítica, pero recomendable junto a logging centralizado.\n\nPrompt sugerido:\nExplica cómo mejorar un middleware Express para no exponer errores en respuesta y cómo integrar un logger simple.`
-    },
-    {
-        title: 'Mejora: Evitar operaciones síncronas (bcrypt.hashSync) en tiempo de import',
-        body: `Historia de usuario:\nComo mantenedor quiero que el arranque de la app no haga operaciones bloqueantes para evitar retardo en startup.\n\nAlcance:\n- Reemplazar hashSync por hash asincrónico o usar password pre-hasheado almacenado en data.\n\nRestricciones:\n- No introducir bloqueos en import.\n\nDoD:\n- No hay llamadas bloqueantes en archivos importados en runtime.\n\nCriterios de aceptación:\n- Arranque del servidor no ejecuta hashing síncrono.\n\nDependencias:\n- Recomendado junto con persistencia de usuarios.\n\nPrompt sugerido:\nMuestra cómo refactorizar un USER hardcodeado que ahora usa bcrypt.hashSync para que use hash asíncrono o un valor precomputado en un archivo de datos.`
-    },
-    {
-        title: 'Mejora: Hacer CORS origin configurable via env',
-        body: `Historia de usuario:\nComo desplegador quiero configurar orígenes permitidos sin tocar el código fuente.\n\nAlcance:\n- Leer CORS_ORIGIN desde env y soportar lista separada por comas.\n\nRestricciones:\n- Mantener seguridad en producción.\n\nDoD:\n- CORS configurable y documentado.\n\nCriterios de aceptación:\n- Cambiar env actualiza el comportamiento.\n\nDependencias:\n- Ninguna directa.\n\nPrompt sugerido:\nImplementa lectura de CORS_ORIGIN desde env, parseo de orígenes y configuración de cors en Express.`
-    },
-    {
-        title: 'Mejora: Añadir logging básico y middleware de error',
-        body: `Historia de usuario:\nComo equipo quiero logs consistentes y un middleware de error para debug y producción.\n\nAlcance:\n- Implementar middleware de error global y logger simple (p.ej. winston o consola estructurada).\n\nRestricciones:\n- No añadir servicios externos de pago.\n\nDoD:\n- Errores pasan por middleware; logs tienen nivel e información útil.\n\nCriterios de aceptación:\n- Errores no controlados son capturados y devuelven respuesta con código adecuado.\n\nDependencias:\n- Recomendado antes de desplegar en producción.\n\nPrompt sugerido:\nProvee un ejemplo de middleware de error para Express y un logger (winston) configurado para dev/production.`
-    },
-    {
-        title: 'Refactor: Extraer configuración en módulo backend/src/config',
-        body: `Historia de usuario:\nComo desarrollador quiero valores de configuración centralizados para evitar duplicación.\n\nAlcance:\n- Crear backend/src/config/index.ts (o .js) que exporte PORT, JWT_SECRET, CORS_ORIGIN, NODE_ENV.\n\nRestricciones:\n- Compatible con TypeScript migration.\n\nDoD:\n- Todos los lugares consumen config del módulo.\n\nCriterios de aceptación:\n- No hay valores hardcodeados en módulos.\n\nDependencias:\n- Debe realizarse temprano; dependencia para la migración a TS.\n\nPrompt sugerido:\nGenera un módulo de configuración que lea variables de entorno con valores por defecto y ejemplos de uso en app.ts.`
-    },
-    {
-        title: 'Refactor: Introducir capa services + repositories para auth',
-        body: `Historia de usuario:\nComo desarrollador quiero separar lógica de negocio y persistencia para mejorar testabilidad.\n\nAlcance:\n- Crear auth.service.ts (business) y user.repository.ts (persistencia).\n\nRestricciones:\n- Mantener compatibilidad API.\n\nDoD:\n- Controladores usan service, service usa repository.\n\nCriterios de aceptación:\n- Código más modular y con puntos claros para mock en tests.\n\nDependencias:\n- Depende de: Refactor a TypeScript y persistencia de usuarios.\n\nPrompt sugerido:\nDescribe la separación entre controller, service y repository para auth, y ejemplos de pruebas unitarias para cada capa.`
-    },
-    {
-        title: 'Tests: Configurar test runner y añadir tests para autenticación',
-        body: `Historia de usuario:\nComo QA quiero pruebas unitarias y E2E para garantizar que auth funciona y prevenir regresiones.\n\nAlcance:\n- Configurar Vitest/Jest y supertest.\n- Añadir tests unitarios para loginService y middleware requireAuth.\n\nRestricciones:\n- Tests deben correr localmente sin servicios externos.\n\nDoD:\n- Tests añadidos y ejecutables con npm test.\n\nCriterios de aceptación:\n- Cobertura básica para casos positivos/negativos.\n\nDependencias:\n- Depende de: Separación de capas y migración a TS (si se migra).\n\nPrompt sugerido:\nProvee configuración mínima de Vitest/Jest para un backend Express y ejemplos de tests para login y middleware.`
-    },
-    {
-        title: 'Docs: Documentar env vars y endpoints en docs/API.md',
-        body: `Historia de usuario:\nComo desarrollador nuevo quiero documentación clara de los endpoints y variables para poner en marcha el proyecto.\n\nAlcance:\n- Crear docs/API.md con ejemplos curl para login/register/logout y sección env.\n\nRestricciones:\n- Mantener documentación en repo.\n\nDoD:\n- Archivo docs/API.md presente y referenciado desde README.\n\nCriterios de aceptación:\n- Siguiendo la documentación un usuario puede iniciar el backend y probar endpoints con curl.\n\nDependencias:\n- Debe sincronizarse con las tareas de features y seguridad.\n\nPrompt sugerido:\nGenera un documento API.md con endpoints de auth, ejemplos curl y descripción de variables de entorno.`
-    }
-];
+jobs:
+  ci:
+    runs-on: ubuntu-latest
 
-(async () => {
-    for (const issue of issues) {
-        try {
-            console.log(`Creating: ${issue.title}`);
-            const res = await fetch(api, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ title: issue.title, body: issue.body })
-            });
-            const data = await res.json();
-            if (!res.ok) {
-                console.error('Failed:', data);
-            } else {
-                console.log('Created:', { number: data.number, url: data.html_url });
-            }
-        } catch (err) {
-            console.error('Error creating issue', err);
-        }
-    }
-})();
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+</file>
+
+<file path=".github/workflows/deploy.yml">
+
+</file>
+
+<file path=".github/ISSUES/01-refactor-monorepo-typescript.md">
+# Refactor: Migrar proyecto a TypeScript, Express y estructura monorepo (crear frontend carpeta)
+
+**Tipo:** refactor / feature
+
+**Estimación:** 20 pts (~80h)
+
+**Descripción:**
+Reestructurar el repositorio para tener una división clara entre `backend/` y `frontend/`. Migrar el backend a TypeScript y mantener el frontend en React + Vite dentro de la carpeta `frontend/`. Actualizar scripts de desarrollo y build para ambos paquetes.
+
+**Contexto:**
+El README actual referencia `frontend` pero el proyecto tiene la app React en la raíz `src/`. El backend está en JavaScript y carece de tipado; migrar a TypeScript mejorará mantenibilidad.
+
+**Alcance:**
+- Mover el código React actual a `frontend/`.
+- Migrar `backend/` a TypeScript (añadir `tsconfig.json`, tipos, build step).
+- Actualizar `package.json` scripts y README.
+- Añadir scripts de desarrollo que levanten ambos servicios (puede ser con `concurrently` o documentación separada).
+
+**Archivos / Componentes involucrados:**
+- `package.json` (raíz)
+- `src/*` → mover a `frontend/src/*`
+- `backend/*` → migrar a `backend/src` en TypeScript
+
+**Dependencias:**
+- Debe ejecutarse antes de la mayoría de los refactors que introducen TypeScript.
+
+**Criterios de aceptación:**
+- El repositorio tiene carpetas `frontend/` y `backend/`.
+- `backend` compila con `tsc` sin errores críticos.
+- Comandos `npm run dev` en cada paquete inician frontend y backend en modo desarrollo.
+
+**Definition of Done:**
+- Código reubicado y migrado según lo descrito; documentación actualizada; nueva estructura committeada.
+
+**Prioridad:** P0
+
+**Labels sugeridos:** `refactor`, `typescript`, `infra`, `high-impact`
+
+**Prompt sugerido:**
+_Eres un ingeniero que debe migrar un repo JavaScript a TypeScript. Describe paso a paso cómo mover el backend a TypeScript (configurar tsconfig, modificar package.json, compilar con tsc), crear la carpeta frontend y actualizar scripts monorepo. Incluye comandos exactos y cambios de package.json._
+</file>
+
+<file path=".github/ISSUES/02-security-env-secrets.md">
+# Seguridad: Mover secrets (JWT, password) a variables de entorno
+
+**Tipo:** bug / security
+
+**Estimación:** 3 pts (~12h)
+
+**Descripción:**
+Extraer cualquier secret hardcodeado del código fuente (p.ej. `super-secret-key`) y leerlos desde variables de entorno (`JWT_SECRET`, `NODE_ENV`, etc.). Añadir `.env.example` con las variables necesarias.
+
+**Contexto:**
+El repositorio contiene secrets en `backend/src/modules/auth/auth.service.js` y en middleware. Esto es un riesgo de seguridad.
+
+**Alcance:**
+- Leer `JWT_SECRET` desde env y usarlo en `jwt.sign` y `jwt.verify`.
+- Añadir `.env.example` y documentación en README.
+
+**Archivos involucrados:**
+- `backend/src/modules/auth/auth.service.js`
+- `backend/src/modules/auth/auth.middleware.js`
+- `README.md`
+
+**Dependencias:**
+- Recomendado aplicar antes de desplegar o hacer la migración a TS.
+
+**Criterios de aceptación:**
+- No existan secrets en el código.
+- La app levanta correctamente cuando `JWT_SECRET` está definido.
+
+**Definition of Done:**
+- `.env.example` creado; código lee variables de entorno; documentación actualizada.
+
+**Prioridad:** P0
+
+**Labels sugeridos:** `security`, `bug`, `critical`
+</file>
+
+<file path=".github/ISSUES/03-persistence-users-sqlite.md">
+# Feature: Añadir persistencia de usuarios y endpoint de registro
+
+**Tipo:** feature
+
+**Estimación:** 8 pts (~32h)
+
+**Descripción:**
+Implementar persistencia de usuarios (SQLite por defecto) y endpoints para registro y autenticación (`/api/auth/register`, `/api/auth/login`). Documentar opción de migrar a Supabase (free tier) si se desea desplegar con DB remota gratuita.
+
+**Contexto:**
+Actualmente existe un usuario hardcodeado; no hay capacidad de registro ni persistencia.
+
+**Alcance:**
+- Añadir tabla/colección `users` con campos mínimos (id, email, passwordHash, role, createdAt).
+- Endpoint `POST /api/auth/register` para crear usuarios (password hasheado).
+- Ajustar `loginService` para consultar la DB.
+
+**Archivos involucrados:**
+- `backend/src/repos/user.repository.ts` (nuevo)
+- `backend/src/services/auth.service.ts` (nuevo/actualizado)
+- `backend/src/modules/auth/*` (rutas/controladores)
+
+**Dependencias:**
+- Depende de `Refactor: Migrar proyecto a TypeScript...` y `Seguridad: Mover secrets...`.
+
+**Criterios de aceptación:**
+- Registro y login funcionan en local con SQLite.
+- Passwords almacenados de forma segura (bcrypt).
+- Documentación sobre cómo activar Supabase si se desea.
+
+**Definition of Done:**
+- Endpoints implementados; migración/esquema creado; pruebas manuales de flujo exitosas.
+
+**Prioridad:** P0
+
+**Labels sugeridos:** `feature`, `backend`, `db`
+</file>
+
+<file path=".github/ISSUES/04-logout-endpoint.md">
+# Feature: Añadir endpoint POST /api/auth/logout
+
+**Tipo:** feature
+
+**Estimación:** 1 pt (~4h)
+
+**Descripción:**
+Añadir un endpoint `POST /api/auth/logout` que borre la cookie `token` y finalice la sesión del usuario.
+
+**Contexto:**
+Actualmente no existe un endpoint explícito para cerrar sesión; la cookie sigue existiendo hasta expirar.
+
+**Alcance:**
+- Añadir ruta en `auth.routes.js` y lógica en `auth.controller.js` para limpiar la cookie.
+- Respetar `secure` y `sameSite` según entorno.
+
+**Archivos involucrados:**
+- `backend/src/modules/auth/auth.routes.js`
+- `backend/src/modules/auth/auth.controller.js`
+
+**Dependencias:**
+- Depende de la configuración de cookies y variables de entorno para `NODE_ENV`.
+
+**Criterios de aceptación:**
+- Llamada al endpoint borra cookie y devuelve 200.
+
+**Definition of Done:**
+- Endpoint implementado y documentado en `docs/API.md`.
+
+**Prioridad:** P2
+
+**Labels sugeridos:** `feature`, `backend`
+</file>
+
+<file path=".github/ISSUES/05-fix-requireAuth-error-handling.md">
+# Bug: Manejo de error en requireAuth y filtrado de errores
+
+**Tipo:** bug
+
+**Estimación:** 1 pt (~4h)
+
+**Descripción:**
+Corregir `requireAuth` para no enviar detalles de errores al cliente y registrar internamente el error.
+
+**Contexto:**
+Actualmente `requireAuth` hace `res.status(401).send("Unauthorized", err)` lo que puede exponer información o no comportarse correctamente.
+
+**Alcance:**
+- Cambiar la respuesta a `res.status(401).send("Unauthorized")` y loguear el error en servidor.
+- Integrar con el middleware de logging si existe.
+
+**Archivos involucrados:**
+- `backend/src/modules/auth/auth.middleware.js`
+
+**Dependencias:**
+- Recomendado tener logging centralizado.
+
+**Criterios de aceptación:**
+- Token inválido devuelve 401 sin stack trace.
+- Error logueado en servidor.
+
+**DoD:**
+- Test manual de token inválido confirmado.
+
+**Prioridad:** P1
+
+**Labels sugeridos:** `bug`, `security`, `backend`
+</file>
+
+<file path=".github/ISSUES/06-avoid-sync-bcrypt.md">
+# Mejora: Evitar operaciones síncronas (bcrypt.hashSync) en tiempo de import
+
+**Tipo:** mejora / perf
+
+**Estimación:** 1 pt (~4h)
+
+**Descripción:**
+Eliminar llamadas síncronas a `bcrypt.hashSync` durante la carga de módulos. Usar hashing asíncrono durante inicialización o valores pre-hasheados.
+
+**Contexto:**
+`auth.service.js` realiza `bcrypt.hashSync` al importar, lo que puede bloquear el event loop.
+
+**Alcance:**
+- Remover hashing síncrono en imports.
+- Si es necesario un password de ejemplo, usar un valor pre-hasheado en un archivo de fixtures.
+
+**Archivos involucrados:**
+- `backend/src/modules/auth/auth.service.js`
+
+**Dependencias:**
+- Recomendado junto con persistencia de usuarios.
+
+**Criterios de aceptación:**
+- No existen llamadas bloqueantes en imports; arranque rápido.
+
+**DoD:**
+- Startup medido y sin hashing síncrono en logs.
+
+**Prioridad:** P2
+
+**Labels sugeridos:** `perf`, `backend`
+</file>
+
+<file path=".github/ISSUES/07-cors-configurable-env.md">
+# Mejora: Hacer CORS origin configurable via env
+
+**Tipo:** mejora / config
+
+**Estimación:** 1 pt (~4h)
+
+**Descripción:**
+Leer `CORS_ORIGIN` desde variables de entorno y soportar lista separada por comas.
+
+**Contexto:**
+Actualmente `app.js` tiene `origin: 'http://localhost:5173'` hardcodeado.
+
+**Alcance:**
+- Implementar lectura de `CORS_ORIGIN` y parseo.
+- Actualizar `.env.example` y README.
+
+**Archivos involucrados:**
+- `backend/src/app.js`
+
+**Dependencias:**
+- Depende de módulo `config` si se extrae.
+
+**Criterios de aceptación:**
+- Cambiar `CORS_ORIGIN` en env actualiza comportamiento.
+
+**DoD:**
+- Documentado en `.env.example` y README.
+
+**Prioridad:** P1
+
+**Labels sugeridos:** `config`, `security`
+</file>
+
+<file path=".github/ISSUES/08-logging-error-middleware.md">
+# Mejora: Añadir logging básico y middleware de error
+
+**Tipo:** mejora / infra
+
+**Estimación:** 3 pts (~12h)
+
+**Descripción:**
+Agregar un logger sencillo (winston/pino o consola estructurada) y un middleware global de errores que capture excepciones y devuelva respuestas adecuadas.
+
+**Contexto:**
+Actualmente no existe un logging consistente y los errores no están centralizados.
+
+**Alcance:**
+- Integrar logger con niveles dev/prod.
+- Añadir middleware de error en `app.js`.
+- Actualizar `requireAuth` y controladores para usar logger.
+
+**Archivos involucrados:**
+- `backend/src/app.js`
+- `backend/src/server.js`
+- `backend/src/modules/auth/*`
+
+**Dependencias:**
+- None estrictas; recomendable antes de deploy.
+
+**Criterios de aceptación:**
+- Errores capturados por middleware y logs con niveles.
+
+**DoD:**
+- Logger configurado; prueba manual de un error no controlado documentada.
+
+**Prioridad:** P1
+
+**Labels sugeridos:** `logging`, `infra`, `backend`
+</file>
+
+<file path=".github/ISSUES/09-config-module.md">
+# Refactor: Extraer configuración en módulo backend/src/config
+
+**Tipo:** refactor / infra
+
+**Estimación:** 2 pts (~8h)
+
+**Descripción:**
+Crear un módulo de configuración (`backend/src/config/index.ts`) que centralice la lectura de variables de entorno y valores por defecto (PORT, JWT_SECRET, CORS_ORIGIN, NODE_ENV).
+
+**Contexto:**
+Valores de configuración están dispersos por el código base.
+
+**Alcance:**
+- Implementar `config` module y reemplazar referencias directas a `process.env`.
+- Documentar variables en `.env.example`.
+
+**Archivos involucrados:**
+- `backend/src/config/index.ts` (nuevo)
+- `backend/src/app.js`, `backend/src/server.js`, `auth.*`
+
+**Dependencias:**
+- Recomendado antes de migrar a TS y refactors.
+
+**Criterios de aceptación:**
+- Todos los valores se obtienen desde `config`.
+
+**DoD:**
+- Módulo implementado y utilizado en lugar de env dispersos.
+
+**Prioridad:** P1
+
+**Labels sugeridos:** `refactor`, `config`, `infra`
+</file>
+
+<file path=".github/ISSUES/10-auth-services-repositories.md">
+# Refactor: Introducir capa services + repositories para auth
+
+**Tipo:** refactor
+
+**Estimación:** 5 pts (~20h)
+
+**Descripción:**
+Separar responsabilidades: controladores manejan requests/response, services contienen lógica de negocio, repositories interactúan con la base de datos.
+
+**Contexto:**
+Actualmente la lógica está mezclada en `auth.service.js` y controladores.
+
+**Alcance:**
+- Crear `auth.service.ts` y `user.repository.ts`.
+- Refactorizar controladores para usar la nueva capa.
+
+**Archivos involucrados:**
+- `backend/src/modules/auth/*` (nuevo/actualizado)
+
+**Dependencias:**
+- Depende de la persistencia de usuarios y migración a TS.
+
+**Criterios de aceptación:**
+- Controladores delegan en services; servicios delegan en repos.
+- Puntos para mocking en tests disponibles.
+
+**DoD:**
+- Refactor completado y pruebas unitarias básicas añadidas.
+
+**Prioridad:** P1
+
+**Labels sugeridos:** `refactor`, `backend`, `testable`
+</file>
+
+<file path=".github/ISSUES/11-tests-auth.md">
+# Tests: Configurar test runner y añadir tests para autenticación
+
+**Tipo:** tests
+
+**Estimación:** 6 pts (~24h)
+
+**Descripción:**
+Configurar un test runner (Vitest o Jest) y `supertest` para pruebas E2E. Añadir tests unitarios para `loginService`, `requireAuth` y pruebas E2E para el flujo de login → recurso protegido.
+
+**Contexto:**
+No existen tests en el repo; esto previene regresiones.
+
+**Alcance:**
+- Configurar runner y scripts `npm test`.
+- Escribir tests unitarios y E2E básicos.
+
+**Archivos involucrados:**
+- `backend/package.json` (scripts)
+- `backend/tests/*`
+
+**Dependencias:**
+- Refactor por capas y persistencia de usuarios.
+
+**Criterios de aceptación:**
+- `npm test` ejecuta y pasa en local.
+- Casos positivos/negativos cubiertos.
+
+**DoD:**
+- Tests añadidos y documentados.
+
+**Prioridad:** P1
+
+**Labels sugeridos:** `tests`, `ci`, `backend`
+</file>
+
+<file path=".github/ISSUES/12-docs-api-env.md">
+# Docs: Documentar env vars y endpoints en docs/API.md
+
+**Tipo:** docs
+
+**Estimación:** 2 pts (~8h)
+
+**Descripción:**
+Crear `docs/API.md` con descripción de endpoints de autenticación (`/login`, `/register`, `/logout`, `/me`), ejemplos `curl` y sección de variables de entorno necesarias para ejecutar el proyecto.
+
+**Contexto:**
+La documentación actual es mínima y el README está desalineado respecto a la estructura de carpetas.
+
+**Alcance:**
+- Crear `docs/API.md` y actualizar `README.md` para referenciarlo.
+- Incluir ejemplos curl y formato de respuesta esperado.
+
+**Archivos involucrados:**
+- `docs/API.md` (nuevo)
+- `README.md`
+
+**Dependencias:**
+- Debe sincronizarse con los cambios de endpoints y env vars.
+
+**Criterios de aceptación:**
+- Siguiendo la documentación un usuario puede iniciar el backend y probar endpoints con curl.
+
+**DoD:**
+- Archivo creado y referenciado desde README.
+
+**Prioridad:** P2
+
+**Labels sugeridos:** `docs`, `onboarding`
+</file>
+
+<file path=".github/ISSUES/13-backend-checkout-atomic-prisma.md">
+# Backend: Implementar Checkout Atómico con Prisma (prisma.$transaction)
+
+**Tipo:** feature / backend
+
+**Estimación:** 8 pts (~32h)
+
+**Descripción:**
+Implementar flujo de checkout que ejecute una transacción real en PostgreSQL usando Prisma (`prisma.$transaction`). El endpoint procesará la orden recibida desde el frontend, validará stock, decrementará stock de variantes y creará la orden y sus items de forma atómica para prevenir sobreventa.
+
+**Alcance:**
+- Endpoint `POST /api/orders` protegido por token (requireAuth).
+- Estructura del payload: información de envío, lista de { productId, variantId, quantity }, método de pago simulado.
+- Uso de `prisma.$transaction` para:
+  - validar stock disponible para cada `variantId`;
+  - decrementar stock de cada variante;
+  - crear `Order` y `OrderItem` en la misma transacción;
+  - si algún stock es insuficiente, abortar la transacción y devolver 409 con detalle.
+- Log de intento y resultado para auditoría (nivel info/error según resultado).
+
+**Archivos / Componentes involucrados:**
+- `backend/src/controllers/order.controller.ts` (nuevo)
+- `backend/src/services/order.service.ts` (nuevo)
+- `backend/src/repos/product.repository.ts` (actualizado)
+- `prisma/schema.prisma` (modelos Order, OrderItem, ProductVariant)
+
+**Criterios de aceptación:**
+- Las compras concurrentes no provocan stock negativo ni sobreventa.
+- Si stock insuficiente, la respuesta es 409 y no se crea ninguna orden.
+- En caso de éxito, devuelve 201 con número de orden y detalle.
+
+**Definition of Done:**
+- Endpoint `POST /api/orders` implementado y probado localmente con Docker Compose + PostgreSQL.
+- Pruebas básicas (unitarias/integración) que simulan concurrencia y validan la atomicidad.
+- Documentación en `docs/API.md` con ejemplo de payload y respuesta.
+
+**Dependencias:**
+- Requiere que Prisma + PostgreSQL estén configurados (ver `Infra: Configurar Docker Compose y Prisma with PostgreSQL`).
+- Depende de: migración a TypeScript y módulo de autenticación (requireAuth).
+
+**Prioridad:** P0
+
+**Labels sugeridos:** `backend`, `prisma`, `orders`, `critical`
+
+**Prompt sugerido:**
+Provee código de ejemplo en TypeScript para un `order.service.ts` que utilice `prisma.$transaction` para decrementar stock y crear la orden, incluyendo manejo de errores por stock insuficiente y tests con supertest/ Vitest que validen comportamiento concurrencial.
+</file>
+
+<file path=".github/copilot-instructions.md">
+# Instrucciones del proyecto
+
+## Arquitectura
+
+Este proyecto utiliza:
+- React
+- TypeScript
+- Vite
+- Express
+- Prisma
+- PostgreSQL
+
+## Reglas
+
+- No cambiar la arquitectura sin autorización.
+- Reutilizar componentes existentes.
+- No introducir dependencias innecesarias.
+- Mantener TypeScript estricto.
+- No duplicar lógica.
+- Respetar los patrones existentes.
+- Ejecutar los tests relevantes después de modificar código.
+- No crear Issues duplicadas.
+- No modificar código cuando el usuario solicite únicamente análisis.
 </file>
 
 <file path="backend/src/modules/auth/auth.controller.js">
@@ -442,6 +927,588 @@ app.listen(PORT, () => {
 }
 </file>
 
+<file path="docs/Arquitectura-del-proyecto-historial.md">
+# 📁 CARPETA DE PROYECTO DE SOFTWARE: ModeaVelour E-Commerce
+
+> **Proyecto de Portafolio Profesional Full-Stack**  
+> **Autor / Desarrollador:** Mau-bar-iva  
+> **Estado:** Documentación Técnica & Backlog de Arquitectura (Pre-Sprint Backend)  
+> **Tecnologías Core:** Node.js, Express, TypeScript, Prisma ORM, PostgreSQL, React, Vite, Tailwind CSS.
+
+---
+
+## 1. RESUMEN EJECUTIVO Y VISIÓN DEL PRODUCTO
+ModeaVelour es una plataforma de comercio electrónico orientada al sector de indumentaria y accesorios de moda atemporal y sustentable. El sistema combina una experiencia de usuario minimalista y responsiva con un motor transaccional robusto en el backend, diseñado bajo estándares de arquitectura por capas (Controller-Service-Repository), tipado estricto en TypeScript y persistencia relacional con Prisma ORM sobre PostgreSQL.
+
+---
+
+## 2. ASESORÍA TÉCNICA: TRANSACCIONES, PAGOS Y ENVÍOS
+- **Transacciones en E-commerce Real:** Los comercios modernos no tocan tarjetas de crédito directamente por normas PCI-DSS. Usan pasarelas como Stripe o Mercado Pago que tokenizan la tarjeta y notifican al backend vía Webhooks para confirmar la orden.
+- **Estrategia Recomendada para Portafolio:** Dejar las pasarelas reales y couriers externos FUERA DEL ALCANCE (Out of Scope) e implementar un **Checkout Transaccional Simulado con Atomicidad Real en Base de Datos (prisma.$transaction)**.
+- **¿Por qué?**
+  1. Evitas que los evaluadores de recursos humanos o líderes técnicos sufran por tarjetas de sandbox caídas o claves que vencen.
+  2. Demuestras el verdadero valor de ingeniería de backend: transacciones ACID en PostgreSQL, bloqueo de stock para evitar sobreventas y manejo de consistencia.
+- **Envíos:** Se deja fuera el cálculo dinámico con couriers comerciales (FedEx, Correo Argentino, DHL) y se modelan modalidades de entrega fijas (Estándar y Express) con cálculo transparente de costos.
+
+---
+
+## 3. ALCANCE DEL SISTEMA (IN-SCOPE VS OUT-OF-SCOPE)
+
+### Dentro del Alcance (In-Scope):
+1. Autenticación JWT con HttpOnly Cookies y roles (ADMIN / CUSTOMER).
+2. Catálogo público con filtros por categoría, temporada, talle, color, precio y búsqueda debounced.
+3. Detalle de producto con selector dinámico de variantes de talle y color y stock en tiempo real.
+4. Carrito de compras reactivo con cálculo de subtotales y total.
+5. Lista de Favoritos (Wishlist) persistida en PostgreSQL.
+6. ABM completo de Productos (Creación, edición de inventario y borrado suave) en panel de administración.
+7. Simulación transaccional de Checkout con persistencia de orden y descuento de stock atómico.
+8. Panel Admin con listado de órdenes y control de despacho.
+
+### Fuera del Alcance (Out-of-Scope):
+1. Pasarelas de pago con cobro real a tarjetas de crédito bancarias.
+2. Integración en vivo con APIs corporativas de couriers de envíos.
+3. Facturación fiscal electrónica con organismos gubernamentales.
+4. Multi-moneda o multi-idioma (i18n).
+5. Chat de soporte en tiempo real o notificaciones SMS/WhatsApp.
+
+---
+
+## 4. REGLAS DE NEGOCIO (BUSINESS RULES)
+- **RN-01 (Stock por Variante):** El stock se administra a nivel de tupla (Producto, Color, Talle). Si una combinación específica se agota, se deshabilita en la interfaz.
+- **RN-02 (Descuentos):** El precio vigente no puede ser <= 0. Si existe oldPrice, el porcentaje de descuento se computa como round(100 - (price / oldPrice * 100)).
+- **RN-03 (Roles y RBAC):** Solo usuarios con rol ADMIN pueden mutar productos (POST, PUT, DELETE) y acceder a rutas administrativas.
+- **RN-04 (Atomicidad en Checkout):** La compra se procesa bajo prisma.$transaction. Si algún ítem no tiene disponibilidad en el momento exacto, la transacción se revierte con error 409 Conflict.
+- **RN-05 (Precios Históricos):** La orden congela el precio unitario en OrderItem al momento de la venta para no alterar reportes contables futuros.
+- **RN-06 (Borrado Lógico / Soft Delete):** Los productos con historial de órdenes no se eliminan físicamente; se marca isActive: false.
+- **RN-07 (Cookies Seguras):** Tokens JWT transmitidos exclusivamente por cookies HttpOnly con SameSite y Secure.
+
+---
+
+## 5. REQUERIMIENTOS FUNCIONALES (RF)
+- RF-01: Registro de nuevos usuarios con hash bcrypt.
+- RF-02: Inicio de sesión con emisión de cookie JWT HttpOnly.
+- RF-03: Endpoint GET /api/auth/me para recuperar sesión.
+- RF-04: Cierre de sesión con limpieza de cookie.
+- RF-05: Listado paginado de productos con filtros de categoría, color, talle y precio.
+- RF-06: Barra de búsqueda debounced (300 ms).
+- RF-07: Detalle de prenda con variantes y stock.
+- RF-08: Carrusel de recomendaciones relacionadas.
+- RF-09: Agregar productos al carrito con talle y color sin duplicar registros.
+- RF-10: Edición de cantidades y vaciado de carrito.
+- RF-11: Checkout simulado con formulario de datos de destinatario.
+- RF-12: Generación de número de seguimiento legible (MV-2026-XXXX).
+- RF-13: Guardar y remover prendas de la lista de favoritos.
+- RF-14: Alta de producto con variantes dinámicas en panel Admin.
+- RF-15: Edición y soft delete de productos en panel Admin.
+- RF-16: Visualización de órdenes de clientes en panel Admin.
+
+---
+
+## 6. REQUERIMIENTOS NO FUNCIONALES (RNF)
+- RNF-01 (Seguridad): Consultas parametrizadas con Prisma, protección XSS, cabeceras Helmet y contraseñas con bcrypt (salt 10).
+- RNF-02 (Rendimiento): Respuestas de catálogo en < 200 ms mediante paginación a nivel de BD e índices en PostgreSQL.
+- RNF-03 (Mantenibilidad): TypeScript estricto en frontend y backend sin tipos any. Arquitectura en capas limpia.
+- RNF-04 (Usabilidad): Interfaz responsiva mobile-first (320px+ a 4K) con contraste accesible WCAG AA.
+
+---
+
+## 7. CASOS DE USO PRINCIPALES
+- **CU-01:** Alta de Prenda con Variantes de Color y Talle (Admin).
+- **CU-02:** Compra Transaccional / Checkout Simulado con Descuento Atómico de Stock.
+- **CU-03:** Búsqueda Debounced y Filtrado Multidimensional de Catálogo.
+
+---
+
+## 8. MODELO DE DATOS PRISMA (schema.prisma)
+
+```prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String
+  name         String
+  role         Role       @default(CUSTOMER)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  orders       Order[]
+  favorites    Favorite[]
+
+  @@map("users")
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  slug      String    @unique
+  products  Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          String           @id @default(uuid())
+  name        String
+  slug        String           @unique
+  description String           @db.Text
+  price       Decimal          @db.Decimal(10, 2)
+  oldPrice    Decimal?         @db.Decimal(10, 2)
+  brand       String           @default("ModeaVelour")
+  season      String?          // summer, fall, winter, spring
+  collection  String?          // sustainable fashion, sporty wear
+  imageUrl    String
+  isNew       Boolean          @default(true)
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  categoryId  String
+  category    Category         @relation(fields: [categoryId], references: [id])
+
+  variants    ProductVariant[]
+  favorites   Favorite[]
+
+  @@index([categoryId])
+  @@index([price])
+  @@index([season])
+  @@index([collection])
+  @@map("products")
+}
+
+model ProductVariant {
+  id         String      @id @default(uuid())
+  productId  String
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  color      String
+  size       String      // XS, S, M, L, XL
+  stock      Int         @default(0)
+  sku        String      @unique
+
+  orderItems OrderItem[]
+
+  @@unique([productId, color, size])
+  @@index([productId])
+  @@map("product_variants")
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  orderNumber     String      @unique
+  status          OrderStatus @default(CONFIRMED)
+  totalAmount     Decimal     @db.Decimal(10, 2)
+  shippingCost    Decimal     @default(0.00) @db.Decimal(10, 2)
+  
+  recipientName   String
+  recipientEmail  String
+  recipientPhone  String
+  shippingAddress String
+  shippingCity    String
+  shippingPostal  String
+  
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  items           OrderItem[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([orderNumber])
+  @@map("orders")
+}
+
+model OrderItem {
+  id         String         @id @default(uuid())
+  orderId    String
+  order      Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId  String
+  variant    ProductVariant @relation(fields: [variantId], references: [id])
+
+  productName String
+  color       String
+  size        String
+  quantity    Int
+  unitPrice   Decimal        @db.Decimal(10, 2)
+
+  @@map("order_items")
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@map("favorites")
+}
+```
+
+---
+
+## 9. CONTRATOS DE API RESTFUL
+- `POST /api/auth/register` (Público)
+- `POST /api/auth/login` (Público)
+- `GET /api/auth/me` (Autenticado)
+- `POST /api/auth/logout` (Autenticado)
+- `GET /api/products` (Público - con paginación y filtros)
+- `GET /api/products/:id` (Público)
+- `POST /api/products` (Admin Only)
+- `PUT /api/products/:id` (Admin Only)
+- `DELETE /api/products/:id` (Admin Only)
+- `POST /api/orders` (Checkout transaccional con descuento atómico de stock)
+- `GET /api/orders` (Admin Only)
+- `GET /api/favorites` (Autenticado)
+
+---
+
+## 10. BACKLOG DE TAREAS PARA GITHUB COPILOT
+1. **TASK-01:** `infra: Configurar estructura Monorepo/Backend con Node.js, Express y TypeScript estricto`
+2. **TASK-02:** `db: Inicializar Prisma ORM y definir Schema Relacional en PostgreSQL`
+3. **TASK-03:** `db: Crear script de Seed para poblar datos iniciales de indumentaria y admin`
+4. **TASK-04:** `auth: Migrar módulo de autenticación a TypeScript y persistencia en BD con bcrypt`
+5. **TASK-05:** `auth: Implementar middleware de autenticación y autorización por roles (Admin Guard)`
+6. **TASK-06:** `security: Validación de variables de entorno con Zod y configuración de Helmet/CORS`
+7. **TASK-07:** `api: Implementar servicio y controlador de productos con filtros y paginación en Prisma`
+8. **TASK-08:** `api: Implementar endpoint de detalle de producto con variantes y stock en tiempo real`
+9. **TASK-09:** `frontend: Conectar catálogo, buscador debounced y filtros al nuevo backend de PostgreSQL`
+10. **TASK-10:** `api: Implementar endpoints de creación, edición y baja lógica de productos con Zod`
+11. **TASK-11:** `frontend: Rediseñar formulario de alta/edición con variantes dinámicas y feedback de UI`
+12. **TASK-12:** `frontend: Implementar tabla de gestión de inventario en panel de administración`
+13. **TASK-13:** `api: Implementar servicio transaccional de Checkout Simulado con Prisma ($transaction)`
+14. **TASK-14:** `frontend: Crear flujo de Checkout con formulario de entrega y pantalla de confirmación`
+15. **TASK-15:** `api/frontend: Implementar persistencia y sincronización de Favoritos en base de datos`
+16. **TASK-16:** `testing: Configurar test runner con Vitest y Supertest para Auth y Checkout`
+</file>
+
+<file path="docs/Arquitectura-del-proyecto.md">
+# CARPETA DE INGENIERÍA DE SOFTWARE: MODEAVELOUR E-COMMERCE
+
+---
+
+## 1. INTRODUCCIÓN Y PROPÓSITO DEL PROYECTO
+
+### 1.1 Nombre del Sistema
+**ModeaVelour** (Plataforma E-Commerce & Retail Management).
+
+### 1.2 Descripción General
+ModeaVelour es una plataforma web integral de comercio electrónico orientada al sector de indumentaria y accesorios de moda sostenible. El proyecto comprende dos frentes principales:
+1. **Frontend del Cliente (B2C):** Catálogo dinámico con navegación por colecciones, filtrado multidimensional (talles, colores, marcas), carrito de compras reactivo, lista de deseos (favoritos) y flujo de checkout simulado.
+2. **Backoffice Administrativo (ABM / ERP Light):** Panel de control protegido para gestión de inventario, alta/baja/modificación de productos, control de variantes (talles y colores) y monitoreo de órdenes.
+
+### 1.3 Propósito Técnico (Portfolio Showcase)
+Demostrar dominio en el desarrollo de software moderno full-stack bajo un stack escalable:
+- **Backend:** Node.js, Express, TypeScript, Prisma ORM, PostgreSQL. Arquitectura multicapa limpia (Clean Architecture / Controller-Service-Repository).
+- **Frontend:** React, Vite, TypeScript, TailwindCSS, Context API, diseño UI/UX responsivo con estética editorial/minimalista.
+- **Seguridad e Infraestructura:** Autenticación JWT stateless mediante cookies `httpOnly`, validación estricta de esquemas (Zod), migraciones declarativas y contenedores Docker para entorno local.
+
+---
+
+## 2. RECOMENDACIÓN ESTRATÉGICA: TRANSACCIONES, PAGOS Y ENVÍOS
+
+### 2.1 Cómo se manejan los pagos y transacciones en e-commerce modernos
+En la industria real, los sistemas **nunca** almacenan números de tarjetas en su base de datos (por normativas PCI-DSS). Se utilizan Pasarelas de Pago (Payment Gateways) como **Stripe**, **Mercado Pago** o **PayPal**:
+1. El cliente envía su orden desde el frontend.
+2. El backend calcula el monto total real desde la base de datos (evitando que el cliente manipule el precio).
+3. El backend crea una *Preferencia de Pago* o *PaymentIntent* en la API de la pasarela y devuelve un ID de sesión o redirect URL.
+4. El cliente paga en el entorno seguro de la pasarela.
+5. La pasarela emite un **Webhook (evento POST asincrónico firmado)** al backend notificando: `payment.success` o `payment.failed`.
+6. El backend procesa el webhook dentro de una **transacción atómica de base de datos** (`prisma.$transaction`), descuenta el inventario (stock) y cambia el estado de la orden a `PAID`.
+
+### 2.2 Estrategia recomendada para este Portfolio
+> **Decisión:** Implementar un **Checkout Simulado con Transacciones Atómicas Reales en Base de Datos**, dejando la integración con APIs reales (Stripe/Mercado Pago) como una integración opcional/fase posterior.
+
+**¿Por qué suma más valor técnico a un reclutador?**
+- Conectar un SDK de Stripe es solo copiar un tutorial de 10 líneas.
+- Diseñar la lógica backend donde se valide concurrencia, idempotencia, cálculo de importes en el servidor y reducción de stock dentro de una transacción en PostgreSQL (`BEGIN...COMMIT / ROLLBACK` gestionado por Prisma) demuestra **conocimiento real de ingeniería de software**.
+- Se evita depender de credenciales bancarias de prueba o cuentas de terceros que expiren en el portafolio.
+
+---
+
+## 3. ALCANCE DEL SISTEMA (SCOPE)
+
+### 3.1 Dentro del Alcance (In Scope)
+- **Gestión de Identidad y Accesos (RBAC):**
+  - Autenticación segura mediante JWT almacenados en cookies seguras (`httpOnly`, `SameSite=Strict`).
+  - Roles definidos: `CLIENT` y `ADMIN`.
+  - Rutas frontend protegidas y middlewares de autorización en backend.
+- **Catálogo de Productos & Filtros:**
+  - Estructura de variantes: Productos con múltiples talles, colores y stock asociado.
+  - Filtrado multidimensional en servidor/cliente por categoría, temporada, color, marca y ordenamiento (precio, fecha).
+- **Carrito y Favoritos:**
+  - Carrito local con sincronización de contexto y verificación de stock contra backend.
+  - Lista de deseos (Wishlist) persistente por usuario.
+- **Panel Administrativo (ABM de Productos):**
+  - Creación, edición y borrado (físico o lógico) de productos y sus variantes.
+  - Carga segura de imágenes mediante servicio cloud (Cloudinary / ImgBB) con sanitización de tipos MIME.
+- **Órdenes y Transacciones (Checkout Simulado):**
+  - Creación de órdenes de compra con estado: `PENDING`, `COMPLETED`, `CANCELLED`.
+  - Disminución atómica de stock mediante `prisma.$transaction`.
+- **Diseño Responsivo & UI/UX:**
+  - Mobile-first con breakpoints consistentes, microinteracciones, estados de carga (skeletons) y feedback accesible (toasts).
+
+### 3.2 Fuera del Alcance (Out of Scope)
+- Integración bancaria con cobro monetario en vivo (producción PCI-DSS).
+- Cotización automática con APIs de logística física en tiempo real (DHL, Correo Argentino, FedEx).
+- Facturación electrónica impositiva legal (AFIP, SAT, etc.).
+- Soporte multilingüe / internacionalización (i18n) automatizada.
+
+---
+
+## 4. REGLAS DE NEGOCIO (RN)
+
+- **RN-01 (Inmutabilidad de Precios en Compra):** El total de la orden se calcula **exclusivamente en el backend** consultando el valor unitario en la base de datos al momento de ejecutar la orden. No se aceptan montos enviados desde el payload del cliente.
+- **RN-02 (Atomicidad del Stock):** Al momento de confirmarse una orden, el stock de las variantes seleccionadas debe decrementar. Si alguna variante no posee stock suficiente (`stock < requestedQuantity`), la transacción completa debe revertirse (`ROLLBACK`) notificando el producto faltante.
+- **RN-03 (Acceso al ABM):** Las rutas de mutación de catálogo (`POST`, `PUT`, `DELETE /api/products`) requieren rol `ADMIN` verificado mediante token criptográfico válido.
+- **RN-04 (Autenticación Segura de Claves):** Toda contraseña debe ser procesada con un algoritmo de hashing unidireccional con salt dinámico (Bcrypt, mínimo 10 rondas de salt) de forma estrictamente asíncrona.
+- **RN-05 (Unicidad de Variantes):** Un producto no puede registrar dos combinaciones idénticas de color y talle en el inventario.
+- **RN-06 (Limpieza de Sesión):** El cierre de sesión (`/api/auth/logout`) invalida la cookie del cliente sobrescribiéndola con expiración inmediata en el encabezado `Set-Cookie`.
+
+---
+
+## 5. REQUERIMIENTOS DEL SISTEMA
+
+### 5.1 Requerimientos Funcionales (RF)
+- **RF-01 (Registro y Autenticación):** El sistema debe permitir registrar usuarios (`POST /api/auth/register`), iniciar sesión (`POST /api/auth/login`) y consultar la sesión activa (`GET /api/auth/me`).
+- **RF-02 (Exploración de Catálogo):** El usuario debe poder listar productos con paginación (`limit`, `page`), búsqueda por texto y filtros acumulativos por categoría, color y marca.
+- **RF-03 (Detalle de Producto):** El usuario debe poder ver información técnica, selector de variantes (color/talle) e indicador dinámico de disponibilidad ("En stock" / "Agotado").
+- **RF-04 (Administración de Carrito):** El usuario puede agregar variantes al carrito, modificar cantidades y eliminar ítems, con actualización reactiva del importe subtotal.
+- **RF-05 (Checkout Simulado):** El usuario autenticado debe poder confirmar la compra de los ítems de su carrito, generando un registro único de orden y descontando el stock correspondiente.
+- **RF-06 (Gestión de Favoritos):** Los usuarios registrados pueden añadir/remover productos a su lista de favoritos (`POST/DELETE /api/favorites`).
+- **RF-07 (ABM Administrativo de Productos):** El administrador debe poder crear, editar, listar y eliminar productos junto a la subida de sus fotografías de muestra.
+
+### 5.2 Requerimientos No Funcionales (RNF)
+- **RNF-01 (Seguridad - Secretos y Configuración):** Ningún secreto (JWT secret, DB URL, API Keys) debe residir en el código fuente. Se cargarán mediante variables de entorno validadas en el arranque.
+- **RNF-02 (Rendimiento):** Tiempos de respuesta menores a 200ms en endpoints de consulta de catálogo bajo carga local estándar.
+- **RNF-03 (Tipado Estricto & Robustez):** 100% de la base de código backend migrada a TypeScript en modo estricto (`noImplicitAny: true`).
+- **RNF-04 (Manejo Seguro de Errores):** Ningún error en producción debe exponer el stack trace al cliente. Se dispondrá de un middleware centralizado de errores.
+- **RNF-05 (Diseño & Accesibilidad UI):** Interfaz fluida adaptable a Mobile (<768px), Tablet (768-1024px) y Desktop (>1024px), cumpliendo contrastes legibles WCAG 2.1 AA.
+
+---
+
+## 6. CASOS DE USO PRINCIPALES
++-----------------------+
+              |      ModeaVelour      |
+              +-----------------------+
+                         |
+     +-------------------+-------------------+
+     |                                       |
+[ Cliente ]                             [ Admin ]
+     |                                       |
+     +---> (CU-01: Explorar Catálogo)        +---> (CU-05: Gestionar Productos)
+     +---> (CU-02: Gestionar Carrito)        +---> (CU-06: Ver Órdenes Recibidas)
+     +---> (CU-03: Crear Favorito)           +---> (CU-07: Gestionar Variantes)
+     +---> (CU-04: Ejecutar Checkout)
+
+
+### CU-01: Exploración y Filtrado de Catálogo
+- **Actor:** Cliente / Visitante no autenticado.
+- **Precondición:** Existencia de productos cargados en la base de datos.
+- **Flujo Principal:**
+  1. El cliente ingresa a `/category`.
+  2. Selecciona un filtro (ej. Color "Negro", Talle "M").
+  3. El frontend envía los parámetros a `GET /api/products?color=Negro&size=M`.
+  4. El servidor consulta mediante Prisma y retorna la lista paginada.
+  5. El cliente visualiza los productos resultantes.
+
+### CU-04: Finalización de Compra (Checkout Simulado)
+- **Actor:** Cliente autenticado (`role: CLIENT` o `ADMIN`).
+- **Precondición:** Usuario ha iniciado sesión y tiene ítems en el carrito.
+- **Flujo Principal:**
+  1. El cliente pulsa "Checkout" en `/carrito`.
+  2. El frontend envía la lista de variantes y cantidades solicitadas a `POST /api/orders`.
+  3. El backend abre una transacción Prisma:
+     - Verifica existencia y stock de cada ítem.
+     - Si hay stock: descuenta la cantidad requerida del stock disponible.
+     - Crea el registro `Order` y sus `OrderItem` vinculados al `userId`.
+  4. La transacción confirma (`COMMIT`).
+  5. El backend devuelve HTTP 201 con el resumen de la orden generada.
+  6. El frontend vacía el carrito y redirige al usuario a la pantalla de confirmación.
+- **Flujo Alternativo (Falta de Stock):**
+  - Si una variante no cuenta con el stock necesario, la transacción ejecuta un `ROLLBACK`.
+  - El backend responde HTTP 409 con el detalle de los productos no disponibles.
+
+### CU-05: Alta de Producto en ABM
+- **Actor:** Administrador autenticado (`role: ADMIN`).
+- **Precondición:** Cookie de sesión válida con privilegios de administrador.
+- **Flujo Principal:**
+  1. El administrador ingresa a `/admin/alta-productos`.
+  2. Completa campos (Nombre, Descripción, Precio, Categoría) y selecciona archivo de imagen.
+  3. La imagen se almacena en el servicio de imágenes y devuelve la URL.
+  4. El formulario envía payload tipado a `POST /api/products`.
+  5. El middleware `requireAuth` y el guard de roles autorizan la operación.
+  6. El servicio registra el producto y sus variantes asociadas.
+  7. El frontend notifica la creación exitosa y resetea el formulario.
+
+---
+
+## 7. ARQUITECTURA TÉCNICA Y ESPECIFICACIÓN DE BASE DE DATOS
+
+### 7.1 Arquitectura Backend (Layered Clean Pattern)
+[ Request HTTP ]
+│
+[ Middlewares: CORS, CookieParser, requireAuth, requireRole, errorHandler ]
+│
+[ Controllers: Validación de entrada (Zod / Express DTOs) ]
+│
+[ Services: Reglas de negocio y orquestación ]
+│
+[ Repositories / Prisma Client: Abstracción de acceso a datos ]
+│
+[ PostgreSQL Database ]
+
+### 7.2 Modelo Entidad-Relación (Prisma Schema Reference)
+```prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  CLIENT
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String
+  name         String?
+  role         Role       @default(CLIENT)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  orders       Order[]
+  favorites    Favorite[]
+
+  @@map("users")
+}
+
+model Product {
+  id          String           @id @default(uuid())
+  name        String
+  description String
+  price       Decimal          @db.Decimal(10, 2)
+  oldPrice    Decimal?         @db.Decimal(10, 2)
+  imageUrl    String
+  brand       String           @default("ModeaVelour")
+  category    String[]
+  collection  String?
+  season      String?
+  isNew       Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  variants    ProductVariant[]
+  favorites   Favorite[]
+
+  @@map("products")
+}
+
+model ProductVariant {
+  id         String      @id @default(uuid())
+  productId  String
+  color      String
+  size       String
+  stock      Int         @default(0)
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@unique([productId, color, size])
+  @@map("product_variants")
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("favorites")
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  userId      String
+  status      OrderStatus @default(COMPLETED)
+  totalAmount Decimal     @db.Decimal(10, 2)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Restrict)
+  items       OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         String         @id @default(uuid())
+  orderId    String
+  variantId  String
+  quantity   Int
+  unitPrice  Decimal        @db.Decimal(10, 2)
+
+  order      Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variant    ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  @@map("order_items")
+}
+
+8. CONTRATO DE API REST (ENDPOINTS PRINCIPALES)
+Método	Endpoint	Acceso	Descripción
+POST	/api/auth/register	Público	Registra nuevo usuario (email, password, name).
+POST	/api/auth/login	Público	Autentica y fija cookie token HTTP-Only.
+POST	/api/auth/logout	Autenticado	Limpia cookie de sesión.
+GET	    /api/auth/me	Autenticado	Retorna datos del usuario en sesión actual.
+GET	    /api/products	Público	Retorna productos con filtros y paginación.
+GET	    /api/products/:id	Público	Detalle de un producto con sus variantes y stock.
+POST	/api/products	Admin	Crea producto nuevo junto con variantes.
+PUT	    /api/products/:id	Admin	Actualiza campos y variantes de un producto.
+DELETE	/api/products/:id	Admin	Eliminación controlada de un producto.
+GET	    /api/favorites	Autenticado	Obtiene la lista de IDs o productos guardados.
+POST	/api/favorites/:productId	Autenticado	Conmuta/agrega producto a favoritos.
+POST	/api/orders	Autenticado	Genera orden y descuenta stock atómicamente.
+GET	    /api/orders/my-orders	Autenticado	Historial de compras del usuario autenticado.
+</file>
+
 <file path="public/data/products.json">
 [
   {
@@ -483,6 +1550,128 @@ app.listen(PORT, () => {
 
 <file path="public/vite.svg">
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--logos" width="31.88" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 257"><defs><linearGradient id="IconifyId1813088fe1fbc01fb466" x1="-.828%" x2="57.636%" y1="7.652%" y2="78.411%"><stop offset="0%" stop-color="#41D1FF"></stop><stop offset="100%" stop-color="#BD34FE"></stop></linearGradient><linearGradient id="IconifyId1813088fe1fbc01fb467" x1="43.376%" x2="50.316%" y1="2.242%" y2="89.03%"><stop offset="0%" stop-color="#FFEA83"></stop><stop offset="8.333%" stop-color="#FFDD35"></stop><stop offset="100%" stop-color="#FFA800"></stop></linearGradient></defs><path fill="url(#IconifyId1813088fe1fbc01fb466)" d="M255.153 37.938L134.897 252.976c-2.483 4.44-8.862 4.466-11.382.048L.875 37.958c-2.746-4.814 1.371-10.646 6.827-9.67l120.385 21.517a6.537 6.537 0 0 0 2.322-.004l117.867-21.483c5.438-.991 9.574 4.796 6.877 9.62Z"></path><path fill="url(#IconifyId1813088fe1fbc01fb467)" d="M185.432.063L96.44 17.501a3.268 3.268 0 0 0-2.634 3.014l-5.474 92.456a3.268 3.268 0 0 0 3.997 3.378l24.777-5.718c2.318-.535 4.413 1.507 3.936 3.838l-7.361 36.047c-.495 2.426 1.782 4.5 4.151 3.78l15.304-4.649c2.372-.72 4.652 1.36 4.15 3.788l-11.698 56.621c-.732 3.542 3.979 5.473 5.943 2.437l1.313-2.028l72.516-144.72c1.215-2.423-.88-5.186-3.54-4.672l-25.505 4.922c-2.396.462-4.435-1.77-3.759-4.114l16.646-57.705c.677-2.35-1.37-4.583-3.769-4.113Z"></path></svg>
+</file>
+
+<file path="scripts/create_issues.js">
+/* eslint-env node */
+/* global process */
+
+const token = process.env.GITHUB_TOKEN;
+if (!token) {
+    console.error('GITHUB_TOKEN no está definido en el entorno.');
+    process.exit(1);
+}
+
+const repo = 'Mau-bar-iva/TP-Curso-React-';
+const api = `https://api.github.com/repos/${repo}/issues`;
+const dryRun = process.env.DRY_RUN === '1' || process.env.DRY_RUN === 'true';
+
+const issues = [
+    {
+        title: 'Refactor: Migrar proyecto a TypeScript, Express y estructura monorepo (crear "frontend" carpeta)',
+        body: `Historia de usuario:\nComo desarrollador del proyecto quiero una base de código consistente en TypeScript con un backend en Express separado y una estructura backend/frontend clara, para facilitar mantenimiento y despliegues.\n\nAlcance:\n- Migrar backend a TypeScript usando Express.\n- Mantener frontend en React + Vite y mover los archivos actuales a la carpeta "frontend/" para concordar con README.\n- Configurar scripts de arranque/build para ambos paquetes.\n\nRestricciones:\n- No introducir servicios de pago.\n- Mantener compatibilidad funcional con la UI actual.\n\nDoD:\n- Repositorio reestructurado con carpetas "backend/" y "frontend/".\n- Backend escrito en TypeScript y se compila.\n- Scripts para dev y build funcionan (npm run dev en cada paquete).\n\nCriterios de aceptación:\n- Clonar repo, instalar deps y ejecutar ambos servidores localmente siguiendo README actualizado.\n- No se añade código funcional nuevo que rompa la app.\n\nDependencias:\n- Puede depender de: "Extraer configuración en módulo config" y "Persistencia de usuarios"`
+    },
+    {
+        title: 'Seguridad: Mover secrets (JWT, password) a variables de entorno',
+        body: `Historia de usuario:\nComo administrador quiero que las claves y credenciales no estén hardcodeadas en el código para evitar fugas.\n\nAlcance:\n- Leer JWT secret desde env (e.g., JWT_SECRET).\n- Eliminar contraseñas en texto plano del repo.\n\nRestricciones:\n- No crear un servicio externo de pago.\n\nDoD:\n- JWT secret y configuración leídos desde archivo .env o variables de entorno.\n- Documentación en README con variables necesarias.\n\nCriterios de aceptación:\n- La app levanta usando las variables y no contiene valores secretos en los archivos del repo.\n\nDependencias:\n- Debe implementarse junto con "Refactor: Migrar proyecto a TypeScript..." si se migra el backend.\n\nPrompt sugerido:\nProporciona un patch y pasos para extraer secretos a variables de entorno en un backend Express existente y cómo documentarlo en README.`
+    },
+    {
+        title: 'Feature: Añadir persistencia de usuarios y endpoint de registro (PostgreSQL + Prisma)',
+        body: `Historia de usuario:\nComo usuario quiero poder registrarme y que mis credenciales se almacenen de forma segura para poder iniciar sesión posteriormente.\n\nAlcance:\n- Añadir endpoint POST /api/auth/register.\n- Persistir usuarios en PostgreSQL usando Prisma como ORM.\n\nRestricciones:\n- Debe ser desplegable sin coste (uso local con Docker Compose + PostgreSQL; documentación para usar Supabase si se desea).\n\nDoD:\n- Registro crea usuario con password hasheado.\n- Login utiliza la tabla "users" en PostgreSQL a través de Prisma.\n\nCriterios de aceptación:\n- Registro + login funcionan en local con PostgreSQL.\n- Documentación sobre cómo cambiar a Supabase.\n\nDependencias:\n- Depende de: "Refactor: Migrar proyecto a TypeScript..." y "Seguridad: Mover secrets..."\n\nPrompt sugerido:\nDiseña la estructura de datos Prisma para \`User\` y los endpoints necesarios para implementar registro y autenticación con PostgreSQL. Incluye migraciones y ejemplos de consultas.`
+    },
+
+    // Infra + Backend + Frontend tasks for PostgreSQL + Prisma + TypeScript
+    {
+        title: 'Infra: Configurar Docker Compose y Prisma con PostgreSQL',
+        body: `Objetivo:\nDisponer de una base de datos local reproducible y configurar Prisma como ORM para el backend en TypeScript.\n\nAlcance:\n- Crear docker-compose.yml en la raíz con servicio PostgreSQL 16 (y pgAdmin opcional).\n- Inicializar Prisma en backend/ (npx prisma init).\n- Definir esquemas Prisma para User, Product, ProductVariant, Favorite, Order, OrderItem.\n- Crear scripts: npm run prisma:migrate y seed.ts para poblar datos de prueba.\n\nCriterios de aceptación:\n- docker-compose up levanta PostgreSQL accesible por el backend.\n- Prisma genera cliente y migraciones aplicables.\n\nDependencias:\n- Debe ejecutarse antes de implementar persistencia y endpoints que dependan de la DB.`
+    },
+    {
+        title: 'Backend: Migración a TypeScript y arquitectura modular (Routes-Controllers-Services-Prisma)',
+        body: `Objetivo:\nReemplazar el código backend JS por TypeScript compilable y organizar en capas.\n\nAlcance:\n- Configurar tsconfig.json en backend/.\n- Usar tsx/ts-node-dev para desarrollo.\n- Crear capas tipadas para auth, products, orders y favorites.\n- Instalar tipos: @types/express, @types/jsonwebtoken, @types/bcrypt, @types/cookie-parser.\n\nCriterios de aceptación:\n- Backend inicia en modo dev con tsx y compila con tsc.\n- Endpoints tipados básicos disponibles para autenticación y productos.\n\nDependencias:\n- Requiere Prisma y config de DB (Docker Compose).`
+    },
+    {
+        title: 'Backend: Implementar Módulo de Órdenes y Checkout Atómico con Prisma',
+        body: `Objetivo:\nDesarrollar endpoint transaccional de compras que garantice integridad de stock y cree ordenes atomically.\n\nAlcance:\n- Crear endpoint POST /api/orders protegido por token.\n- Implementar transacción con prisma.$transaction: validar stock, decrementar stock, crear Order y OrderItem.\n- Devolver 409 si stock insuficiente, 201 si éxito.\n\nCriterios de aceptación:\n- Simulación de compra decremente stock y cree orden en la misma transacción.\n\nDependencias:\n- Prisma, persistencia de productos y variantes.`
+    },
+    {
+        title: 'Frontend: Reemplazar llamadas de MockAPI por Backend Express propio',
+        body: `Objetivo:\nConectar la app React con el backend local para eliminar dependencias de MockAPI.\n\nAlcance:\n- Modificar src/services/products.js para apuntar a http://localhost:3000/api/products (o migrar a TypeScript).\n- Soportar lectura de variantes, stock y talles desde la API.\n- Asegurar fetch con credentials: "include" para solicitudes autenticadas.\n\nCriterios de aceptación:\n- El frontend consume los endpoints locales y muestra variantes y stock reales.\n\nDependencias:\n- Backend en TypeScript con endpoints de productos implementados.`
+    },
+    {
+        title: 'Frontend: Migrar estilos a TailwindCSS y pulir UI/UX',
+        body: `Objetivo:\nHomogeneizar estilos y corregir bugs de maquetación visibles.\n\nAlcance:\n- Instalar y configurar TailwindCSS con Vite.\n- Corregir layout del carrito (evitar solapamiento entre texto y imagen).\n- Arreglar botón de eliminar favoritos en /favorite (alineación).\n- Rediseñar formulario admin para paleta clara editorial.\n\nCriterios de aceptación:\n- UI consistente con Tailwind; los bugs de layout corregidos.\n\nDependencias:\n- Ninguna técnica, recomendable después de migración a frontend/ carpeta.`
+    },
+    {
+        title: 'Frontend: Checkout Simulado y flujo de compra en UI',
+        body: `Objetivo:\nOfrecer una experiencia completa de checkout y limpiar el carrito tras la compra.\n\nAlcance:\n- Conectar botón Checkout con POST /api/orders.\n- Crear vista /checkout/success con número de orden y detalle.\n- Limpiar estado del carrito y mostrar toast notifications en éxito o error (stock insuficiente).\n\nCriterios de aceptación:\n- Flujo de compra desde frontend a backend funciona, carrito se limpia y usuario ve confirmación.\n\nDependencias:\n- Endpoint POST /api/orders implementado en backend.`
+    },
+    {
+        title: 'Feature: Añadir endpoint POST /api/auth/logout',
+        body: `Historia de usuario:\nComo usuario quiero cerrar sesión para que mi token no sea válido y mi cookie sea eliminada.\n\nAlcance:\n- Endpoint POST /api/auth/logout que borre la cookie "token".\n\nRestricciones:\n- Compatible con SameSite y secure según entorno.\n\nDoD:\n- Endpoint implementado y documentado.\n\nCriterios de aceptación:\n- Llamar al endpoint borra la cookie y devuelve 200.\n\nDependencias:\n- Depende de la implementación actual de auth y configuración de cookies.\n\nPrompt sugerido:\nProvee el código para un endpoint Express que borre la cookie de sesión de manera segura y muestre ejemplos curl para probarlo.`
+    },
+    {
+        title: 'Bug: Manejo de error en requireAuth y filtrado de errores',
+        body: `Historia de usuario:\nComo desarrollador quiero que middleware de auth no filtre detalles de errores al cliente y maneje correctamente excepciones.\n\nAlcance:\n- Cambiar res.status(401).send('Unauthorized', err) por respuesta segura y logging interno.\n\nRestricciones:\n- No exponer stack traces en producción.\n\nDoD:\n- Middleware devuelve 401 sin detalles y registra error en servidor.\n\nCriterios de aceptación:\n- Token inválido devuelve 401 y no muestra stack trace.\n\nDependencias:\n- Ninguna crítica, pero recomendable junto a logging centralizado.\n\nPrompt sugerido:\nExplica cómo mejorar un middleware Express para no exponer errores en respuesta y cómo integrar un logger simple.`
+    },
+    {
+        title: 'Mejora: Evitar operaciones síncronas (bcrypt.hashSync) en tiempo de import',
+        body: `Historia de usuario:\nComo mantenedor quiero que el arranque de la app no haga operaciones bloqueantes para evitar retardo en startup.\n\nAlcance:\n- Reemplazar hashSync por hash asincrónico o usar password pre-hasheado almacenado en data.\n\nRestricciones:\n- No introducir bloqueos en import.\n\nDoD:\n- No hay llamadas bloqueantes en archivos importados en runtime.\n\nCriterios de aceptación:\n- Arranque del servidor no ejecuta hashing síncrono.\n\nDependencias:\n- Recomendado junto con persistencia de usuarios.\n\nPrompt sugerido:\nMuestra cómo refactorizar un USER hardcodeado que ahora usa bcrypt.hashSync para que use hash asíncrono o un valor precomputado en un archivo de datos.`
+    },
+    {
+        title: 'Mejora: Hacer CORS origin configurable via env',
+        body: `Historia de usuario:\nComo desplegador quiero configurar orígenes permitidos sin tocar el código fuente.\n\nAlcance:\n- Leer CORS_ORIGIN desde env y soportar lista separada por comas.\n\nRestricciones:\n- Mantener seguridad en producción.\n\nDoD:\n- CORS configurable y documentado.\n\nCriterios de aceptación:\n- Cambiar env actualiza el comportamiento.\n\nDependencias:\n- Ninguna directa.\n\nPrompt sugerido:\nImplementa lectura de CORS_ORIGIN desde env, parseo de orígenes y configuración de cors en Express.`
+    },
+    {
+        title: 'Mejora: Añadir logging básico y middleware de error',
+        body: `Historia de usuario:\nComo equipo quiero logs consistentes y un middleware de error para debug y producción.\n\nAlcance:\n- Implementar middleware de error global y logger simple (p.ej. winston o consola estructurada).\n\nRestricciones:\n- No añadir servicios externos de pago.\n\nDoD:\n- Errores pasan por middleware; logs tienen nivel e información útil.\n\nCriterios de aceptación:\n- Errores no controlados son capturados y devuelven respuesta con código adecuado.\n\nDependencias:\n- Recomendado antes de desplegar en producción.\n\nPrompt sugerido:\nProvee un ejemplo de middleware de error para Express y un logger (winston) configurado para dev/production.`
+    },
+    {
+        title: 'Refactor: Extraer configuración en módulo backend/src/config',
+        body: `Historia de usuario:\nComo desarrollador quiero valores de configuración centralizados para evitar duplicación.\n\nAlcance:\n- Crear backend/src/config/index.ts (o .js) que exporte PORT, JWT_SECRET, CORS_ORIGIN, NODE_ENV.\n\nRestricciones:\n- Compatible con TypeScript migration.\n\nDoD:\n- Todos los lugares consumen config del módulo.\n\nCriterios de aceptación:\n- No hay valores hardcodeados en módulos.\n\nDependencias:\n- Debe realizarse temprano; dependencia para la migración a TS.\n\nPrompt sugerido:\nGenera un módulo de configuración que lea variables de entorno con valores por defecto y ejemplos de uso en app.ts.`
+    },
+    {
+        title: 'Refactor: Introducir capa services + repositories para auth',
+        body: `Historia de usuario:\nComo desarrollador quiero separar lógica de negocio y persistencia para mejorar testabilidad.\n\nAlcance:\n- Crear auth.service.ts (business) y user.repository.ts (persistencia).\n\nRestricciones:\n- Mantener compatibilidad API.\n\nDoD:\n- Controladores usan service, service usa repository.\n\nCriterios de aceptación:\n- Código más modular y con puntos claros para mock en tests.\n\nDependencias:\n- Depende de: Refactor a TypeScript y persistencia de usuarios.\n\nPrompt sugerido:\nDescribe la separación entre controller, service y repository para auth, y ejemplos de pruebas unitarias para cada capa.`
+    },
+    {
+        title: 'Tests: Configurar test runner y añadir tests para autenticación',
+        body: `Historia de usuario:\nComo QA quiero pruebas unitarias y E2E para garantizar que auth funciona y prevenir regresiones.\n\nAlcance:\n- Configurar Vitest/Jest y supertest.\n- Añadir tests unitarios para loginService y middleware requireAuth.\n\nRestricciones:\n- Tests deben correr localmente sin servicios externos.\n\nDoD:\n- Tests añadidos y ejecutables con npm test.\n\nCriterios de aceptación:\n- Cobertura básica para casos positivos/negativos.\n\nDependencias:\n- Depende de: Separación de capas y migración a TS (si se migra).\n\nPrompt sugerido:\nProvee configuración mínima de Vitest/Jest para un backend Express y ejemplos de tests para login y middleware.`
+    },
+    {
+        title: 'Docs: Documentar env vars y endpoints en docs/API.md',
+        body: `Historia de usuario:\nComo desarrollador nuevo quiero documentación clara de los endpoints y variables para poner en marcha el proyecto.\n\nAlcance:\n- Crear docs/API.md con ejemplos curl para login/register/logout y sección env.\n\nRestricciones:\n- Mantener documentación en repo.\n\nDoD:\n- Archivo docs/API.md presente y referenciado desde README.\n\nCriterios de aceptación:\n- Siguiendo la documentación un usuario puede iniciar el backend y probar endpoints con curl.\n\nDependencias:\n- Debe sincronizarse con las tareas de features y seguridad.\n\nPrompt sugerido:\nGenera un documento API.md con endpoints de auth, ejemplos curl y descripción de variables de entorno.`
+    }
+];
+
+(async () => {
+    for (const issue of issues) {
+        try {
+            if (dryRun) {
+                console.log(`Dry run - would create: ${issue.title}`);
+                console.log(JSON.stringify({ title: issue.title, body: issue.body }, null, 2));
+                continue;
+            }
+            console.log(`Creating: ${issue.title}`);
+            const res = await fetch(api, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title: issue.title, body: issue.body })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                console.error('Failed:', data);
+            } else {
+                console.log('Created:', { number: data.number, url: data.html_url });
+            }
+        } catch (err) {
+            console.error('Error creating issue', err);
+        }
+    }
+})();
 </file>
 
 <file path="src/assets/chevronLeft.svg">
@@ -1101,6 +2290,238 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+</file>
+
+<file path="BACKLOG.md">
+# Backlog Técnico - Proyecto TP-Curso-React
+
+Fecha: 2026-09-18
+
+Resumen: backlog priorizado para refactor, seguridad, persistencia, tests y documentación. Estimaciones expresadas en puntos (1 punto ≈ 4 horas).
+
+---
+
+## P0 - Crítico
+
+### 1) Refactor: Migrar proyecto a TypeScript, Express y estructura monorepo (crear `frontend` carpeta)
+- Tipo: refactor / feature
+- Estimación: 20 pts (≈ 80h)
+- Descripción: Reestructurar el repositorio en `backend/` y `frontend/`, migrar backend a TypeScript y configurar builds/dev scripts.
+- Contexto: README actual requiere `frontend` carpeta; backend es JS minimal. Migración mejora mantenibilidad.
+- Alcance:
+  - Mover código React actual a `frontend/`.
+  - Migrar `backend/` a TypeScript (tsconfig, types, build step).
+  - Actualizar `package.json` y scripts monorepo para dev/build.
+- Archivos/Componentes: `package.json`, todos los archivos bajo `src` (mover a `frontend/`), crear `backend/src` TS files.
+- Dependencias: debe preceder a la mayoría de refactors (config central, servicios/repos, tests).
+- Criterios de aceptación:
+  - `frontend` y `backend` existen y ambos pueden iniciarse en modo dev con comandos documentados.
+  - Backend compila con `tsc` sin errores críticos.
+- Definition of Done:
+  - Estructura creada y cambios mínimos aplicados para funcionalidad equivalente.
+- Labels sugeridos: `refactor`, `typescript`, `infra`, `high-impact`
+
+### 2) Seguridad: Mover secrets (JWT, password) a variables de entorno
+- Tipo: bug/security
+- Estimación: 3 pts (≈ 12h)
+- Descripción: Eliminar `super-secret-key` y otros secretos del código; usar `JWT_SECRET` y `.env`/env vars.
+- Contexto: Actualmente el secret y credenciales están hardcodeadas en `auth.service.js`.
+- Alcance: Leer `JWT_SECRET` y configuraciones desde env; añadir `.env.example`.
+- Archivos: `backend/src/modules/auth/auth.service.js`, `backend/src/modules/auth/auth.middleware.js` y `backend/src/*` config.
+- Dependencias: Debe ejecutarse temprano, antes de desplegar o migrar.
+- Criterios de aceptación: La app funciona con variables de entorno; repositorio no contiene secrets.
+- DoD: `.env.example` añadido y README documentado.
+- Labels: `security`, `bug`, `critical`
+
+### 3) Persistencia de usuarios (PostgreSQL + Prisma; opción Supabase documentada)
+- Tipo: feature
+- Estimación: 8 pts (≈ 32h)
+- Descripción: Implementar persistencia de usuarios y endpoints de registro/login usando PostgreSQL como base de datos local reproducible y Prisma como ORM.
+- Contexto: Actualmente usuario único hardcodeado; no hay registro. Se decide adoptar PostgreSQL + Prisma para consistencia y despliegue futuro.
+- Alcance: `POST /api/auth/register`, `POST /api/auth/login` (usando PostgreSQL vía Prisma), migraciones y seed de datos de prueba.
+- Archivos: nuevo `backend/prisma/schema.prisma`, `backend/src/repos/user.repository.ts`, cambios en `auth.service`, rutas y controladores.
+- Dependencias: `Refactor TypeScript`, `Seguridad: mover secrets`, `Infra: Docker Compose + Prisma`.
+- Criterios de aceptación: Registro y login funcionan en local con PostgreSQL; passwords hasheados; documentación para cambiar a Supabase.
+- DoD: DB creada automáticamente o vía docker-compose y pruebas manuales de flujo.
+- Labels: `feature`, `backend`, `db`
+
+---
+
+## Nuevas tareas (Infra / Backend / Frontend) - Priorizadas por dependencia
+
+### Infra: Configurar Docker Compose y Prisma con PostgreSQL
+- Tipo: infra
+- Estimación: 4 pts (≈ 16h)
+- Objetivo: Disponer de una base de datos local reproducible y configurar Prisma como ORM.
+- Alcance:
+  - Crear `docker-compose.yml` en la raíz con servicio PostgreSQL 16 y pgAdmin opcional.
+  - Inicializar Prisma en `backend/` (`npx prisma init`).
+  - Configurar esquemas para `User`, `Product`, `ProductVariant`, `Favorite`, `Order`, `OrderItem`.
+  - Crear script `npm run prisma:migrate` y `seed.ts` para poblar con datos de prueba.
+- Dependencias: Debe preceder a la implementación de persistencia y endpoints que dependan de la DB.
+- Criterios de aceptación: `docker-compose up` levanta PostgreSQL; Prisma genera cliente usable y migraciones aplicables.
+
+### Backend: Migración a TypeScript y arquitectura modular (Routes-Controllers-Services-Prisma)
+- Tipo: refactor / infra
+- Estimación: 12 pts (≈ 48h)
+- Objetivo: Reemplazar el código backend JS por TypeScript compilable con `tsx` para desarrollo y organizar en capas.
+- Alcance:
+  - Configurar `tsconfig.json` en `backend/`.
+  - Usar `tsx` o `ts-node-dev` para desarrollo.
+  - Crear capas tipadas para `auth`, `products`, `orders` y `favorites`.
+  - Instalar y tipar dependencias (`express`, `@types/express`, `@types/jsonwebtoken`, `@types/bcrypt`, `@types/cookie-parser`).
+- Dependencias: Requiere Prisma y configuración de DB.
+- Criterios de aceptación: Backend inicia en modo dev con tsx y compila con tsc; endpoints básicos tipados.
+
+### Backend: Implementar Módulo de Órdenes y Checkout Atómico con Prisma
+- Tipo: feature
+- Estimación: 8 pts (≈ 32h)
+- Objetivo: Desarrollar el endpoint de simulación transaccional de compras.
+- Alcance:
+  - Crear endpoint `POST /api/orders` protegido por token.
+  - Implementar transacción con `prisma.$transaction` para validar stock, decrementar y crear `Order` y `OrderItem`.
+  - Devolver 409 si stock insuficiente o 201 con orden creada.
+- Dependencias: Prisma y modelos de producto/variant.
+
+### Frontend: Reemplazar llamadas de MockAPI por Backend Express Propio
+- Tipo: feature
+- Estimación: 4 pts (≈ 16h)
+- Objetivo: Conectar React con el servidor local para desacoplar el proyecto de MockAPI.
+- Alcance:
+  - Modificar `frontend/src/services/products.js` (o migrarlo a `.ts`) para apuntar a `http://localhost:3000/api/products`.
+  - Soportar lectura de variantes, stock y talles provistos por PostgreSQL.
+  - Manejar credenciales (`credentials: "include"`) en todas las llamadas fetch/axios.
+- Dependencias: Endpoints de productos implementados en backend.
+
+### Frontend: Migrar estilos a TailwindCSS y Pulir UI/UX (Bugs de Maquetación)
+- Tipo: improvement / frontend
+- Estimación: 6 pts (≈ 24h)
+- Objetivo: Homogeneizar los estilos y resolver desbordes visibles.
+- Alcance:
+  - Instalar y configurar TailwindCSS con Vite.
+  - Corregir el layout del Carrito (texto de variantes y cantidades que se superpone con la imagen).
+  - Corregir el botón "Remove from favorite" en `/favorite` y rediseñar formulario admin.
+- Dependencias: Migración del frontend a `frontend/` carpeta.
+
+### Frontend: Checkout Simulado y Flujo de Compra en UI
+- Tipo: feature
+- Estimación: 4 pts (≈ 16h)
+- Objetivo: Implementar el flujo completo de compra y feedback en UI.
+- Alcance:
+  - Conectar el botón "Checkout" del carrito con `POST /api/orders`.
+  - Crear `/checkout/success` con número de orden y detalle.
+  - Limpiar estado del carrito y mostrar toast notifications en éxito/fracaso.
+- Dependencias: Endpoint de órdenes implementado.
+
+---
+
+## P1 - Alta prioridad
+
+### 4) Refactor: Separar controller → service → repository para auth
+- Tipo: refactor
+- Estimación: 5 pts (≈ 20h)
+- Descripción: Introducir capa `service` y `repository` para facilitar testing.
+- Contexto: Lógica actual concentrada y no separada.
+- Alcance: Crear `auth.service.ts`, `user.repository.ts`, adaptar controladores.
+- Dependencias: Persistance de usuarios y migración a TS.
+- Criterios de aceptación: Código modularizado; puntos de mocking disponibles.
+- DoD: Controladores delegan en services; servicios delegan en repos.
+- Labels: `refactor`, `testable`
+
+### 5) Tests: Configurar runner y añadir tests unitarios/E2E para auth
+- Tipo: test
+- Estimación: 6 pts (≈ 24h)
+- Descripción: Configurar Vitest/Jest + supertest y escribir tests para login, requireAuth y register.
+- Contexto: No hay tests actualmente.
+- Alcance: Configurar test runner, añadir tests unitarios y E2E.
+- Dependencias: Refactor en capas y persistencia.
+- Criterios de aceptación: `npm test` ejecuta tests; casos positivos/negativos cubiertos.
+- DoD: CI localizable y tests documentados.
+- Labels: `tests`, `ci`
+
+### 6) Logging y manejo centralizado de errores
+- Tipo: mejora/infra
+- Estimación: 3 pts (≈ 12h)
+- Descripción: Añadir middleware global de errores y logger (winston/pino) con niveles dev/prod.
+- Contexto: Errores actuales pueden filtrar detalles (e.g., requireAuth).
+- Alcance: Implementar logger y middleware; actualizar `requireAuth` para no filtrar stack traces.
+- Dependencias: Ninguna estricta, recomendado antes de producción.
+- Criterios: Errores devueltos con códigos adecuados; logs con niveles.
+- DoD: Logger configurado y middleware funcionando.
+- Labels: `logging`, `infra`, `security`
+
+### 7) CORS configurable via env
+- Tipo: mejora
+- Estimación: 1 pt (≈ 4h)
+- Descripción: Leer `CORS_ORIGIN` de variables de entorno y soportar lista.
+- Archivos: `backend/src/app.js`
+- Dependencias: config module
+- Criterios: Cambiar env actualiza origen.
+- DoD: Documentado en `.env.example`.
+- Labels: `config`, `security`
+
+---
+
+## P2 - Media
+
+### 8) Evitar operaciones síncronas en import (bcrypt.hashSync)
+- Tipo: mejora / perf
+- Estimación: 1 pt (≈ 4h)
+- Descripción: Eliminar `bcrypt.hashSync` en tiempo de import; usar valor precomputado o hashing asíncrono en inicialización.
+- Archivos: `backend/src/modules/auth/auth.service.js`
+- Dependencias: persistencia de usuarios
+- Criterios: No hashing síncrono en imports.
+- DoD: Startup sin operaciones bloqueantes.
+- Labels: `perf`, `bug`
+
+### 9) Docs: `docs/API.md` + README fixes (.env vars, endpoints)
+- Tipo: docs
+- Estimación: 2 pts (≈ 8h)
+- Descripción: Documentar variables de entorno, endpoints auth y ejemplos curl; corregir README para reflejar `frontend` carpeta.
+- Archivos: `README.md`, `docs/API.md`
+- Dependencias: cambios en endpoints/vars
+- Criterios: Seguir docs permite levantar backend y probar endpoints.
+- DoD: docs añadidos y referenciados.
+- Labels: `docs`, `onboarding`
+
+### 10) Feature: Añadir endpoint POST /api/auth/logout
+- Tipo: feature
+- Estimación: 1 pt (≈ 4h)
+- Descripción: Endpoint que borre cookie `token` y finalice sesión.
+- Archivos: `backend/src/modules/auth/auth.controller.js`, `auth.routes.js`
+- Dependencias: cookie settings env
+- Criterios: Llamar endpoint borra cookie y devuelve 200.
+- DoD: Endpoint implementado y documentado.
+- Labels: `feature`, `backend`
+
+---
+
+## P3 - Bajo
+
+### 11) Revisión frontend: lazy-load y optimización de assets
+- Tipo: mejora/ux
+- Estimación: 3 pts (≈ 12h)
+- Descripción: Revisar bundling y lazy-load para reducir TTFB y bundle size.
+- Archivos: `src/components`, `src/assets`
+- Labels: `frontend`, `perf`, `ux`
+
+### 12) Deployment docs: opciones gratis (GH Pages, Vercel, Netlify, Supabase free)
+- Tipo: docs
+- Estimación: 1 pt (≈ 4h)
+- Descripción: Documentar opciones gratuitas y pasos de despliegue para frontend y backend.
+- Archivos: `README.md`
+- Labels: `docs`, `deploy`
+
+---
+
+## Tareas menores / Housekeeping
+- Fix ESLint for scripts/create_issues.js (done).
+- Add `.env.example` with `JWT_SECRET`, `PORT`, `CORS_ORIGIN`, `NODE_ENV` (1 pt).
+- Add CI workflow (lint + tests) (3 pts).
+
+---
+
+Si querés, genero ahora los archivos de Issue drafts en `.github/ISSUES/` (tengo eso en la siguiente acción) y luego te muestro el backlog completo en formato corto o con estimaciones en horas.
 </file>
 
 <file path="eslint.config.js">
