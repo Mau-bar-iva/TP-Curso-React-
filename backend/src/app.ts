@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./modules/auth/auth.routes.js";
+import orderRoutes from "./modules/order/order.routes.js";
 import logger from "./utils/logger.js";
 import { errorHandler, notFoundHandler } from "./middleware/error.middleware.js";
 
@@ -24,6 +25,8 @@ app.use(cookieParser());
 
 // Rutas de autenticación
 app.use("/api/auth", authRoutes);
+// Rutas de órdenes
+app.use("/api/orders", orderRoutes);
 
 /* ---------- Ruta de prueba ---------- */
 app.get("/", (req, res) => {

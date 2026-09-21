@@ -25,6 +25,7 @@ model Product {
   title       String
   description String?
   price       Float
+  stock       Int               @default(0)
   sku         String?           @unique
   variants    ProductVariant[]
   favorites   Favorite[]
@@ -39,6 +40,7 @@ model ProductVariant {
   productId Int
   name      String
   price     Float
+  stock     Int     @default(0)
   sku       String?  @unique
 }
 
