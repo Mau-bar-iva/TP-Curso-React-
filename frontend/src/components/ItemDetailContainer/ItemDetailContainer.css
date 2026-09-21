@@ -1,0 +1,46 @@
+.detail-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 2.5rem clamp(1rem, 6vw, 7.5rem);
+    width: 100%;
+    gap: 3.5rem;
+}
+
+.count-container {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-top: 20px;
+}
+
+.suggest-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.suggest-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #221D17;
+    margin: 0;
+    border-top: 1px solid #E7E1D6;
+    padding-top: 2rem;
+}
+
+@media (width < 768px) {
+    .detail-container {
+        gap: 2.5rem;
+        padding: 1.5rem 1rem;
+    }
+
+    .suggest-title {
+        font-size: 1.3rem;
+    }
+}

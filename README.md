@@ -1,23 +1,34 @@
 # Proyecto
 
+## Estructura
+
+- `backend/`: API Express escrita en TypeScript.
+- `frontend/`: aplicación React + Vite.
+
 ## Cómo levantar el proyecto
 
-1. Instala las dependencias del backend:
+1. Instala dependencias del backend:
    ```bash
    cd backend
    npm install
    ```
 
-2. Crea tu archivo de variables de entorno a partir del ejemplo:
+2. Instala dependencias del frontend:
    ```bash
-   copy .env.example .env
+   cd ../frontend
+   npm install
+   ```
+
+3. Crea el archivo de entorno del backend:
+   ```bash
+   cp .env.example .env
    ```
    En PowerShell:
    ```powershell
    Copy-Item .env.example .env
    ```
 
-3. Ajusta los valores en `backend/.env`:
+4. Ajusta los valores en `backend/.env`:
    ```env
    PORT=3000
    JWT_SECRET=cambia_esto_por_un_secreto_largo_y_aleatorio
@@ -25,17 +36,35 @@
    CORS_ORIGIN=http://localhost:5173
    ```
 
-4. Levanta el backend:
+5. Levanta el backend:
    ```bash
    cd backend
    npm run dev
    ```
 
-5. En otra terminal, levanta el frontend:
+6. En otra terminal, levanta el frontend:
    ```bash
    cd frontend
    npm run dev
    ```
+
+## Scripts por paquete
+
+### Backend
+```bash
+cd backend
+npm run dev
+npm run build
+npm run start
+```
+
+### Frontend
+```bash
+cd frontend
+npm run dev
+npm run build
+npm run preview
+```
 
 ## Seguridad
 
@@ -53,30 +82,6 @@
 
 > El archivo `.env` queda ignorado por Git y se distribuye como ejemplo mediante `backend/.env.example`.
 
-## Patch aplicado
+## Estado del refactor
 
-El backend ya no usa secretos hardcodeados. Se sustituyó la clave JWT y la contraseña del usuario admin por `process.env.JWT_SECRET` y `process.env.ADMIN_PASSWORD`. Además, se añadió `dotenv/config` al arrancar la app y se centralizó la configuración del puerto y origen CORS.
-
-Ejemplo:
-```env
-PORT=3000
-JWT_SECRET=mi_clave_super_secreta
-ADMIN_PASSWORD=MiPasswordSegura123
-CORS_ORIGIN=http://localhost:5173
-```
-
-### Pasos para reproducirlo
-
-1. Copia el ejemplo:
-   ```bash
-   cp backend/.env.example backend/.env
-   ```
-2. Edita `backend/.env` con tus valores reales.
-3. Arranca el backend:
-   ```bash
-   cd backend
-   npm run dev
-   ```
-4. Verifica que el login siga funcionando con el usuario admin usando la contraseña configurada en `.env`.
-
-> Si el proyecto se despliega en producción, usa variables reales del entorno del hosting y nunca versionees el archivo `.env`.
+El backend está migrado a TypeScript para arrancar con `tsx` y compilar con `tsc`. El frontend conserva la app actual en `frontend/` para mantener compatibilidad funcional y permitir que cada paquete tenga su propio flujo de desarrollo y build.

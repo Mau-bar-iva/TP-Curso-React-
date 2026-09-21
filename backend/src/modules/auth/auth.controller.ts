@@ -1,7 +1,8 @@
+import type { Request, Response } from "express";
 import { loginService } from "./auth.service.js";
 
-export async function login(req, res) {
-  const { email, password } = req.body;
+export async function login(req: Request, res: Response) {
+  const { email, password } = req.body as { email?: string; password?: string };
 
   if (!email || !password) {
     return res.status(400).json({ message: "Datos incompletos" });
@@ -17,11 +18,11 @@ export async function login(req, res) {
     .cookie("token", user.token, {
       httpOnly: true,
       sameSite: "strict",
-      secure: false // true en producción con HTTPS
+      secure: false,
     })
     .json({
       id: user.id,
       email: user.email,
-      role: user.role
+      role: user.role,
     });
 }
