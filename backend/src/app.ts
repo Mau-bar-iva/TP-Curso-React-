@@ -3,6 +3,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./modules/auth/auth.routes.js";
 import orderRoutes from "./modules/order/order.routes.js";
+import productRoutes from "./modules/product/product.routes.js";
+import favoriteRoutes from "./modules/favorite/favorite.routes.js";
 import logger from "./utils/logger.js";
 import { errorHandler, notFoundHandler } from "./middleware/error.middleware.js";
 
@@ -27,6 +29,10 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 // Rutas de órdenes
 app.use("/api/orders", orderRoutes);
+// Rutas de productos
+app.use("/api/products", productRoutes);
+// Rutas de favoritos
+app.use("/api/favorites", favoriteRoutes);
 
 /* ---------- Ruta de prueba ---------- */
 app.get("/", (req, res) => {
