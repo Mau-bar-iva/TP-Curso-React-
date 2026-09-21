@@ -1,5 +1,4 @@
 /* eslint-env node */
-/* global process */
 
 const token = process.env.GITHUB_TOKEN;
 if (!token) {

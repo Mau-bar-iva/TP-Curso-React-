@@ -4,12 +4,13 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./modules/auth/auth.routes.js";
 
 const app = express();
+const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:5173";
 
 /* ---------- Middlewares globales ---------- */
 
 // Permite que React se comunique con el backend
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: corsOrigin,
   credentials: true
 }));
 
