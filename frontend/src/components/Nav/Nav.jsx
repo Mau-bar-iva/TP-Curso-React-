@@ -9,6 +9,8 @@ import searchIcon from "../../assets/search.svg";
 import closeIcon from "../../assets/close.svg";
 import MenuIcon from "../../assets/menu.svg";
 import ResultSearch from "../ResultSearch/ResultSearch.jsx"
+import { useAuthContext } from "../../context/AuthContext/useAuthContext";
+import { useNavigate } from "react-router-dom";
 
 
 export const Nav = () => {
@@ -16,6 +18,8 @@ export const Nav = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("")
   const [openMenu, setOpenMenu] = useState(false)
   const { getTotalItems } = useCartContext();
+  const { user, logout } = useAuthContext();
+  const navigate = useNavigate();
 
   const handleSearch = (e) => {
     setSearch(e.target.value)
@@ -43,6 +47,19 @@ export const Nav = () => {
             <img src={MenuIcon} alt="menu-icon" className="list-icon" />
           </button>
         </li>
+        {user && (
+          <li className="nav-list-item nav-list-desktop">
+            <button
+              className="logout-btn"
+              onClick={async () => {
+                await logout();
+                navigate("/", { replace: true });
+              }}
+            >
+              Cerrar sesión
+            </button>
+          </li>
+        )}
 
         {/* Nav en desktop */}
         <div className={`nav-list-desktop-container ${openMenu ? "open" : ""}`}>

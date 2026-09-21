@@ -6,11 +6,12 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+// Users don't need a role enum; use a boolean `isAdmin` to mark admin users
 
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
-  role      String   @default("user")
+  isAdmin   Boolean  @default(false)
   name      String?
   password  String
   favorites Favorite[]

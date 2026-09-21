@@ -9,7 +9,7 @@ interface UserWithRole {
   email: string;
   password: string;
   name?: string | null;
-  role?: string | null;
+  isAdmin?: boolean | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,7 +37,7 @@ export async function loginService(email: string, password: string) {
   const dbUser = user as unknown as UserWithRole;
 
   const token = jwt.sign(
-    { id: dbUser.id, email: dbUser.email, role: dbUser.role ?? "user" },
+    { id: dbUser.id, email: dbUser.email, isAdmin: !!dbUser.isAdmin },
     JWT_SECRET,
     { expiresIn: "1h" }
   );
@@ -45,7 +45,7 @@ export async function loginService(email: string, password: string) {
   return {
     id: user.id,
     email: user.email,
-    role: dbUser.role ?? "user",
+    isAdmin: !!dbUser.isAdmin,
     token,
   };
 }

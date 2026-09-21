@@ -16,7 +16,7 @@ const JWT_SECRET = getRequiredEnv("JWT_SECRET");
 export interface AuthenticatedUser {
   id: number;
   email: string;
-  role: string;
+  isAdmin?: boolean;
   iat?: number;
   exp?: number;
 }

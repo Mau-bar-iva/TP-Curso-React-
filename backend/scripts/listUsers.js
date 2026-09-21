@@ -3,6 +3,6 @@ import { PrismaClient } from '@prisma/client';
 (async () => {
     const prisma = new PrismaClient();
     const users = await prisma.user.findMany();
-    console.log(JSON.stringify(users, null, 2));
+    // debug log removed
     await prisma.$disconnect();
 })();

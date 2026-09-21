@@ -5,8 +5,7 @@ function RutaProtegida({ children, role }) {
     const { user, loading } = useAuthContext();
     const location = useLocation();
 
-    console.log("USER EN RUTA:", user);
-    console.log("ROLE ESPERADO:", role);
+    // debug logs removed
 
     if (loading) return null;
 

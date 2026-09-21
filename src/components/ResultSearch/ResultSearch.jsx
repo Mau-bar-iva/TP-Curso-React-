@@ -10,7 +10,7 @@ export default function ResultSearch({ search }) {
     useEffect(() => {
         getProducts()
             .then((data) => setProducts(data))
-            .catch((err) => console.log(err))
+            .catch(() => { })
     }, [])
 
     useEffect(() => {
