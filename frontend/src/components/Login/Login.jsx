@@ -27,9 +27,13 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const success = await login(userForm.email, userForm.password);
-    if (success) {
-      navigate("/admin/alta-productos");
+    const userData = await login(userForm.email, userForm.password);
+    if (userData) {
+      if (userData.role === "admin") {
+        navigate(from || "/admin/alta-productos", { replace: true });
+      } else {
+        navigate(from || "/", { replace: true });
+      }
     } else {
       alert("Credenciales incorrectas");
       setUserForm({ email: "", password: "" });

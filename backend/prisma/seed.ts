@@ -1,16 +1,36 @@
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcrypt'
+
 const prisma = new PrismaClient()
 
 async function main() {
+    const passwordHash = await bcrypt.hash('password123', 10)
     const user = await prisma.user.upsert({
         where: { email: 'alice@example.com' },
         update: {},
         create: {
             email: 'alice@example.com',
             name: 'Alice',
-            password: 'password123'
+            password: passwordHash
         }
     })
+
+    const adminHash = await bcrypt.hash('adminpass123', 10)
+    const admin = await prisma.user.upsert({
+        where: { email: 'admin@example.com' },
+        update: {},
+        create: {
+            email: 'admin@example.com',
+            name: 'Admin',
+            password: adminHash,
+            // role field may be optional in the generated types, but exists in DB
+            // use direct query to ensure role is set when creating
+        }
+    })
+    // ensure admin role is set (raw SQL to avoid typing issues)
+    await prisma.$executeRaw`
+      UPDATE "User" SET role = 'admin' WHERE email = 'admin@example.com'
+    `
 
     const product1 = await prisma.product.upsert({
         where: { sku: 'TSHIRT-001' },

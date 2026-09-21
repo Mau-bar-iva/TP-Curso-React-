@@ -26,3 +26,15 @@ export async function login(req: Request, res: Response) {
       role: user.role,
     });
 }
+
+// Registration is disabled: users are seeded for demo purposes.
+
+export function logout(req: Request, res: Response) {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: false,
+  });
+
+  res.status(204).send();
+}
