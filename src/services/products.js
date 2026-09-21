@@ -1,4 +1,4 @@
-const BASE_URL = "https://68cda302da4697a7f30695ae.mockapi.io/productos";
+const BASE_URL = "/api/products";
 
 export const createProduct = async (product) => {
   const res = await fetch(BASE_URL, {
@@ -23,7 +23,7 @@ export const getProducts = async (category) => {
     url = `${BASE_URL}?category=${category}`;
   }
 
-  const res = await fetch(url);
+  const res = await fetch(url, { credentials: "include" });
   if (!res.ok) {
     throw new Error("No se pudieron obtener los productos");
   }
@@ -42,7 +42,7 @@ export const getProducts = async (filters = {}) => {
 
   const url = `${BASE_URL}?${params.toString()}`;
 
-  const res = await fetch(url);
+  const res = await fetch(url, { credentials: "include" });
 
   if (!res.ok) {
     throw new Error("No se pudieron obtener los productos");
@@ -67,7 +67,7 @@ export const getCollections = async (collection) => {
 };
 
 export const getProductById = async (id) => {
-  const res = await fetch(`${BASE_URL}?id=${id}`);
+  const res = await fetch(`${BASE_URL}?id=${id}`, { credentials: "include" });
 
   if (!res.ok) {
     throw new Error("No se pudo obtener el producto");

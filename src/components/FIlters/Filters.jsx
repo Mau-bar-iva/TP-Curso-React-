@@ -4,20 +4,47 @@ import { useState } from "react";
 import closeIcon from "../../assets/close.svg";
 
 export default function Filters({ products, setFilters }) {
-    const colors = [...new Set(products.map(p => p.variants[0].color))];
-    const brands = [...new Set(products.map(p => p.brand))];
-    const sizes = [...new Set(products.map(p => p.variants[0].sizes[0]))];
+    const colors = [
+        ...new Set(
+            (Array.isArray(products) ? products : [])
+                .flatMap((p) => Array.isArray(p?.variants) ? p.variants.map((v) => v?.color).filter(Boolean) : [])
+        )
+    ];
+
+    const brands = [
+        ...new Set(
+            (Array.isArray(products) ? products : [])
+                .map((p) => p?.brand)
+                .filter(Boolean)
+        )
+    ];
+
+    const sizes = [
+        ...new Set(
+            (Array.isArray(products) ? products : [])
+                .flatMap((p) =>
+                    Array.isArray(p?.variants)
+                        ? p.variants.flatMap((v) => (Array.isArray(v?.sizes) ? v.sizes : [])).filter(Boolean)
+                        : []
+                )
+        )
+    ];
+
     const [openFilters, setOpenFilters] = useState(false);
 
     const handleCheckBox = (e) => {
         const { name, value, checked } = e.target;
 
-        setFilters(prev => ({
-            ...prev,
-            [name]: checked
-                ? [...prev[name], value]
-                : prev[name].filter(v => v !== value)
-        }));
+        setFilters(prev => {
+            const currentValues = prev?.[name] ?? [];
+
+            return {
+                ...prev,
+                [name]: checked
+                    ? [...currentValues, value]
+                    : currentValues.filter(v => v !== value)
+            };
+        });
     }
 
     return (
