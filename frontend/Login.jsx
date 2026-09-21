@@ -13,7 +13,7 @@ export default function Login() {
 
   useEffect(() => {
     if (user) {
-      if (user.role === "admin") {
+      if (user.isAdmin) {
         navigate(from || "/admin/alta-productos", { replace: true });
       } else {
         navigate(from || "/", { replace: true });

@@ -167,58 +167,65 @@
         transition: transform 0.35s ease-in-out;
     }
 
-    .nav-list-desktop-container.open {
-        transform: translateX(0);
+    .logout-btn {
+        background: transparent;
+        border: 1px solid #ccc;
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+
+        .nav-list-desktop-container.open {
+            transform: translateX(0);
+        }
+
+        .nav-list-desktop {
+            height: 10%;
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+        .nav-list-desktop-container .nav-list-desktop a {
+            color: #fff;
+            font-size: 1.5rem;
+        }
+
+        .nav-list-searchbar {
+            height: 7%;
+            order: -1;
+            padding: 0;
+        }
+
+        .searchbar-container {
+            height: 100%;
+            width: 100%;
+            align-items: center;
+            padding: 0;
+            overflow: hidden;
+            padding: 4px 10px;
+            position: relative;
+        }
+
+        .searchbar {
+            height: 100%;
+            width: 9rem;
+        }
+
+        .searchbar::placeholder {
+            font-size: 1rem;
+        }
+
+        .searchbar-container img {
+            height: 80%;
+            width: auto;
+        }
+
+
+
+        .favorite-icon-container {
+            order: 2;
+        }
+
+        .carrito-icon-container {
+            order: 1;
+        }
     }
-
-    .nav-list-desktop {
-        height: 10%;
-        width: 100%;
-        justify-content: flex-start;
-    }
-
-    .nav-list-desktop-container .nav-list-desktop a {
-        color: #fff;
-        font-size: 1.5rem;
-    }
-
-    .nav-list-searchbar {
-        height: 7%;
-        order: -1;
-        padding: 0;
-    }
-
-    .searchbar-container {
-        height: 100%;
-        width: 100%;
-        align-items: center;
-        padding: 0;
-        overflow: hidden;
-        padding: 4px 10px;
-        position: relative;
-    }
-
-    .searchbar {
-        height: 100%;
-        width: 9rem;
-    }
-
-    .searchbar::placeholder {
-        font-size: 1rem;
-    }
-
-    .searchbar-container img {
-        height: 80%;
-        width: auto;
-    }
-
-
-
-    .favorite-icon-container {
-        order: 2;
-    }
-
-    .carrito-icon-container {
-        order: 1;
-    }
-}

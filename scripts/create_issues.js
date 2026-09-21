@@ -91,11 +91,10 @@ const issues = [
     for (const issue of issues) {
         try {
             if (dryRun) {
-                console.log(`Dry run - would create: ${issue.title}`);
-                console.log(JSON.stringify({ title: issue.title, body: issue.body }, null, 2));
+                // dry run - skipping network calls
                 continue;
             }
-            console.log(`Creating: ${issue.title}`);
+            // creating issue
             const res = await fetch(api, {
                 method: 'POST',
                 headers: {
@@ -109,7 +108,7 @@ const issues = [
             if (!res.ok) {
                 console.error('Failed:', data);
             } else {
-                console.log('Created:', { number: data.number, url: data.html_url });
+                // success
             }
         } catch (err) {
             console.error('Error creating issue', err);

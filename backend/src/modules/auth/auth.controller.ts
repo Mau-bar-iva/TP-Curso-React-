@@ -23,7 +23,7 @@ export async function login(req: Request, res: Response) {
     .json({
       id: user.id,
       email: user.email,
-      role: user.role,
+      isAdmin: user.isAdmin,
     });
 }
 

@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./modules/auth/auth.routes.js";
+import logger from "./utils/logger.js";
+import { errorHandler, notFoundHandler } from "./middleware/error.middleware.js";
 
 const app = express();
 const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:5173";
@@ -26,6 +28,18 @@ app.use("/api/auth", authRoutes);
 /* ---------- Ruta de prueba ---------- */
 app.get("/", (req, res) => {
   res.send("API OK");
+});
+
+// 404 handler
+app.use(notFoundHandler);
+
+// Global error handler
+app.use(errorHandler);
+
+// basic request logging
+app.use((req, _res, next) => {
+  logger.info(`${req.method} ${req.path}`);
+  next();
 });
 
 export default app;

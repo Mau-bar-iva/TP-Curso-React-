@@ -5,7 +5,6 @@ import "./favorite.css"
 
 export default function Favorite() {
     const { favoriteItems, removeFromFavorite } = useFavoriteContext();
-    console.log(favoriteItems)
 
     const handleRemove = (e, id) => {
         e.preventDefault();

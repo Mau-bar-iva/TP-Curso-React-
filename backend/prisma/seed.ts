@@ -4,16 +4,15 @@ import bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
 
 async function main() {
-    const passwordHash = await bcrypt.hash('password123', 10)
-    const user = await prisma.user.upsert({
-        where: { email: 'alice@example.com' },
-        update: {},
-        create: {
-            email: 'alice@example.com',
-            name: 'Alice',
-            password: passwordHash
-        }
-    })
+    // migrate any existing role column to isAdmin boolean if present
+    try {
+        await prisma.$executeRaw`ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "isAdmin" BOOLEAN DEFAULT false`;
+        await prisma.$executeRaw`UPDATE "User" SET "isAdmin" = CASE WHEN LOWER(role) = 'admin' THEN true ELSE false END WHERE role IS NOT NULL`;
+        // drop old role column if exists
+        await prisma.$executeRaw`ALTER TABLE "User" DROP COLUMN IF EXISTS role`;
+    } catch (e) {
+        // ignore if role column doesn't exist or DB already updated
+    }
 
     const adminHash = await bcrypt.hash('adminpass123', 10)
     const admin = await prisma.user.upsert({
@@ -23,14 +22,9 @@ async function main() {
             email: 'admin@example.com',
             name: 'Admin',
             password: adminHash,
-            // role field may be optional in the generated types, but exists in DB
-            // use direct query to ensure role is set when creating
+            isAdmin: true
         }
     })
-    // ensure admin role is set (raw SQL to avoid typing issues)
-    await prisma.$executeRaw`
-      UPDATE "User" SET role = 'admin' WHERE email = 'admin@example.com'
-    `
 
     const product1 = await prisma.product.upsert({
         where: { sku: 'TSHIRT-001' },
@@ -55,11 +49,11 @@ async function main() {
         }
     })
 
-    await prisma.favorite.create({ data: { userId: user.id, productId: product1.id } })
+    await prisma.favorite.create({ data: { userId: admin.id, productId: product1.id } })
 
     const order = await prisma.order.create({
         data: {
-            userId: user.id,
+            userId: admin.id,
             total: 29.98,
             items: {
                 create: [{ productId: product1.id, quantity: 1, unitPrice: 19.99 }, { productId: product2.id, quantity: 1, unitPrice: 9.99 }]
@@ -67,7 +61,7 @@ async function main() {
         }
     })
 
-    console.log({ user, product1, product2, order })
+    // debug logs removed
 }
 
 main()

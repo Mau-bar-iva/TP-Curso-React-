@@ -13,7 +13,7 @@ export default function Login() {
 
   useEffect(() => {
     if (user) {
-      if (user.role === "admin") {
+      if (user.isAdmin) {
         navigate(from || "/admin/alta-productos", { replace: true });
       } else {
         navigate(from || "/", { replace: true });
@@ -29,7 +29,7 @@ export default function Login() {
 
     const userData = await login(userForm.email, userForm.password);
     if (userData) {
-      if (userData.role === "admin") {
+      if (userData.isAdmin) {
         navigate(from || "/admin/alta-productos", { replace: true });
       } else {
         navigate(from || "/", { replace: true });

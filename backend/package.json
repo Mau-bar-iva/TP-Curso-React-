@@ -11,6 +11,7 @@
     "prisma:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "winston": "^3.9.0",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.2.6",
     "cors": "^2.8.5",
@@ -20,6 +21,7 @@
     "@prisma/client": "^5.10.1"
   },
   "devDependencies": {
+    "@types/winston": "^2.4.4",
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.19",
