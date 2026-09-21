@@ -26,40 +26,81 @@ async function main() {
         }
     })
 
-    const product1 = await prisma.product.upsert({
-        where: { sku: 'TSHIRT-001' },
-        update: {},
-        create: {
-            title: 'T-Shirt',
-            description: 'Comfortable cotton t-shirt',
-            price: 19.99,
-            sku: 'TSHIRT-001',
-            variants: { create: [{ name: 'S', price: 19.99 }, { name: 'M', price: 19.99 }] }
+    const categories = ['men', 'women', 'kids'];
+    const colors = ['Black', 'White', 'Navy', 'Beige', 'Forest', 'Sand'];
+    const sizes = ['XS', 'S', 'M', 'L', 'XL'];
+    const brands = ['ModeaVelour', 'Aster', 'Northline'];
+
+    const createdProducts = [];
+
+    for (const category of categories) {
+        for (let i = 1; i <= 10; i++) {
+            const brand = brands[(i + category.length) % brands.length];
+            const sku = `${category.substring(0, 3).toUpperCase()}-${String(i).padStart(3, '0')}`;
+            const title = `${brand} ${category} Product ${i}`;
+            const description = `Modern ${category} essentials by ${brand}.`;
+            const imageUrl = `/assets/${category}-product-${i}.jpg`;
+            const basePrice = 29.99 + (i % 5) * 5;
+
+            const product = await prisma.product.upsert({
+                where: { sku },
+                update: {
+                    title,
+                    description,
+                    category,
+                    imageUrl,
+                    price: basePrice,
+                    stock: 50,
+                },
+                create: {
+                    title,
+                    description,
+                    category,
+                    imageUrl,
+                    price: basePrice,
+                    sku,
+                    stock: 50,
+                    variants: {
+                        create: [
+                            {
+                                name: `${colors[i % colors.length]} / ${sizes[0]}`,
+                                price: basePrice,
+                                stock: 50,
+                            },
+                            {
+                                name: `${colors[(i + 1) % colors.length]} / ${sizes[2]}`,
+                                price: basePrice + 5,
+                                stock: 20,
+                            }
+                        ]
+                    }
+                }
+            });
+
+            createdProducts.push(product);
         }
-    })
+    }
 
-    const product2 = await prisma.product.upsert({
-        where: { sku: 'MUG-001' },
-        update: {},
-        create: {
-            title: 'Mug',
-            description: 'Ceramic coffee mug',
-            price: 9.99,
-            sku: 'MUG-001'
-        }
-    })
+    // create a favorite for admin
+    if (createdProducts.length > 0) {
+        await prisma.favorite.create({ data: { userId: admin.id, productId: createdProducts[0].id } });
+    }
 
-    await prisma.favorite.create({ data: { userId: admin.id, productId: product1.id } })
-
-    const order = await prisma.order.create({
-        data: {
-            userId: admin.id,
-            total: 29.98,
-            items: {
-                create: [{ productId: product1.id, quantity: 1, unitPrice: 19.99 }, { productId: product2.id, quantity: 1, unitPrice: 9.99 }]
+    // create a sample order for admin
+    if (createdProducts.length >= 2) {
+        const order = await prisma.order.create({
+            data: {
+                userId: admin.id,
+                total: createdProducts[0].price + createdProducts[1].price,
+                items: {
+                    create: [
+                        { productId: createdProducts[0].id, quantity: 1, unitPrice: createdProducts[0].price },
+                        { productId: createdProducts[1].id, quantity: 1, unitPrice: createdProducts[1].price }
+                    ]
+                }
             }
-        }
-    })
+        });
+    }
 
     // debug logs removed
 }

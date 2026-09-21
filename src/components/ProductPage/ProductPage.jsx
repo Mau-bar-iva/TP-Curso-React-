@@ -82,20 +82,26 @@ export default function ProductPage({ type }) {
     }, [searchParams, type, collection])
 
     const filteredProducts = products.filter(product => {
-        //si el filtro de color y sizes del producto esta incluido en el estado filters.color entonces devuelve true y crea un array con esos productos
+        const productVariants = Array.isArray(product?.variants) ? product.variants : [];
+
         const matchColor =
             filters.color.length === 0 ||
-            product.variants.some(c => filters.color.includes(c.color));
+            productVariants.some(variant =>
+                variant?.color && filters.color.includes(variant.color)
+            );
 
         const matchSize =
             filters.sizes.length === 0 ||
-            product.variants.some(s => filters.sizes.includes(s.sizes[0]));
+            productVariants.some(variant =>
+                Array.isArray(variant?.sizes) &&
+                variant.sizes.some(size => filters.sizes.includes(size))
+            );
 
         const matchBrand =
             filters.brand.length === 0 ||
-            filters.brand.some(b =>
+            (product?.brand && filters.brand.some(b =>
                 b.toLowerCase() === product.brand.toLowerCase()
-            );
+            ));
 
         return matchColor && matchSize && matchBrand;
     });
