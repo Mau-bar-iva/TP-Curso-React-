@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import logger from "../../utils/logger.js";
 
 function getRequiredEnv(name: string): string {
   const value = process.env[name];
@@ -29,14 +30,27 @@ export function requireAuth(req: AuthenticatedRequest, res: Response, next: Next
   const token = req.cookies.token as string | undefined;
 
   if (!token) {
-    return res.status(401).send("Unauthorized");
+    logger.warn("Unauthorized access attempt: token missing", {
+      path: req.path,
+      method: req.method,
+    });
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
     const payload = jwt.verify(token, JWT_SECRET) as AuthenticatedUser;
     req.user = payload;
-    next();
-  } catch {
-    return res.status(401).send("Unauthorized");
+    return next();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Invalid token";
+
+    logger.error("Unauthorized access attempt: invalid token", {
+      path: req.path,
+      method: req.method,
+      reason: message,
+      stack: process.env.NODE_ENV === "production" ? undefined : error instanceof Error ? error.stack : undefined,
+    });
+
+    return res.status(401).json({ message: "Unauthorized" });
   }
 }
