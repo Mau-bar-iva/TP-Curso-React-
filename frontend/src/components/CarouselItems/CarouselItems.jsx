@@ -67,17 +67,17 @@ export default function CarouselItems({ children }) {
                 <Motion.button
                     type="button"
                     aria-label="Scroll left"
-                    whileHover={{ scale: 1.08 }}
-                    whileTap={{ scale: 0.96 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     transition={{ type: 'spring', stiffness: 280, damping: 18 }}
-                    className="absolute -left-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-stone-200 bg-white/90 text-stone-900 shadow-[0_10px_30px_rgba(0,0,0,0.08)] md:h-14 md:w-14"
+                    className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 z-30 flex h-12 w-12 items-center justify-center rounded-full border border-stone-200 bg-white shadow-lg shadow-black/8 transition-all hover:scale-105 active:scale-95"
                     onClick={() => scroll('left')}
                 >
-                    <img src={ChevronLeftIcon} alt="" className="h-5 w-5 md:h-6 md:w-6" />
+                    <img src={ChevronLeftIcon} alt="" className="h-5 w-5 text-stone-800" />
                 </Motion.button>
             )}
 
-            <div className="flex gap-4 overflow-x-auto scroll-smooth px-2 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] md:px-10 [&::-webkit-scrollbar]:hidden" ref={carouselRef}>
+            <div className="flex gap-4 overflow-x-auto scroll-smooth px-4 pb-2 md:px-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" ref={carouselRef}>
                 {children}
             </div>
 
@@ -85,13 +85,13 @@ export default function CarouselItems({ children }) {
                 <Motion.button
                     type="button"
                     aria-label="Scroll right"
-                    whileHover={{ scale: 1.08 }}
-                    whileTap={{ scale: 0.96 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     transition={{ type: 'spring', stiffness: 280, damping: 18 }}
-                    className="absolute -right-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-stone-200 bg-white/90 text-stone-900 shadow-[0_10px_30px_rgba(0,0,0,0.08)] md:h-14 md:w-14"
+                    className="absolute -right-4 md:-right-6 top-1/2 -translate-y-1/2 z-30 flex h-12 w-12 items-center justify-center rounded-full border border-stone-200 bg-white shadow-lg shadow-black/8 transition-all hover:scale-105 active:scale-95"
                     onClick={() => scroll('right')}
                 >
-                    <img src={ChevronRightIcon} alt="" className="h-5 w-5 md:h-6 md:w-6" />
+                    <img src={ChevronRightIcon} alt="" className="h-5 w-5 text-stone-800" />
                 </Motion.button>
             )}
         </div>

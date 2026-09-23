@@ -13,6 +13,7 @@ import { MainLayout } from "./layouts/MainLayout";
 import { AdminLayout } from "./layouts/AdminLayout.jsx";
 import Home from "./components/Home/Home.jsx";
 import OffersPage from "./components/OffersPage/OffersPage.jsx";
+import CheckoutSuccessPage from "./components/CheckoutSuccess/CheckoutSuccessPage.jsx";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/category" element={<ProductPage type="category" />} />
                 <Route path="/collection/:collection" element={<ProductPage type="collection" />} />
                 <Route path="/detail/:id" element={<ItemDetailContainer />} />
+                <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
                 <Route
                   path="/favorite"
                   element={
@@ -35,14 +37,7 @@ function App() {
                     </RutaProtegida>
                   }
                 />
-                <Route
-                  path="/carrito"
-                  element={
-                    <RutaProtegida>
-                      <Cart />
-                    </RutaProtegida>
-                  }
-                />
+                <Route path="/carrito" element={<Cart />} />
               </Route>
 
               <Route path="/admin" element={<AdminLayout />}>

@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useCartContext } from "../../context/CartContext/useCartContext";
+import { useFavoriteContext } from "../../context/FavoriteContext/useFavoriteContext";
 import carritoIcon from "../../assets/carrito.svg";
-import favoriteIcon from "../../assets/favorite.svg";
 import userIcon from "../../assets/user.svg";
 import searchIcon from "../../assets/search.svg";
 import closeIcon from "../../assets/close.svg";
@@ -16,6 +16,7 @@ export const Nav = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [openMenu, setOpenMenu] = useState(false);
   const { getTotalItems } = useCartContext();
+  const { getTotalFavorites } = useFavoriteContext();
   const { user, logout } = useAuthContext();
   const navigate = useNavigate();
 
@@ -59,11 +60,11 @@ export const Nav = () => {
 
           <li className="list-none md:flex">
             <div className="relative">
-              <label htmlFor="searchbar" className="flex items-center gap-2 rounded-full border border-stone-300 bg-white px-3 py-2 shadow-sm md:min-w-[220px]">
+              <label htmlFor="searchbar" className="flex items-center gap-2 rounded-full border border-stone-300 bg-white px-3 py-2 shadow-sm md:min-w-[240px]">
                 <input
                   type="text"
                   id="searchbar"
-                  placeholder="Search product..."
+                  placeholder="Buscar prendas..."
                   value={search}
                   onChange={handleSearch}
                   className="w-full border-none bg-transparent text-sm text-stone-800 outline-none placeholder:text-stone-400"
@@ -86,7 +87,7 @@ export const Nav = () => {
             <li className="list-none md:flex">
               <button
                 type="button"
-                className="rounded-full border border-stone-300 bg-stone-100 px-3 py-2 text-xs font-medium uppercase tracking-[0.18em] text-stone-700 transition hover:border-stone-400 hover:bg-stone-200"
+                className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500 transition hover:text-stone-900"
                 onClick={async () => {
                   await logout();
                   navigate("/", { replace: true });
@@ -100,17 +101,34 @@ export const Nav = () => {
 
         <li className="flex list-none items-center">
           <Link to="/admin" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white transition-all duration-200 hover:border-stone-400 hover:bg-stone-100 hover:shadow-sm">
-            <img src={userIcon} alt="" className="h-5 w-5 transition-transform duration-200 hover:scale-110" />
-          </Link>
-        </li>
-        <li className="flex list-none items-center">
-          <Link to="/favorite" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white transition-all duration-200 hover:border-stone-400 hover:bg-stone-100 hover:shadow-sm">
-            <img src={favoriteIcon} alt="" className="h-5 w-5 transition-transform duration-200 hover:scale-110" />
+            <img src={userIcon} alt="" className="h-[22px] w-[22px] transition-transform duration-200 hover:scale-110" />
           </Link>
         </li>
         <li className="relative flex list-none items-center">
+          <Link
+            to="/favorite"
+            aria-label="Ver favoritos"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white transition-all duration-200 hover:border-stone-400 hover:bg-stone-100 hover:shadow-sm"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className={`h-[22px] w-[22px] transition-all stroke-current fill-none duration-200 ${getTotalFavorites() > 0 ? "stroke-[#A63D34] fill-[#A63D34]" : ""}`}
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 20.25s-7.5-4.35-9.5-8.64C1.3 9.39 2.95 5.25 6.9 5.25c2.11 0 3.34 1.02 4.1 2.05.76-1.03 2-2.05 4.1-2.05 3.95 0 5.6 4.14 4.4 6.36-2 4.29-9.5 8.64-9.5 8.64Z" />
+            </svg>
+          </Link>
+          {getTotalFavorites() > 0 && (
+            <span className="absolute -right-2 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#E6D3BB] px-1 text-[10px] font-semibold text-stone-900 shadow-xs animate-scaleIn">
+              {getTotalFavorites()}
+            </span>
+          )}
+        </li>
+        <li className="relative flex list-none items-center">
           <Link to="/carrito" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white transition-all duration-200 hover:border-stone-400 hover:bg-stone-100 hover:shadow-sm">
-            <img src={carritoIcon} alt="" className="h-5 w-5 transition-transform duration-200 hover:scale-110" />
+            <img src={carritoIcon} alt="" className="h-[22px] w-[22px] transition-transform duration-200 hover:scale-110" />
           </Link>
           {getTotalItems() > 0 && (
             <span className="absolute -right-2 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#d7c8b6] px-1 text-[10px] font-semibold text-stone-900">
