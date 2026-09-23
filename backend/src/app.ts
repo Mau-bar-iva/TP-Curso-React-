@@ -9,15 +9,49 @@ import logger from "./utils/logger.js";
 import { errorHandler, notFoundHandler } from "./middleware/error.middleware.js";
 
 const app = express();
-const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:5173";
+
+const parseAllowedOrigins = (value?: string): string[] => {
+  if (!value) {
+    return ["http://localhost:5173"];
+  }
+
+  return value
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+};
+
+const allowedOrigins = parseAllowedOrigins(process.env.CORS_ORIGIN);
+const isProduction = process.env.NODE_ENV === "production";
+
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean | string) => void) => {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    const isLocalhostOrigin = /^https?:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin);
+
+    if (!isProduction && isLocalhostOrigin) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error("Origin not allowed by CORS"));
+  },
+  credentials: true,
+};
 
 /* ---------- Middlewares globales ---------- */
 
 // Permite que React se comunique con el backend
-app.use(cors({
-  origin: corsOrigin,
-  credentials: true
-}));
+app.use(cors(corsOptions));
 
 // Permite leer JSON del body
 app.use(express.json());
