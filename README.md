@@ -66,6 +66,10 @@ npm run build
 npm run preview
 ```
 
+## Documentación de API
+
+- Ver [docs/API.md](docs/API.md) para endpoints de auth, ejemplos de `curl` y variables de entorno.
+
 ## Seguridad
 
 - No subas el archivo `.env` al repositorio.
