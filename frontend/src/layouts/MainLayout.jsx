@@ -4,12 +4,12 @@ import { Footer } from "../components/Footer/Footer";
 
 export const MainLayout = () => {
     return (
-        <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", minWidth: "100vw" }}>
+        <div className="flex min-h-screen min-w-full flex-col bg-[#f7f4ef] text-stone-900">
             <Header />
-            <main id="home" style={{ flex: 1, paddingTop: "90px", marginBottom: "90px" }}>
+            <main id="home" className="flex-1 pt-[90px] pb-[90px] min-h-[620px]">
                 <Outlet />
             </main>
             <Footer />
         </div>
-    )
-}
+    );
+};

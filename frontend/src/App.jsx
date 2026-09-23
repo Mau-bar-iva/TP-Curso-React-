@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import "./App.css";
 import { AuthProvider } from "./context/AuthContext/AuthProvider.jsx";
 import { ItemDetailContainer } from "./components/ItemDetailContainer/ItemDetailContainer";
 import ProductPage from "./components/ProductPage/ProductPage.jsx";
@@ -13,7 +12,7 @@ import Login from "./components/Login/Login.jsx";
 import { MainLayout } from "./layouts/MainLayout";
 import { AdminLayout } from "./layouts/AdminLayout.jsx";
 import Home from "./components/Home/Home.jsx";
-import OffersPage from "./components/OffersPage/OffersPage.jsx"
+import OffersPage from "./components/OffersPage/OffersPage.jsx";
 
 function App() {
   return (
@@ -21,31 +20,21 @@ function App() {
       <BrowserRouter>
         <CartProvider>
           <FavoriteProvider>
-            {/* Dejamos fuera del Routes lo que queremos que no se vuelva a renderizar al navegar */}
             <Routes>
               <Route element={<MainLayout />}>
                 <Route index element={<Home />} />
-                <Route
-                  path="/offers"
-                  element={<OffersPage />}
-                />
-                <Route
-                  path="/category"
-                  element={<ProductPage type="category" />}
-                />
-                <Route
-                  path="/collection/:collection"
-                  element={<ProductPage type="collection" />}
-                />
-                <Route
-                  path="/detail/:id"
-                  element={<ItemDetailContainer />} />
+                <Route path="/offers" element={<OffersPage />} />
+                <Route path="/category" element={<ProductPage type="category" />} />
+                <Route path="/collection/:collection" element={<ProductPage type="collection" />} />
+                <Route path="/detail/:id" element={<ItemDetailContainer />} />
                 <Route
                   path="/favorite"
                   element={
                     <RutaProtegida>
                       <Favorite />
-                    </RutaProtegida>} />
+                    </RutaProtegida>
+                  }
+                />
                 <Route
                   path="/carrito"
                   element={
@@ -57,16 +46,17 @@ function App() {
               </Route>
 
               <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<Login />}></Route>
-                <Route path="alta-productos"
+                <Route index element={<Login />} />
+                <Route
+                  path="alta-productos"
                   element={
                     <RutaProtegida role="admin">
                       <ProductFormContainer />
                     </RutaProtegida>
-                  } />
+                  }
+                />
               </Route>
             </Routes>
-            {/* Dejamos fuera del Routes lo que queremos que no se vuelva a renderizar al navegar */}
           </FavoriteProvider>
         </CartProvider>
       </BrowserRouter>

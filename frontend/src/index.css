@@ -46,6 +46,19 @@ textarea {
     font: inherit;
 }
 
+button,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+    cursor: pointer;
+}
+
+button:disabled,
+input:disabled {
+    cursor: not-allowed;
+}
+
 ::selection {
     background: rgba(115, 83, 61, 0.2);
 }

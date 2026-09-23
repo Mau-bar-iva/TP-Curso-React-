@@ -4,8 +4,6 @@ import { validateProduct } from "../../../utils/validateProducts";
 import { uploadToImgbb } from "../../../services/uploadImage";
 import { createProduct } from "../../../services/products";
 
-import "../ProductFormContainer/ProductFormContainer.css";
-
 export const ProductFormContainer = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState("");
