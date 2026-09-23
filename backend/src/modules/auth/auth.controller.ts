@@ -29,12 +29,16 @@ export async function login(req: Request, res: Response) {
 
 // Registration is disabled: users are seeded for demo purposes.
 
-export function logout(req: Request, res: Response) {
+export function logout(_req: Request, res: Response) {
   res.clearCookie("token", {
     httpOnly: true,
     sameSite: "strict",
     secure: false,
+    path: "/",
   });
 
-  res.status(204).send();
+  return res.status(200).json({
+    success: true,
+    message: "Sesión cerrada correctamente",
+  });
 }

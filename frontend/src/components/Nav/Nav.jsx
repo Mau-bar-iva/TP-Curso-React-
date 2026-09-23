@@ -77,26 +77,11 @@ export const Nav = () => {
                   </button>
                 )}
               </label>
-              <div className="absolute left-1/2 top-full z-40 mt-2 -translate-x-1/2">
+              <div className="absolute right-0 top-full z-50 mt-3">
                 <ResultSearch search={debouncedSearch} />
               </div>
             </div>
           </li>
-
-          {user && (
-            <li className="list-none md:flex">
-              <button
-                type="button"
-                className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500 transition hover:text-stone-900"
-                onClick={async () => {
-                  await logout();
-                  navigate("/", { replace: true });
-                }}
-              >
-                Cerrar sesión
-              </button>
-            </li>
-          )}
         </div>
 
         <li className="flex list-none items-center">
@@ -136,6 +121,33 @@ export const Nav = () => {
             </span>
           )}
         </li>
+        {user && (
+          <li className="list-none md:flex">
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white px-2.5 py-2 uppercase tracking-[0.1em] text-stone-500 transition hover:border-stone-300 hover:text-stone-900"
+              onClick={async () => {
+                await logout();
+                navigate("/", { replace: true });
+              }}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="h-[16px] w-[16px] stroke-current"
+                fill="none"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <path d="M16 17l5-5-5-5" />
+                <path d="M21 12H9" />
+              </svg>
+              Logout
+            </button>
+          </li>
+        )}
       </ul>
     </nav>
   );
