@@ -22,10 +22,8 @@ export async function loginService(email: string, password: string) {
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) return null;
 
-  const dbUser = user as unknown as UserWithRole;
-
   const token = jwt.sign(
-    { id: dbUser.id, email: dbUser.email, isAdmin: !!dbUser.isAdmin },
+    { id: user.id, email: user.email, isAdmin: !!user.isAdmin },
     JWT_SECRET,
     { expiresIn: "1h" }
   );
@@ -33,11 +31,11 @@ export async function loginService(email: string, password: string) {
   return {
     id: user.id,
     email: user.email,
-    isAdmin: !!dbUser.isAdmin,
+    isAdmin: !!user.isAdmin,
     token,
   };
 }
 
-export async function registerService(email: string, password: string, name?: string) {
+export async function registerService(_email: string, _password: string, _name?: string) {
   throw new Error("Registration disabled: users are seeded for demo purposes.");
 }
