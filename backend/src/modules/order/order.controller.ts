@@ -10,7 +10,7 @@ export async function createOrderController(req: Request, res: Response) {
     }
 
     try {
-        const order = await createOrderService(user.id, items);
+        const order = await createOrderService(user?.id, items);
         return res.status(201).json(order);
     } catch (e: any) {
         if (e && e.code === "INSUFFICIENT_STOCK") {

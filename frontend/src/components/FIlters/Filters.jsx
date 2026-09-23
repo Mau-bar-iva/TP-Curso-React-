@@ -1,93 +1,182 @@
-import { useState } from 'react';
-import FilterIcon from '../../assets/filter.svg';
-import closeIcon from '../../assets/close.svg';
+import { useMemo } from 'react';
 
-export default function Filters({ products, setFilters }) {
-    const colors = [
-        ...new Set(
-            (Array.isArray(products) ? products : [])
-                .flatMap((p) => (Array.isArray(p?.variants) ? p.variants.map((v) => v?.color).filter(Boolean) : []))
-        ),
-    ];
+const getSwatchColor = (colorName) => {
+    const value = String(colorName || '').toLowerCase();
 
-    const brands = [
-        ...new Set((Array.isArray(products) ? products : []).map((p) => p?.brand).filter(Boolean)),
-    ];
+    if (value.includes('black')) return '#1b1b1b';
+    if (value.includes('white') || value.includes('ivory')) return '#F4EFE8';
+    if (value.includes('beige') || value.includes('sand') || value.includes('tan')) return '#C7A98B';
+    if (value.includes('brown') || value.includes('camel')) return '#8D6B4F';
+    if (value.includes('navy') || value.includes('blue')) return '#2D4266';
+    if (value.includes('olive') || value.includes('green')) return '#6A715A';
+    if (value.includes('red') || value.includes('coral')) return '#C86759';
+    if (value.includes('gray') || value.includes('grey')) return '#9EA3A1';
+    if (value.includes('pink')) return '#D9A4A0';
+    if (value.includes('gold')) return '#C6A15B';
+    return '#D8C7B2';
+};
 
-    const sizes = [
-        ...new Set(
-            (Array.isArray(products) ? products : [])
-                .flatMap((p) =>
-                    Array.isArray(p?.variants)
-                        ? p.variants.flatMap((v) => (Array.isArray(v?.sizes) ? v.sizes : [])).filter(Boolean)
-                        : []
-                )
-        ),
-    ];
+export default function Filters({
+    products = [],
+    selectedFilters = { color: [], sizes: [], brand: [] },
+    onToggleFilter,
+    mobile = false,
+}) {
+    const colors = useMemo(() => {
+        const map = new Map();
 
-    const [openFilters, setOpenFilters] = useState(false);
+        products.forEach((product) => {
+            const variants = Array.isArray(product?.variants) ? product.variants : [];
 
-    const handleCheckBox = (e) => {
-        const { name, value, checked } = e.target;
-
-        setFilters((prev) => {
-            const currentValues = prev?.[name] ?? [];
-
-            return {
-                ...prev,
-                [name]: checked ? [...currentValues, value] : currentValues.filter((v) => v !== value),
-            };
+            variants.forEach((variant) => {
+                const color = variant?.color;
+                if (!color) return;
+                map.set(color, (map.get(color) || 0) + 1);
+            });
         });
+
+        return [...map.entries()].map(([name, count]) => ({ name, count }));
+    }, [products]);
+
+    const brands = useMemo(() => {
+        const map = new Map();
+
+        products.forEach((product) => {
+            const brand = product?.brand;
+            if (!brand) return;
+            map.set(brand, (map.get(brand) || 0) + 1);
+        });
+
+        return [...map.entries()].map(([name, count]) => ({ name, count }));
+    }, [products]);
+
+    const sizes = useMemo(() => {
+        const map = new Map();
+
+        products.forEach((product) => {
+            const variants = Array.isArray(product?.variants) ? product.variants : [];
+
+            variants.forEach((variant) => {
+                const list = Array.isArray(variant?.sizes) ? variant.sizes : [];
+                list.forEach((size) => {
+                    if (!size) return;
+                    map.set(size, (map.get(size) || 0) + 1);
+                });
+            });
+        });
+
+        return [...map.entries()].map(([name, count]) => ({ name, count }));
+    }, [products]);
+
+    const handleToggle = (group, value) => {
+        if (onToggleFilter) onToggleFilter(group, value);
     };
 
-    const filterGroups = [
-        { title: 'Colors', name: 'color', values: colors },
-        { title: 'Brands', name: 'brand', values: brands },
-        { title: 'Sizes', name: 'sizes', values: sizes },
-    ];
+    const panelClass = mobile
+        ? 'space-y-5'
+        : 'space-y-6 rounded-[28px] border border-[#E7E1D6] bg-white p-4 shadow-[0_18px_42px_rgba(34,29,23,0.04)]';
 
     return (
-        <aside className="w-full">
-            <div className="mb-4 flex lg:hidden">
-                <button
-                    type="button"
-                    onClick={() => setOpenFilters(!openFilters)}
-                    className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white px-3 py-2 text-sm font-medium text-stone-700 shadow-sm"
-                >
-                    <img src={FilterIcon} alt="menu-icon" className="h-4 w-4" />
-                    Filters
-                </button>
+        <aside className={panelClass}>
+            <div className="flex items-center justify-between">
+                <h3 className="font-serif text-2xl text-[#221D17]">Filtros</h3>
             </div>
 
-            <div
-                className={`${openFilters ? 'fixed inset-x-0 bottom-0 z-50 grid max-h-[55vh] grid-cols-2 gap-4 rounded-t-[28px] bg-[#1e1d1b] p-4 text-white lg:static lg:grid lg:max-h-none lg:rounded-none lg:bg-transparent lg:p-0 lg:text-stone-900' : 'hidden lg:block'} `}
-            >
-                <div className="col-span-2 flex items-center justify-between lg:hidden">
-                    <h5 className="text-lg font-semibold">Filters</h5>
-                    <button type="button" className="rounded-full bg-white/10 p-2" onClick={() => setOpenFilters(false)}>
-                        <img src={closeIcon} alt="close-icon" className="h-4 w-4 invert" />
-                    </button>
+            <div className="space-y-5">
+                <div>
+                    <h4 className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-stone-500">
+                        Marcas
+                    </h4>
+                    <div className="space-y-2">
+                        {brands.length > 0 ? (
+                            brands.map(({ name, count }) => {
+                                const selected = selectedFilters.brand?.includes(name);
+
+                                return (
+                                    <button
+                                        key={name}
+                                        type="button"
+                                        onClick={() => handleToggle('brand', name)}
+                                        className={`flex w-full items-center justify-between rounded-full border px-3 py-2 text-sm transition ${selected
+                                            ? 'border-[#221D17] bg-[#221D17] text-white'
+                                            : 'border-[#E7E1D6] bg-white text-stone-700 hover:border-stone-400'
+                                            }`}
+                                    >
+                                        <span>{name}</span>
+                                        <span className={selected ? 'text-white/80' : 'text-stone-400'}>({count})</span>
+                                    </button>
+                                );
+                            })
+                        ) : (
+                            <p className="text-sm text-stone-500">Sin marcas disponibles</p>
+                        )}
+                    </div>
                 </div>
 
-                {filterGroups.map((group) => (
-                    <div key={group.title} className="space-y-3">
-                        <h5 className="text-sm font-semibold uppercase tracking-[0.14em] text-current lg:text-stone-700">{group.title}</h5>
-                        <ul className="space-y-2 text-sm">
-                            {group.values.map((value, index) => (
-                                <li key={`${group.title}-${index}`} className="flex items-center gap-2">
-                                    <input
-                                        type="checkbox"
-                                        name={group.name}
-                                        value={value}
-                                        onChange={handleCheckBox}
-                                        className="h-4 w-4 accent-stone-900"
-                                    />
-                                    <span className="text-current lg:text-stone-700">{value}</span>
-                                </li>
-                            ))}
-                        </ul>
+                <div>
+                    <h4 className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-stone-500">
+                        Colores
+                    </h4>
+                    <div className="flex flex-wrap gap-2.5">
+                        {colors.length > 0 ? (
+                            colors.map(({ name, count }) => {
+                                const selected = selectedFilters.color?.includes(name);
+
+                                return (
+                                    <button
+                                        key={name}
+                                        type="button"
+                                        onClick={() => handleToggle('color', name)}
+                                        className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-2 transition ${selected
+                                            ? 'border-[#221D17] bg-[#221D17] text-white'
+                                            : 'border-[#E7E1D6] bg-white text-stone-700 hover:border-stone-400'
+                                            }`}
+                                        title={name}
+                                    >
+                                        <span
+                                            className="h-4 w-4 rounded-full border border-stone-300"
+                                            style={{ backgroundColor: getSwatchColor(name) }}
+                                        />
+                                        <span className="text-xs">{name}</span>
+                                        <span className={selected ? 'text-white/80' : 'text-stone-400'}>({count})</span>
+                                    </button>
+                                );
+                            })
+                        ) : (
+                            <p className="text-sm text-stone-500">Sin colores disponibles</p>
+                        )}
                     </div>
-                ))}
+                </div>
+
+                <div>
+                    <h4 className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-stone-500">
+                        Talles
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                        {sizes.length > 0 ? (
+                            sizes.map(({ name, count }) => {
+                                const selected = selectedFilters.sizes?.includes(name);
+
+                                return (
+                                    <button
+                                        key={name}
+                                        type="button"
+                                        onClick={() => handleToggle('sizes', name)}
+                                        className={`flex h-10 w-10 items-center justify-center rounded-[10px] border text-sm transition ${selected
+                                            ? 'border-[#221D17] bg-[#221D17] text-white'
+                                            : 'border-[#E7E1D6] bg-white text-stone-700 hover:border-stone-400'
+                                            }`}
+                                        title={`${name} (${count})`}
+                                    >
+                                        {name}
+                                    </button>
+                                );
+                            })
+                        ) : (
+                            <p className="text-sm text-stone-500">Sin talles disponibles</p>
+                        )}
+                    </div>
+                </div>
             </div>
         </aside>
     );

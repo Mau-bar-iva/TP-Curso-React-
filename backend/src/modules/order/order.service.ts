@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
 export interface OrderItemInput {
@@ -7,8 +8,29 @@ export interface OrderItemInput {
     quantity: number;
 }
 
-export async function createOrderService(userId: number, items: OrderItemInput[]) {
+const GUEST_EMAIL = "guest@modeavelour.local";
+
+async function getGuestUserId(tx: any) {
+    const guestUser = await tx.user.upsert({
+        where: { email: GUEST_EMAIL },
+        update: {},
+        create: {
+            email: GUEST_EMAIL,
+            name: "Guest Customer",
+            password: await bcrypt.hash("guest-checkout-pass", 10),
+            isAdmin: false,
+        },
+    });
+
+    return guestUser.id;
+}
+
+export async function createOrderService(userId: number | undefined, items: OrderItemInput[]) {
+    const resolvedUserId = userId ?? await prisma.$transaction(async (tx) => getGuestUserId(tx));
+
     return await prisma.$transaction(async (tx) => {
+        const finalUserId = userId ?? await getGuestUserId(tx);
+
         for (const it of items) {
             if (it.variantId) {
                 const variant = await tx.productVariant.findUnique({ where: { id: it.variantId } });
@@ -47,7 +69,7 @@ export async function createOrderService(userId: number, items: OrderItemInput[]
             return acc + (product!.price * it.quantity);
         }, Promise.resolve(0));
 
-        const order = await tx.order.create({ data: { userId, total, status: "confirmed" } });
+        const order = await tx.order.create({ data: { userId: finalUserId, total, status: "confirmed" } });
 
         for (const it of items) {
             const unitPrice = it.variantId ? (await tx.productVariant.findUnique({ where: { id: it.variantId } }))!.price : (await tx.product.findUnique({ where: { id: it.productId } }))!.price;
