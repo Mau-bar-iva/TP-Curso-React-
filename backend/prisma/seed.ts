@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import * as bcrypt from 'bcrypt'
+import { ADMIN_SEED } from '../src/data/adminSeed.js'
 
 const prisma = new PrismaClient()
 
@@ -14,14 +14,13 @@ async function main() {
         // ignore if role column doesn't exist or DB already updated
     }
 
-    const adminHash = await bcrypt.hash('adminpass123', 10)
     const admin = await prisma.user.upsert({
-        where: { email: 'admin@example.com' },
+        where: { email: ADMIN_SEED.email },
         update: {},
         create: {
-            email: 'admin@example.com',
-            name: 'Admin',
-            password: adminHash,
+            email: ADMIN_SEED.email,
+            name: ADMIN_SEED.name,
+            password: ADMIN_SEED.passwordHash,
             isAdmin: true
         }
     })
