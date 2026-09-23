@@ -1,22 +1,10 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { PrismaClient } from "@prisma/client";
 import { JWT_SECRET } from "../../config/index.js";
-
-const prisma = new PrismaClient();
-
-interface UserWithRole {
-  id: number;
-  email: string;
-  password: string;
-  name?: string | null;
-  isAdmin?: boolean | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { userRepository } from "./user.repository.js";
 
 export async function loginService(email: string, password: string) {
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await userRepository.findByEmail(email);
   if (!user) return null;
 
   const valid = await bcrypt.compare(password, user.password);
