@@ -1,18 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import logger from "../../utils/logger.js";
-
-function getRequiredEnv(name: string): string {
-  const value = process.env[name];
-
-  if (!value) {
-    throw new Error(`${name} no está definido. Añade la variable de entorno en backend/.env`);
-  }
-
-  return value;
-}
-
-const JWT_SECRET = getRequiredEnv("JWT_SECRET");
+import { JWT_SECRET, NODE_ENV } from "../../config/index.js";
 
 export interface AuthenticatedUser {
   id: number;
@@ -48,7 +37,7 @@ export function requireAuth(req: AuthenticatedRequest, res: Response, next: Next
       path: req.path,
       method: req.method,
       reason: message,
-      stack: process.env.NODE_ENV === "production" ? undefined : error instanceof Error ? error.stack : undefined,
+      stack: NODE_ENV === "production" ? undefined : error instanceof Error ? error.stack : undefined,
     });
 
     return res.status(401).json({ message: "Unauthorized" });

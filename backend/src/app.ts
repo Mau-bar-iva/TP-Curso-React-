@@ -7,22 +7,9 @@ import productRoutes from "./modules/product/product.routes.js";
 import favoriteRoutes from "./modules/favorite/favorite.routes.js";
 import logger from "./utils/logger.js";
 import { errorHandler, notFoundHandler } from "./middleware/error.middleware.js";
+import { allowedOrigins, isProduction } from "./config/index.js";
 
 const app = express();
-
-const parseAllowedOrigins = (value?: string): string[] => {
-  if (!value) {
-    return ["http://localhost:5173"];
-  }
-
-  return value
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean);
-};
-
-const allowedOrigins = parseAllowedOrigins(process.env.CORS_ORIGIN);
-const isProduction = process.env.NODE_ENV === "production";
 
 const corsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean | string) => void) => {
