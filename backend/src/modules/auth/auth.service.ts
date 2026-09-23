@@ -1,18 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-interface UserWithRole {
-  id: number;
-  email: string;
-  password: string;
-  name?: string | null;
-  isAdmin?: boolean | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { userRepository } from "./user.repository.js";
 
 function getRequiredEnv(name: string): string {
   const value = process.env[name];
@@ -24,20 +12,24 @@ function getRequiredEnv(name: string): string {
   return value;
 }
 
-const ADMIN_PASSWORD = getRequiredEnv("ADMIN_PASSWORD");
 const JWT_SECRET = getRequiredEnv("JWT_SECRET");
 
-export async function loginService(email: string, password: string) {
-  const user = await prisma.user.findUnique({ where: { email } });
+export interface AuthUserPayload {
+  id: number;
+  email: string;
+  isAdmin: boolean;
+  token: string;
+}
+
+export async function loginService(email: string, password: string): Promise<AuthUserPayload | null> {
+  const user = await userRepository.findByEmail(email);
   if (!user) return null;
 
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) return null;
 
-  const dbUser = user as unknown as UserWithRole;
-
   const token = jwt.sign(
-    { id: dbUser.id, email: dbUser.email, isAdmin: !!dbUser.isAdmin },
+    { id: user.id, email: user.email, isAdmin: !!user.isAdmin },
     JWT_SECRET,
     { expiresIn: "1h" }
   );
@@ -45,11 +37,11 @@ export async function loginService(email: string, password: string) {
   return {
     id: user.id,
     email: user.email,
-    isAdmin: !!dbUser.isAdmin,
+    isAdmin: !!user.isAdmin,
     token,
   };
 }
 
-export async function registerService(email: string, password: string, name?: string) {
+export async function registerService(_email: string, _password: string, _name?: string) {
   throw new Error("Registration disabled: users are seeded for demo purposes.");
 }
