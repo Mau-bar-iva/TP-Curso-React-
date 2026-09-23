@@ -1,4 +1,5 @@
 import winston from 'winston';
+import { NODE_ENV } from '../config/index.js';
 
 const { combine, timestamp, printf, colorize } = winston.format;
 
@@ -19,7 +20,7 @@ const prodFormat = combine(
 
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',
-    format: process.env.NODE_ENV === 'production' ? prodFormat : devFormat,
+    format: NODE_ENV === 'production' ? prodFormat : devFormat,
     transports: [new winston.transports.Console()],
 });
 

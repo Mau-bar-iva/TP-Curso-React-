@@ -1,28 +1,22 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { userRepository } from "./user.repository.js";
+import { PrismaClient } from "@prisma/client";
+import { JWT_SECRET } from "../../config/index.js";
 
-function getRequiredEnv(name: string): string {
-  const value = process.env[name];
+const prisma = new PrismaClient();
 
-  if (!value) {
-    throw new Error(`${name} no está definido. Añade la variable de entorno en backend/.env`);
-  }
-
-  return value;
-}
-
-const JWT_SECRET = getRequiredEnv("JWT_SECRET");
-
-export interface AuthUserPayload {
+interface UserWithRole {
   id: number;
   email: string;
-  isAdmin: boolean;
-  token: string;
+  password: string;
+  name?: string | null;
+  isAdmin?: boolean | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export async function loginService(email: string, password: string): Promise<AuthUserPayload | null> {
-  const user = await userRepository.findByEmail(email);
+export async function loginService(email: string, password: string) {
+  const user = await prisma.user.findUnique({ where: { email } });
   if (!user) return null;
 
   const valid = await bcrypt.compare(password, user.password);
