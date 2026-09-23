@@ -14,20 +14,19 @@ export async function login(req: Request, res: Response) {
     return res.status(401).json({ message: "Credenciales inválidas" });
   }
 
-  res
+  return res
     .cookie("token", user.token, {
       httpOnly: true,
       sameSite: "strict",
       secure: false,
     })
+    .status(200)
     .json({
       id: user.id,
       email: user.email,
       isAdmin: user.isAdmin,
     });
 }
-
-// Registration is disabled: users are seeded for demo purposes.
 
 export function logout(_req: Request, res: Response) {
   res.clearCookie("token", {
