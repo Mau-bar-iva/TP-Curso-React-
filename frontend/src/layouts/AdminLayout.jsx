@@ -1,11 +1,9 @@
 import { Outlet } from "react-router-dom";
-import "./AdminLayout.css";
 
 export const AdminLayout = () => {
     return (
-        <div className="adminLayout-container">
-            <Outlet/>
+        <div className="flex min-h-screen items-center justify-center bg-[#f7f4ef] px-4 py-8">
+            <Outlet />
         </div>
-            
-    )
-}
+    );
+};

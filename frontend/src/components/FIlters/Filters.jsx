@@ -1,22 +1,17 @@
-import "./Filters.css"
-import FilterIcon from "../../assets/filter.svg";
-import { useState } from "react";
-import closeIcon from "../../assets/close.svg";
+import { useState } from 'react';
+import FilterIcon from '../../assets/filter.svg';
+import closeIcon from '../../assets/close.svg';
 
 export default function Filters({ products, setFilters }) {
     const colors = [
         ...new Set(
             (Array.isArray(products) ? products : [])
-                .flatMap((p) => Array.isArray(p?.variants) ? p.variants.map((v) => v?.color).filter(Boolean) : [])
-        )
+                .flatMap((p) => (Array.isArray(p?.variants) ? p.variants.map((v) => v?.color).filter(Boolean) : []))
+        ),
     ];
 
     const brands = [
-        ...new Set(
-            (Array.isArray(products) ? products : [])
-                .map((p) => p?.brand)
-                .filter(Boolean)
-        )
+        ...new Set((Array.isArray(products) ? products : []).map((p) => p?.brand).filter(Boolean)),
     ];
 
     const sizes = [
@@ -27,7 +22,7 @@ export default function Filters({ products, setFilters }) {
                         ? p.variants.flatMap((v) => (Array.isArray(v?.sizes) ? v.sizes : [])).filter(Boolean)
                         : []
                 )
-        )
+        ),
     ];
 
     const [openFilters, setOpenFilters] = useState(false);
@@ -35,67 +30,65 @@ export default function Filters({ products, setFilters }) {
     const handleCheckBox = (e) => {
         const { name, value, checked } = e.target;
 
-        setFilters(prev => {
+        setFilters((prev) => {
             const currentValues = prev?.[name] ?? [];
 
             return {
                 ...prev,
-                [name]: checked
-                    ? [...currentValues, value]
-                    : currentValues.filter(v => v !== value)
+                [name]: checked ? [...currentValues, value] : currentValues.filter((v) => v !== value),
             };
         });
-    }
+    };
+
+    const filterGroups = [
+        { title: 'Colors', name: 'color', values: colors },
+        { title: 'Brands', name: 'brand', values: brands },
+        { title: 'Sizes', name: 'sizes', values: sizes },
+    ];
 
     return (
-        <aside className="aside-filters-container">
-
-
-            <div className="filters-menu">
-                <button className="filters-menu-btn" onClick={() => setOpenFilters(!openFilters)}>
-                    <img src={FilterIcon} alt="menu-icon" className="filters-menu-icon" />
-                    <h5 className="filters-menu-btn-title">Filters</h5>
+        <aside className="w-full">
+            <div className="mb-4 flex lg:hidden">
+                <button
+                    type="button"
+                    onClick={() => setOpenFilters(!openFilters)}
+                    className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white px-3 py-2 text-sm font-medium text-stone-700 shadow-sm"
+                >
+                    <img src={FilterIcon} alt="menu-icon" className="h-4 w-4" />
+                    Filters
                 </button>
             </div>
 
-            <div className={`filters-options-container ${openFilters ? 'open-filters' : ''}`}>
-                <div className="filters-options-header">
-                    <h5 className="filters-options-title">Filters</h5>
-                    {openFilters && (
-                        <button className="filters-menu-btn-close">
-                            <img src={closeIcon} alt="close-icon" className="filters-close-icon" onClick={() => setOpenFilters(!openFilters)} />
-                        </button>
-                    )}
+            <div
+                className={`${openFilters ? 'fixed inset-x-0 bottom-0 z-50 grid max-h-[55vh] grid-cols-2 gap-4 rounded-t-[28px] bg-[#1e1d1b] p-4 text-white lg:static lg:grid lg:max-h-none lg:rounded-none lg:bg-transparent lg:p-0 lg:text-stone-900' : 'hidden lg:block'} `}
+            >
+                <div className="col-span-2 flex items-center justify-between lg:hidden">
+                    <h5 className="text-lg font-semibold">Filters</h5>
+                    <button type="button" className="rounded-full bg-white/10 p-2" onClick={() => setOpenFilters(false)}>
+                        <img src={closeIcon} alt="close-icon" className="h-4 w-4 invert" />
+                    </button>
                 </div>
-                <ul className="filters-container">
-                    <h5 className="filters-title">Colors</h5>
-                    {colors.map((c, index) => (
-                        <li key={index} className="filters-item">
-                            <input type="checkbox" name="color" value={c} onChange={handleCheckBox} className="filter-option-checkbox" />
-                            {c}
-                        </li>))}
-                </ul>
 
-                <ul className="filters-container">
-                    <h5 className="filters-title">Brands</h5>
-                    {brands.map((b, index) => (
-                        <li key={index} className="filters-item">
-                            <input type="checkbox" name="brand" value={b} onChange={handleCheckBox} className="filter-option-checkbox" />
-                            {b}
-                        </li>))}
-                </ul>
-
-                <ul className="filters-container">
-                    <h5 className="filters-title">Sizes</h5>
-                    {sizes.map((s, index) => (
-                        <li key={index} className="filters-item">
-                            <input type="checkbox" name="sizes" value={s} onChange={handleCheckBox} className="filter-option-checkbox" />
-                            {s}
-                        </li>))}
-                </ul>
+                {filterGroups.map((group) => (
+                    <div key={group.title} className="space-y-3">
+                        <h5 className="text-sm font-semibold uppercase tracking-[0.14em] text-current lg:text-stone-700">{group.title}</h5>
+                        <ul className="space-y-2 text-sm">
+                            {group.values.map((value, index) => (
+                                <li key={`${group.title}-${index}`} className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        name={group.name}
+                                        value={value}
+                                        onChange={handleCheckBox}
+                                        className="h-4 w-4 accent-stone-900"
+                                    />
+                                    <span className="text-current lg:text-stone-700">{value}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
             </div>
-
-
         </aside>
-    )
+    );
 }
