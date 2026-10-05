@@ -33,6 +33,7 @@ export const CartProvider = ({ children }) => {
   /*                           Agregamos map y spread                           */
   /* -------------------------------------------------------------------------- */
   const addItem = (item) => {
+
     if (exists(item.id)) {
       const updatedCart = cart.map((prod) => {
         if (prod.id === item.id) {
@@ -41,12 +42,14 @@ export const CartProvider = ({ children }) => {
         return prod;
       });
       setCart(updatedCart);
-      notify(`${item.name} añadido al carrito`, "success");
+      notify({ message: `${item.name} añadido al carrito`, type: 'success', imageUrl: item.imageUrl });
+
       return;
     }
 
     setCart([...cart, item]);
-    notify(`${item.name} agregado al carrito`, "success");
+    notify({ message: `${item.name} añadido al carrito`, type: 'success', imageUrl: item.imageUrl });
+
   };
 
   /* -------------------------------------------------------------------------- */
@@ -55,9 +58,9 @@ export const CartProvider = ({ children }) => {
   const deleteItem = (e, id) => {
     e.preventDefault();
     e.stopPropagation();
-    const filtered = cart.filter((p) => p.id !== id);
-    setCart(filtered);
-    notify("Producto eliminado del carrito", "error");
+    const removed = cart.find((p) => p.id === id);
+    setCart(cart.filter((p) => p.id !== id));
+    notify({ message: 'Producto eliminado del carrito', type: 'error', imageUrl: removed?.imageUrl });
   };
 
   /* -------------------------------------------------------------------------- */

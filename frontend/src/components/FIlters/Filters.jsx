@@ -16,10 +16,53 @@ const getSwatchColor = (colorName) => {
     return '#D8C7B2';
 };
 
+/* Grupo de filtros con checkboxes, reutilizado por Brands y Colores */
+function CheckboxFilterGroup({
+    title,
+    group,
+    options,
+    selectedValues = [],
+    onToggle,
+    emptyText,
+    renderPrefix,
+}) {
+    return (
+        <div>
+            <h4 className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-500">
+                {title}
+            </h4>
+
+            {options.length > 0 ? (
+                <div className="space-y-1.5">
+                    {options.map(({ name }) => (
+                        <label
+                            key={name}
+                            className="flex items-center gap-2.5 text-xs text-stone-700 hover:text-stone-900 cursor-pointer py-1"
+                        >
+                            <input
+                                type="checkbox"
+                                checked={selectedValues.includes(name)}
+                                onChange={() => onToggle(group, name)}
+                                className="rounded cursor-pointer border-stone-300 accent-stone-900 h-4 w-4"
+                            />
+                            {renderPrefix?.(name)}
+                            <span>{name}</span>
+                        </label>
+                    ))}
+                </div>
+            ) : (
+                emptyText && <p className="text-sm text-stone-500">{emptyText}</p>
+            )}
+        </div>
+    );
+}
+
 export default function Filters({
     products = [],
     selectedFilters = { color: [], sizes: [], brand: [] },
     onToggleFilter,
+    onClearAll,
+    activeFiltersCount = 0,
     mobile = false,
 }) {
     const colors = useMemo(() => {
@@ -78,75 +121,45 @@ export default function Filters({
 
     return (
         <aside className={panelClass}>
-            <div className="flex items-center justify-between">
+            {/* ENCABEZADO CON LIMPIAR FILTROS DEBAJO */}
+            <div className="border-b border-stone-200 pb-3">
                 <h3 className="font-serif text-2xl text-[#221D17]">Filtros</h3>
             </div>
 
             <div className="space-y-5">
-                <div>
-                    <h4 className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-stone-500">
-                        Marcas
-                    </h4>
-                    <div className="space-y-2">
-                        {brands.length > 0 ? (
-                            brands.map(({ name, count }) => {
-                                const selected = selectedFilters.brand?.includes(name);
+                {activeFiltersCount > 0 && onClearAll && (
+                    <button
+                        type="button"
+                        onClick={onClearAll}
+                        className="text-xs text-stone-500 hover:text-stone-900 tracking-wide transition block text-left"
+                    >
+                        Limpiar filtros ({activeFiltersCount})
+                    </button>
+                )}
 
-                                return (
-                                    <button
-                                        key={name}
-                                        type="button"
-                                        onClick={() => handleToggle('brand', name)}
-                                        className={`flex w-full items-center justify-between rounded-full border px-3 py-2 text-sm transition ${selected
-                                            ? 'border-[#221D17] bg-[#221D17] text-white'
-                                            : 'border-[#E7E1D6] bg-white text-stone-700 hover:border-stone-400'
-                                            }`}
-                                    >
-                                        <span>{name}</span>
-                                        <span className={selected ? 'text-white/80' : 'text-stone-400'}>({count})</span>
-                                    </button>
-                                );
-                            })
-                        ) : (
-                            <p className="text-sm text-stone-500">Sin marcas disponibles</p>
-                        )}
-                    </div>
-                </div>
+                <CheckboxFilterGroup
+                    title="Brands"
+                    group="brand"
+                    options={brands}
+                    selectedValues={selectedFilters.brand}
+                    onToggle={handleToggle}
+                />
 
-                <div>
-                    <h4 className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-stone-500">
-                        Colores
-                    </h4>
-                    <div className="flex flex-wrap gap-2.5">
-                        {colors.length > 0 ? (
-                            colors.map(({ name, count }) => {
-                                const selected = selectedFilters.color?.includes(name);
-
-                                return (
-                                    <button
-                                        key={name}
-                                        type="button"
-                                        onClick={() => handleToggle('color', name)}
-                                        className={`inline-flex items-center gap-2 rounded-full border px-2.5 py-2 transition ${selected
-                                            ? 'border-[#221D17] bg-[#221D17] text-white'
-                                            : 'border-[#E7E1D6] bg-white text-stone-700 hover:border-stone-400'
-                                            }`}
-                                        title={name}
-                                    >
-                                        <span
-                                            className="h-4 w-4 rounded-full border border-stone-300"
-                                            style={{ backgroundColor: getSwatchColor(name) }}
-                                        />
-                                        <span className="text-xs">{name}</span>
-                                        <span className={selected ? 'text-white/80' : 'text-stone-400'}>({count})</span>
-                                    </button>
-                                );
-                            })
-                        ) : (
-                            <p className="text-sm text-stone-500">Sin colores disponibles</p>
-                        )}
-                    </div>
-                </div>
+                <CheckboxFilterGroup
+                    title="Colores"
+                    group="color"
+                    options={colors}
+                    selectedValues={selectedFilters.color}
+                    onToggle={handleToggle}
+                    emptyText="Sin colores disponibles"
+                    renderPrefix={(name) => (
+                        <span
+                            className="h-4 w-4 shrink-0 rounded-full border border-stone-300"
+                            style={{ backgroundColor: getSwatchColor(name) }}
+                            aria-hidden="true"
+                        />
+                    )}
+                />
 
                 <div>
                     <h4 className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-stone-500">

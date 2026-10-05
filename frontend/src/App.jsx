@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import { AuthProvider } from "./context/AuthContext/AuthProvider.jsx";
 import { ItemDetailContainer } from "./components/ItemDetailContainer/ItemDetailContainer";
 import ProductPage from "./components/ProductPage/ProductPage.jsx";
@@ -19,6 +20,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <CartProvider>
           <FavoriteProvider>
             <Routes>

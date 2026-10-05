@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useCartContext } from '../../context/CartContext/useCartContext';
 import { notify } from '../../utils/toast';
-import { useFavoriteContext } from '../../context/FavoriteContext/useFavoriteContext';
+import FavoriteButton from '../FavoriteButton/FavoriteButton';
+import { useFavoriteToggle } from '../../context/FavoriteContext/useFavoriteToggle.js';
 
 const TRUST_ITEMS = [
   { label: 'Envío 24/48hs', icon: '🚚' },
@@ -30,16 +32,17 @@ const getSwatchColor = (colorName) => {
   return '#D5C4AF';
 };
 
-export const ItemDetail = ({ detail }) => {
+export const ItemDetail = ({ detail = {} }) => {
   const { addItem } = useCartContext();
 
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState(detail.variants?.[0]?.color ?? detail.color ?? null);
   const [selectedSize, setSelectedSize] = useState(detail.variants?.[0]?.sizes?.[0] ?? null);
   const [selectedImage, setSelectedImage] = useState(0);
-  const { isFavorite, toggleFavorite } = useFavoriteContext();
-  const isFav = isFavorite(detail.id);
   const [openAccordion, setOpenAccordion] = useState(0);
+
+  const { isFavorite, toggle } = useFavoriteToggle();
+  const isFav = isFavorite(detail.id);
 
   const colors = detail.variants
     ? [...new Set(detail.variants.map((variant) => variant.color).filter(Boolean))]
@@ -59,9 +62,7 @@ export const ItemDetail = ({ detail }) => {
       detail.imageUrl,
       ...(Array.isArray(detail.gallery) ? detail.gallery : []),
       ...(Array.isArray(detail.variants)
-        ? detail.variants
-          .map((variant) => variant.imageUrl)
-          .filter(Boolean)
+        ? detail.variants.map((variant) => variant.imageUrl).filter(Boolean)
         : []),
     ];
 
@@ -73,7 +74,7 @@ export const ItemDetail = ({ detail }) => {
   };
 
   const handleAddToCart = () => {
-    if (!selectedSize) {
+    if (!selectedSize && sizes.length > 0) {
       notify('Seleccioná un talle antes de agregar al carrito', 'error');
       return;
     }
@@ -84,8 +85,6 @@ export const ItemDetail = ({ detail }) => {
       color: selectedColor,
       size: selectedSize,
     });
-
-    notify(`${detail.name} añadido al carrito`, 'success');
   };
 
   const accordionItems = [
@@ -106,22 +105,66 @@ export const ItemDetail = ({ detail }) => {
     },
   ];
 
+  /* -------------------------------------------------------------------------- */
+  /*                    BREADCRUMBS ADAPTATIVOS PARA DETALLE                    */
+  /* -------------------------------------------------------------------------- */
+  const breadcrumbs = useMemo(() => {
+    const crumbs = [
+      { label: 'Inicio', to: '/' },
+      { label: 'Catálogo', to: '/category' },
+    ];
+
+    if (detail.category) {
+      const primaryCat = Array.isArray(detail.category) ? detail.category[0] : detail.category;
+      if (primaryCat && primaryCat !== 'clothes' && primaryCat !== 'accessories') {
+        crumbs.push({
+          label: primaryCat,
+          to: `/category?category=${encodeURIComponent(primaryCat)}`,
+        });
+      }
+    }
+
+    if (detail.subCategory) {
+      crumbs.push({
+        label: detail.subCategory,
+        to: `/category?category=${encodeURIComponent(detail.subCategory)}`,
+      });
+    }
+
+    if (detail.name) {
+      crumbs.push({ label: detail.name, to: null });
+    }
+
+    return crumbs;
+  }, [detail]);
+
   return (
     <article className="w-full bg-[#F7F4EF] px-4 py-6 sm:px-6 lg:px-10">
+      {/* BREADCRUMB EDITORIAL DINÁMICO */}
       <nav
-        aria-label="breadcrumb"
-        className="mb-6 flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-stone-500"
+        aria-label="Breadcrumb"
+        className="mb-6 flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-stone-500"
       >
-        <span>Inicio</span>
-        <span>/</span>
-        <span className="text-stone-900">
-          {Array.isArray(detail.category) ? detail.category[0] : detail.category}
-        </span>
+        {breadcrumbs.map((crumb, idx) => (
+          <span key={`${crumb.label}-${idx}`} className="flex items-center gap-2">
+            {idx !== 0 && <span className="text-stone-300">/</span>}
+            {crumb.to ? (
+              <Link to={crumb.to} className="transition hover:text-stone-900">
+                {crumb.label}
+              </Link>
+            ) : (
+              <span className="font-medium text-stone-900 line-clamp-1 max-w-[280px] sm:max-w-none">
+                {crumb.label}
+              </span>
+            )}
+          </span>
+        ))}
       </nav>
 
       <div className="grid items-start gap-8 lg:grid-cols-[1.15fr_0.85fr]">
+        {/* GALERÍA DE IMÁGENES */}
         <div className="space-y-4">
-          <div className="relative overflow-hidden rounded-[30px] border border-[#E7E1D6] bg-[#F7F4EF] p-3 shadow-[0_22px_52px_-32px_rgba(34,29,23,0.28)] sm:p-4">
+          <div className="h-full relative overflow-hidden rounded-[30px] border border-[#E7E1D6] bg-[#F7F4EF] p-3 shadow-[0_22px_52px_-32px_rgba(34,29,23,0.28)] sm:p-4">
             <div className="absolute left-4 top-4 z-10 flex items-center gap-2">
               {detail.collection && (
                 <span className="rounded-full bg-white/90 px-3 py-1 text-[9px] font-medium uppercase tracking-[0.16em] text-stone-700 backdrop-blur-sm">
@@ -130,53 +173,48 @@ export const ItemDetail = ({ detail }) => {
               )}
             </div>
 
-            <button
-              type="button"
-              aria-label={isFav ? "Quitar de favoritos" : "Agregar a favoritos"}
-              onClick={() => toggleFavorite(detail)}
-              className={`absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-[#E7E1D6] bg-white/90 shadow-sm backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95 ${isFav ? "text-[#A63D34] border-[#A63D34]/30" : "text-stone-700"
-                }`}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className={`h-5 w-5 transition-all ${isFav ? "fill-[#A63D34] stroke-[#A63D34]" : "fill-none stroke-current"
-                  }`}
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 20.25s-7.5-4.35-9.5-8.64C1.3 9.39 2.95 5.25 6.9 5.25c2.11 0 3.34 1.02 4.1 2.05.76-1.03 2-2.05 4.1-2.05 3.95 0 5.6 4.14 4.4 6.36-2 4.29-9.5 8.64-9.5 8.64Z" />
-              </svg>
-            </button>
+            {/* BOTÓN DE FAVORITOS CON GUARD DE AUTENTICACIÓN */}
+            <FavoriteButton
+              isFavorite={isFav}
+              onToggle={() => toggle(detail)}
+              size="md"
+              className="absolute justify-self-end  z-10"
+            />
 
             <img
               src={imageGallery[selectedImage] || detail.imageUrl}
               alt={detail.name}
-              className="aspect-[4/5] w-full rounded-[24px] object-cover"
+              className="aspect-[5/5] w-full rounded-[24px] object-cover transform-gpu"
+              loading="lazy"
+              decoding="async"
+              style={{ backgroundColor: '#F7F4EF' }}
             />
           </div>
 
-          <div className="grid grid-cols-4 gap-3">
-            {imageGallery.map((image, index) => (
-              <button
-                key={`${image}-${index}`}
-                type="button"
-                onClick={() => setSelectedImage(index)}
-                className={`overflow-hidden rounded-[16px] border transition ${selectedImage === index
-                  ? 'border-stone-900 shadow-[0_8px_18px_rgba(34,29,23,0.12)]'
-                  : 'border-[#E7E1D6] hover:border-stone-400'
-                  }`}
-              >
-                <img
-                  src={image}
-                  alt={`${detail.name} vista ${index + 1}`}
-                  className="aspect-square w-full object-cover"
-                />
-              </button>
-            ))}
-          </div>
+          {imageGallery.length > 1 && (
+            <div className="grid grid-cols-4 gap-3">
+              {imageGallery.map((image, index) => (
+                <button
+                  key={`${image}-${index}`}
+                  type="button"
+                  onClick={() => setSelectedImage(index)}
+                  className={`overflow-hidden rounded-[16px] border transition ${selectedImage === index
+                    ? 'border-stone-900 shadow-[0_8px_18px_rgba(34,29,23,0.12)]'
+                    : 'border-[#E7E1D6] hover:border-stone-400'
+                    }`}
+                >
+                  <img
+                    src={image}
+                    alt={`${detail.name} vista ${index + 1}`}
+                    className="aspect-square w-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
+        {/* PANEL DE COMPRA (STICKY) */}
         <aside className="lg:sticky lg:top-28">
           <div className="space-y-6 rounded-[30px] border border-[#E7E1D6] bg-white p-5 shadow-[0_20px_40px_-28px_rgba(34,29,23,0.15)] sm:p-6">
             {detail.category && (
@@ -189,24 +227,7 @@ export const ItemDetail = ({ detail }) => {
               {detail.name}
             </h1>
 
-            <div className="flex items-end gap-3">
-              <p className="font-serif text-4xl font-medium text-stone-900">
-                {formatPrice(detail.price)}
-              </p>
-
-              {detail.oldPrice && (
-                <p className="text-base text-stone-400 line-through">
-                  {formatPrice(detail.oldPrice)}
-                </p>
-              )}
-
-              {discount && (
-                <span className="rounded-full bg-[#F2E8E2] px-2.5 py-1 text-[9px] font-medium uppercase tracking-[0.14em] text-[#A63D34]">
-                  -{discount}%
-                </span>
-              )}
-            </div>
-
+            {/* SELECTOR DE COLOR */}
             {colors.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-3">
@@ -236,6 +257,7 @@ export const ItemDetail = ({ detail }) => {
               </div>
             )}
 
+            {/* SELECTOR DE TALLE */}
             {sizes.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-3">
@@ -245,6 +267,7 @@ export const ItemDetail = ({ detail }) => {
 
                   <button
                     type="button"
+                    onClick={() => alert('Guía de talles: el modelo viste talle M (1.80m).')}
                     className="text-[10px] uppercase tracking-[0.16em] text-stone-500 underline-offset-4 hover:text-stone-900 hover:underline"
                   >
                     ¿Cuál es mi talle? (Guía)
@@ -274,7 +297,8 @@ export const ItemDetail = ({ detail }) => {
               </div>
             )}
 
-            <div className="rounded-[22px] border border-[#E7E1D6] bg-[#F7F4EF] p-3">
+            {/* STEPPER DE CANTIDAD (INICIA EN 1) */}
+            <div className="p-3">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 rounded-full border border-[#E7E1D6] bg-white px-2 py-1.5">
                   <button
@@ -302,29 +326,56 @@ export const ItemDetail = ({ detail }) => {
 
                 <div className="text-right">
                   <p className="text-[10px] uppercase tracking-[0.18em] text-stone-500">Total</p>
-                  <p className="font-serif text-2xl text-stone-900">
-                    {formatPrice(Number(detail.price) * quantity)}
-                  </p>
+                  <div className="flex items-end gap-3">
+                    <p className="font-serif text-4xl font-medium text-stone-900">
+                      {formatPrice(detail.price)}
+                    </p>
+
+                    {detail.oldPrice && (
+                      <p className="text-base text-stone-400 line-through">
+                        {formatPrice(detail.oldPrice)}
+                      </p>
+                    )}
+
+                    {discount && (
+                      <span className="rounded-full bg-[#F2E8E2] px-2.5 py-1 text-[9px] font-medium uppercase tracking-[0.14em] text-[#A63D34]">
+                        -{discount}%
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
 
+            {/* BOTÓN PRIMARIO DE COMPRA */}
             <button
               type="button"
-              onClick={handleAddToCart}
-              className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-[#1A1714] px-5 text-[10px] font-medium uppercase tracking-[0.2em] text-white transition duration-200 hover:-translate-y-0.5 hover:bg-[#2c2724]"
+              onClick={async () => {
+                // micro-feedback: show 'Añadido ✓' for 800ms
+                handleAddToCart();
+                const btn = document.activeElement;
+                if (btn && btn instanceof HTMLElement) {
+                  btn.classList.add('bg-[#155a40]');
+                }
+                const labelEl = document.getElementById('add-to-cart-label');
+                if (labelEl) labelEl.innerText = 'Añadido ✓';
+                setTimeout(() => {
+                  if (labelEl) labelEl.innerText = 'Agregar al carrito';
+                  if (btn && btn instanceof HTMLElement) {
+                    btn.classList.remove('bg-[#155a40]');
+                  }
+                }, 800);
+              }}
+              id="add-to-cart"
+              className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-[#1A1714] px-5 text-sm font-medium uppercase tracking-[0.2em] text-white transition duration-200 hover:-translate-y-0.5 hover:bg-[#2c2724]"
             >
-              <span>Agregar al carrito</span>
+              <span id="add-to-cart-label">Agregar al carrito</span>
             </button>
-
-            <div className="flex items-center gap-2 text-sm text-emerald-700">
-              <span className="h-2.5 w-2.5 rounded-full bg-emerald-600" />
-              <span>En stock · Listo para despacho en 24hs</span>
-            </div>
           </div>
         </aside>
       </div>
 
+      {/* SELLOS DE CONFIANZA */}
       <div className="mt-10 grid gap-3 md:grid-cols-3">
         {TRUST_ITEMS.map((item) => (
           <div
@@ -337,6 +388,7 @@ export const ItemDetail = ({ detail }) => {
         ))}
       </div>
 
+      {/* ACORDEONES INFORMATIVOS */}
       <div className="mt-10 overflow-hidden rounded-[24px] border border-[#E7E1D6] bg-white">
         {accordionItems.map((item, index) => {
           const isOpen = openAccordion === index;

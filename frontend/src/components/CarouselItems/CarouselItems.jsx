@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion as Motion } from 'framer-motion';
-import ChevronRightIcon from '../../assets/chevronRight.svg';
-import ChevronLeftIcon from '../../assets/chevronLeft.svg';
+import { IconChevronLeft, IconChevronRight } from '../Icons';
 
 export default function CarouselItems({ children }) {
     const carouselRef = useRef(null);
@@ -73,7 +72,7 @@ export default function CarouselItems({ children }) {
                     className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 z-30 flex h-12 w-12 items-center justify-center rounded-full border border-stone-200 bg-white shadow-lg shadow-black/8 transition-all hover:scale-105 active:scale-95"
                     onClick={() => scroll('left')}
                 >
-                    <img src={ChevronLeftIcon} alt="" className="h-5 w-5 text-stone-800" />
+                    <IconChevronLeft className="h-5 w-5 text-stone-800" />
                 </Motion.button>
             )}
 
@@ -91,7 +90,7 @@ export default function CarouselItems({ children }) {
                     className="absolute -right-4 md:-right-6 top-1/2 -translate-y-1/2 z-30 flex h-12 w-12 items-center justify-center rounded-full border border-stone-200 bg-white shadow-lg shadow-black/8 transition-all hover:scale-105 active:scale-95"
                     onClick={() => scroll('right')}
                 >
-                    <img src={ChevronRightIcon} alt="" className="h-5 w-5 text-stone-800" />
+                    <IconChevronRight className="h-5 w-5 text-stone-800" />
                 </Motion.button>
             )}
         </div>
