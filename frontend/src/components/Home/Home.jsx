@@ -41,13 +41,13 @@ export default function Home() {
                     </p>
                 </div>
 
-                <div className="grid w-full gap-4 md:grid-cols-2">
+                <div className="grid w-full md:grid-cols-2 rounded-[26px] overflow-hidden">
                     {[
                         { to: '/collection/elegant sustainable fashion', background: '/assets/Home-section-1-pic-1.png', title: 'Elegant sustainable fashion' },
                         { to: '/collection/sporty sustainable wear', background: '/assets/Home-section-1-pic-2.png', title: 'Sporty sustainable wear' },
                     ].map((item, index) => (
                         <Motion.div key={item.to} initial={{ opacity: 0, x: index % 2 === 0 ? -12 : 12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: index * 0.1 }}>
-                            <Link to={item.to} className="group relative block h-[420px] overflow-hidden rounded-[26px] md:h-[560px]">
+                            <Link to={item.to} className="group relative block h-[420px] overflow-hidden  md:h-[560px]">
                                 <div className="absolute inset-0 bg-cover bg-center transition duration-500 group-hover:scale-105 group-hover:brightness-75" style={{ backgroundImage: `url(${item.background})` }} />
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/15">
                                     <span className="text-center text-2xl font-medium text-white md:text-4xl">{item.title}</span>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ItemList } from '../ItemList/ItemList';
 import { getProducts } from '../../services/products';
+import ProductCardSkeleton from '../Skeleton/ProductCardSkeleton';
 
 export const ItemListContainer = ({ category, orderBy, mode = 'grid' }) => {
   const [products, setProducts] = useState([]);
@@ -35,7 +36,16 @@ export const ItemListContainer = ({ category, orderBy, mode = 'grid' }) => {
       .finally(() => setLoading(false));
   }, [category, orderBy]);
 
-  if (loading) return <p className="px-6 py-8 text-stone-600">Cargando productos...</p>;
+  if (loading)
+    return (
+      <div aria-busy="true" aria-live="polite">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <ProductCardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
 
   if (mode === 'carousel') {
     return <ItemList lista={products} horizontal />;

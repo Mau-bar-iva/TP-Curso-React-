@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { getProducts, getCollections } from '../../services/products';
 import { ItemList } from '../ItemList/ItemList.jsx';
+import ProductCardSkeleton from '../Skeleton/ProductCardSkeleton';
 import Filters from '../FIlters/Filters.jsx';
+import Dropdown from '../Dropdown/Dropdown.jsx';
 
 const SORT_OPTIONS = [
     { value: 'featured', label: 'Destacados' },
@@ -34,10 +36,12 @@ export default function ProductPage({ type = 'category' }) {
     });
 
     const itemsPerPage = 12;
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadData = async () => {
             try {
+                setLoading(true);
                 const routeFilters = {
                     season: searchParams.get('season'),
                     category: searchParams.getAll('category'),
@@ -95,6 +99,9 @@ export default function ProductPage({ type = 'category' }) {
                 console.error(error);
                 setProducts([]);
             }
+            finally {
+                setLoading(false);
+            }
         };
 
         setSelectedFilters({
@@ -115,13 +122,6 @@ export default function ProductPage({ type = 'category' }) {
 
             return { ...prev, [group]: next };
         });
-    };
-
-    const removeFilter = (group, value) => {
-        setSelectedFilters((prev) => ({
-            ...prev,
-            [group]: (prev[group] ?? []).filter((entry) => entry !== value),
-        }));
     };
 
     const clearAllFilters = () => {
@@ -193,76 +193,59 @@ export default function ProductPage({ type = 'category' }) {
 
     const pageNumbers = Array.from({ length: pageCount }, (_, index) => index + 1);
 
-    const sectionTitle =
-        type === 'collection'
-            ? (collection ? `${collection}` : 'Colección')
-            : 'Catálogo General';
+    const breadcrumbs = (() => {
+        const crumbs = [
+            { label: 'Inicio', to: '/' },
+            { label: 'Catálogo', to: '/category' },
+        ];
+
+        if (type === 'collection' && collection) {
+            crumbs.push({ label: collection, to: `/collection/${collection}` });
+        }
+
+        const categories = searchParams.getAll('category') || [];
+        if (categories.length > 0) {
+            categories.forEach((cat) => {
+                // link to catalog with that category selected
+                crumbs.push({ label: cat, to: `/category?category=${encodeURIComponent(cat)}` });
+            });
+        }
+
+        return crumbs;
+    })();
 
     return (
         <section className="mx-auto w-full max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8">
-            <header className="mb-6 border-b border-[#E7E1D6] pb-5">
+
+            <header className="mb-6">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                    <div>
-                        <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-stone-500">
-                            ModeaVelour
-                        </p>
-                        <h2 className="mt-2 font-serif text-3xl text-[#221D17] sm:text-4xl">
-                            {sectionTitle}
-                        </h2>
-                    </div>
+                    {/* BREADCRUMB EDITORIAL */}
+                    <nav aria-label="Breadcrumb" className="mb-3 ml-4 flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-stone-500">
+                        {breadcrumbs.map((crumb, idx) => (
+                            <span key={`${crumb.label}-${idx}`} className="flex items-center gap-2">
+                                {idx !== 0 && <span className="text-stone-300">/</span>}
+                                {idx < breadcrumbs.length - 1 ? (
+                                    <Link to={crumb.to} className="hover:text-stone-900 transition">{crumb.label}</Link>
+                                ) : (
+                                    <span className="font-medium text-stone-900 uppercase tracking-[0.2em]">{crumb.label}</span>
+                                )}
+                            </span>
+                        ))}
+                    </nav>
 
                     <div className="flex items-center gap-3 self-start lg:self-auto">
-                        <p className="text-sm text-stone-600">
-                            Mostrando <span className="font-medium text-[#221D17]">{totalResults}</span> de{' '}
-                            <span className="font-medium text-[#221D17]">{products.length}</span> productos
-                        </p>
-
-                        <label className="relative">
-                            <span className="sr-only">Ordenar productos</span>
-                            <select
-                                value={sortBy}
-                                onChange={(event) => setSortBy(event.target.value)}
-                                className="appearance-none rounded-full border border-[#E7E1D6] bg-white px-4 py-2.5 pr-10 text-sm text-stone-700 shadow-sm outline-none transition focus:border-stone-900"
-                            >
-                                {SORT_OPTIONS.map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
-                            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-stone-500">
-                                ▾
-                            </span>
-                        </label>
+                        <Dropdown
+                            options={SORT_OPTIONS}
+                            value={sortBy}
+                            onChange={(val) => setSortBy(val)}
+                            className=""
+                            buttonClass={'appearance-none rounded-full bg-white px-4 py-2.5 pr-10 text-sm text-stone-700 shadow-sm outline-none transition focus:border-stone-900'}
+                            menuClass={'absolute right-0 mt-2 w-44 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-gray-300 ring-opacity-5 z-50'}
+                            itemClass={'cursor-pointer px-4 py-2 text-sm text-stone-700 hover:bg-stone-100'}
+                        />
                     </div>
                 </div>
             </header>
-
-            {activeFilters.length > 0 && (
-                <div className="mb-6 flex flex-wrap items-center gap-2">
-                    {activeFilters.map(({ group, value }) => (
-                        <button
-                            key={`${group}-${value}`}
-                            type="button"
-                            onClick={() => removeFilter(group, value)}
-                            className="inline-flex items-center gap-2 rounded-full border border-[#E7E1D6] bg-white px-3 py-1.5 text-xs font-medium uppercase tracking-[0.12em] text-stone-700 transition hover:border-stone-400"
-                        >
-                            <span>
-                                {group === 'brand' ? 'Marca' : group === 'color' ? 'Color' : 'Talle'}: {value}
-                            </span>
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    ))}
-
-                    <button
-                        type="button"
-                        onClick={clearAllFilters}
-                        className="text-xs font-medium uppercase tracking-[0.14em] text-stone-500 underline-offset-4 hover:text-[#221D17] hover:underline"
-                    >
-                        Limpiar filtros
-                    </button>
-                </div>
-            )}
 
             <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
                 <div className="hidden lg:block">
@@ -271,11 +254,20 @@ export default function ProductPage({ type = 'category' }) {
                         selectedFilters={selectedFilters}
                         onToggleFilter={toggleFilter}
                         onClearAll={clearAllFilters}
+                        activeFiltersCount={activeFilters.length}
                     />
                 </div>
 
                 <div className="space-y-6">
-                    {totalResults === 0 ? (
+                    {loading ? (
+                        <div aria-busy="true" aria-live="polite">
+                            <div className="grid w-full justify-items-center gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                {Array.from({ length: itemsPerPage }).map((_, i) => (
+                                    <ProductCardSkeleton key={i} />
+                                ))}
+                            </div>
+                        </div>
+                    ) : totalResults === 0 ? (
                         <div className="rounded-[30px] border border-[#E7E1D6] bg-[#F7F4EF] px-6 py-12 text-center shadow-[0_16px_42px_rgba(34,29,23,0.04)]">
                             <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-stone-500">
                                 Sin resultados
@@ -306,8 +298,8 @@ export default function ProductPage({ type = 'category' }) {
                                             onClick={() => setCurrentPage(page)}
                                             disabled={page === currentPage}
                                             className={`flex h-10 w-10 items-center justify-center rounded-full border text-sm font-medium transition ${page === currentPage
-                                                    ? 'border-[#221D17] bg-[#221D17] text-white'
-                                                    : 'border-[#E7E1D6] bg-white text-stone-700 hover:border-stone-400'
+                                                ? 'border-[#221D17] bg-[#221D17] text-white'
+                                                : 'border-[#E7E1D6] bg-white text-stone-700 hover:border-stone-400'
                                                 }`}
                                         >
                                             {page}

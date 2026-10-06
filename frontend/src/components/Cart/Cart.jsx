@@ -1,4 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
+import CheckoutButton from './CheckoutButton';
+import { IconTrash, IconTrash as IconTrashSimple, IconShoppingBag, IconChevronRight, IconLock, IconTruck } from '../Icons';
 import { useCartContext } from '../../context/CartContext/useCartContext';
 
 const currency = new Intl.NumberFormat('en-US', {
@@ -6,75 +8,21 @@ const currency = new Intl.NumberFormat('en-US', {
   currency: 'USD',
 });
 
-const IconBag = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-    <path d="M6 8h12l-1 11H7L6 8Z" />
-    <path d="M9 8a3 3 0 1 1 6 0" />
-  </svg>
+const IconBag = (props) => <IconShoppingBag {...props} className={props.className || 'h-6 w-6'} />;
+
+const IconLockLocal = (props) => <IconLock {...props} className={props.className || 'h-4 w-4'} />;
+
+// reuse IconTrash from lucide-react via Icons index
+const IconTrashLocal = (props) => <IconTrash {...props} className={props.className || 'h-4 w-4'} />;
+const IconTrashSimpleLocal = IconTrashLocal;
+
+const IconChevronLocal = ({ direction = 'right', ...props }) => (
+  <IconChevronRight {...props} className={`${props.className || 'h-4 w-4'} ${direction === 'left' ? 'rotate-180' : ''}`} />
 );
 
-const IconLock = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-    <rect x="5" y="10" width="14" height="10" rx="2" />
-    <path d="M8 10V7a4 4 0 1 1 8 0v3" />
-  </svg>
-);
-
-const IconTrash = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-    <path d="M3 6h18" />
-    <path d="M8 6V4h8v2" />
-    <path d="M19 6l-1 14H6L5 6" />
-    <path d="M10 11v5" />
-    <path d="M14 11v5" />
-  </svg>
-);
-
-const IconTrashSimple = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-    <path d="M3 6h18" />
-    <path d="M8 6V4h8v2" />
-    <path d="M19 6l-1 14H6L5 6" />
-  </svg>
-);
-
-const IconChevron = ({ direction = 'right' }) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={`h-4 w-4 ${direction === 'left' ? 'rotate-180' : ''}`}
-  >
-    <path d="M5 12h14" />
-    <path d="m13 5 7 7-7 7" />
-  </svg>
-);
-
-const IconShield = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-    <path d="M12 3 5 6v6c0 4.2 2.7 7.9 7 9 4.3-1.1 7-4.8 7-9V6l-7-3Z" />
-    <path d="m9.5 12 1.7 1.7 3.3-4" />
-  </svg>
-);
-
-const IconTruck = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-    <path d="M3 7h11v8H3z" />
-    <path d="M14 10h3l3 3v2h-6z" />
-    <circle cx="8" cy="17" r="1.6" />
-    <circle cx="18" cy="17" r="1.6" />
-  </svg>
-);
-
-const IconReturn = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-    <path d="M7 7h10a4 4 0 0 1 0 8H8" />
-    <path d="m11 3 4 4-4 4" />
-  </svg>
-);
+const IconShield = (props) => <IconLock {...props} className={props.className || 'h-4 w-4'} />;
+const IconTruckLocal = (props) => <IconTruck {...props} className={props.className || 'h-4 w-4'} />;
+const IconReturn = (props) => <IconChevronRight {...props} className={props.className || 'h-4 w-4'} />;
 
 export const Cart = () => {
   const navigate = useNavigate();
@@ -136,7 +84,7 @@ export const Cart = () => {
             className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#1A1714] px-6 py-3 text-[10px] font-medium uppercase tracking-[0.18em] text-white transition hover:bg-[#2a2522]"
           >
             Discover collection
-            <IconChevron />
+            <IconChevronRight />
           </button>
         </div>
       </section>
@@ -160,7 +108,7 @@ export const Cart = () => {
           }}
           className="inline-flex items-center gap-2 rounded-full border border-[#E7E1D6] bg-white px-3 py-2 text-[10px] font-medium uppercase tracking-[0.18em] text-stone-600 transition hover:border-stone-300 hover:text-[#221D17]"
         >
-          <IconTrashSimple />
+          <IconTrashLocal />
           Clear cart
         </button>
       </div>
@@ -321,14 +269,7 @@ export const Cart = () => {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={checkout}
-              className="mt-6 inline-flex h-[52px] w-full items-center justify-center gap-2 rounded-full bg-[#1A1714] px-4 text-[10px] font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#2d2825]"
-            >
-              <IconLock className="h-5 w-5" />
-              Proceed to checkout
-            </button>
+            <CheckoutButton onCheckout={checkout} />
 
             <div className="mt-5 space-y-3 border-t border-[#E7E1D6] pt-5 text-xs text-stone-600">
               <div className="flex items-center gap-2">

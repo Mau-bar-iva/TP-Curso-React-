@@ -4,11 +4,15 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "npm run dev --workspace=frontend",
+    "build": "npm run build --workspace=frontend",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "npm run preview --workspace=frontend",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },

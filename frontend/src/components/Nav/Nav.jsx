@@ -2,11 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useCartContext } from "../../context/CartContext/useCartContext";
 import { useFavoriteContext } from "../../context/FavoriteContext/useFavoriteContext";
-import carritoIcon from "../../assets/carrito.svg";
-import userIcon from "../../assets/user.svg";
-import searchIcon from "../../assets/search.svg";
-import closeIcon from "../../assets/close.svg";
-import MenuIcon from "../../assets/menu.svg";
+import { IconMenu, IconSearch, IconX, IconUser, IconShoppingCart, IconHeart } from '../Icons';
 import ResultSearch from "../ResultSearch/ResultSearch.jsx";
 import { useAuthContext } from "../../context/AuthContext/useAuthContext";
 import "./Nav.css";
@@ -37,7 +33,7 @@ export const Nav = () => {
             className={`flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white transition ${openMenu ? "bg-stone-900 text-white" : "text-stone-900"}`}
             onClick={() => setOpenMenu(!openMenu)}
           >
-            <img src={MenuIcon} alt="menu-icon" className="h-5 w-5" />
+            <IconMenu className="h-5 w-5" />
           </button>
         </li>
 
@@ -70,10 +66,10 @@ export const Nav = () => {
                   className="w-full border-none bg-transparent text-sm text-stone-800 outline-none placeholder:text-stone-400"
                 />
                 {search === "" ? (
-                  <img src={searchIcon} alt="" className="h-4 w-4 opacity-70" />
+                  <IconSearch className="h-4 w-4 opacity-70" />
                 ) : (
                   <button type="button" className="flex items-center" onClick={() => setSearch("")}>
-                    <img src={closeIcon} alt="" className="h-4 w-4 opacity-70" />
+                    <IconX className="h-4 w-4 opacity-70" />
                   </button>
                 )}
               </label>
@@ -86,7 +82,7 @@ export const Nav = () => {
 
         <li className="flex list-none items-center">
           <Link to="/admin" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white transition-all duration-200 hover:border-stone-400 hover:bg-stone-100 hover:shadow-sm">
-            <img src={userIcon} alt="" className="h-[22px] w-[22px] transition-transform duration-200 hover:scale-110" />
+            <IconUser className="h-[22px] w-[22px] transition-transform duration-200 hover:scale-110" />
           </Link>
         </li>
         <li className="relative flex list-none items-center">
@@ -95,15 +91,7 @@ export const Nav = () => {
             aria-label="Ver favoritos"
             className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white transition-all duration-200 hover:border-stone-400 hover:bg-stone-100 hover:shadow-sm"
           >
-            <svg
-              viewBox="0 0 24 24"
-              className={`h-[22px] w-[22px] transition-all stroke-current fill-none duration-200 ${getTotalFavorites() > 0 ? "stroke-[#A63D34] fill-[#A63D34]" : ""}`}
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 20.25s-7.5-4.35-9.5-8.64C1.3 9.39 2.95 5.25 6.9 5.25c2.11 0 3.34 1.02 4.1 2.05.76-1.03 2-2.05 4.1-2.05 3.95 0 5.6 4.14 4.4 6.36-2 4.29-9.5 8.64-9.5 8.64Z" />
-            </svg>
+            <IconHeart className={`h-[22px] w-[22px] transition-all ${getTotalFavorites() > 0 ? 'text-[#A63D34]' : 'text-current'}`} />
           </Link>
           {getTotalFavorites() > 0 && (
             <span className="absolute -right-2 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#E6D3BB] px-1 text-[10px] font-semibold text-stone-900 shadow-xs animate-scaleIn">
@@ -113,7 +101,7 @@ export const Nav = () => {
         </li>
         <li className="relative flex list-none items-center">
           <Link to="/carrito" className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white transition-all duration-200 hover:border-stone-400 hover:bg-stone-100 hover:shadow-sm">
-            <img src={carritoIcon} alt="" className="h-[22px] w-[22px] transition-transform duration-200 hover:scale-110" />
+            <IconShoppingCart className="h-[22px] w-[22px] transition-transform duration-200 hover:scale-110" />
           </Link>
           {getTotalItems() > 0 && (
             <span className="absolute -right-2 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#d7c8b6] px-1 text-[10px] font-semibold text-stone-900">

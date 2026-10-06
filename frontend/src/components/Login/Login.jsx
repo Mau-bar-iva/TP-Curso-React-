@@ -25,19 +25,27 @@ export default function Login() {
     setUserForm({ ...userForm, [name]: value });
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
-    const userData = await login(userForm.email, userForm.password);
-    if (userData) {
-      if (userData.isAdmin) {
-        navigate(from || '/admin/alta-productos', { replace: true });
+    try {
+      const userData = await login(userForm.email, userForm.password);
+      if (userData) {
+        if (userData.isAdmin) {
+          navigate(from || '/admin/alta-productos', { replace: true });
+        } else {
+          navigate(from || '/', { replace: true });
+        }
       } else {
-        navigate(from || '/', { replace: true });
+        alert('Credenciales incorrectas');
+        setUserForm({ email: '', password: '' });
       }
-    } else {
-      alert('Credenciales incorrectas');
-      setUserForm({ email: '', password: '' });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -76,9 +84,17 @@ export default function Login() {
 
         <button
           type="submit"
-          className="w-full rounded-full bg-stone-900 px-4 py-3 text-sm font-medium uppercase tracking-[0.18em] text-white transition hover:bg-stone-700"
+          disabled={isSubmitting}
+          className={`w-full rounded-full px-4 py-3 text-sm font-medium uppercase tracking-[0.18em] text-white transition ${isSubmitting ? 'bg-stone-900 opacity-80 cursor-wait' : 'bg-stone-900 hover:bg-stone-700'}`}
         >
-          Iniciar Sesión
+          {isSubmitting ? (
+            <span className="inline-flex items-center gap-2 justify-center">
+              <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="#fff" strokeWidth="3" fill="none" /><path className="opacity-75" fill="#fff" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" /></svg>
+              Verificando credenciales...
+            </span>
+          ) : (
+            'Iniciar Sesión'
+          )}
         </button>
       </div>
     </form>
