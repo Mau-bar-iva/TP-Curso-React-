@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion as m } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 
 const itemVariants = {
     hidden: { opacity: 0, y: 8 },
@@ -11,7 +11,7 @@ export default function ProductCardSkeleton() {
     const prefersReduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     return (
-        <m.div
+        <Motion.div
             className="block w-fit"
             initial={prefersReduce ? 'visible' : 'hidden'}
             animate="visible"
@@ -32,6 +32,6 @@ export default function ProductCardSkeleton() {
                     <div className="h-4 w-1/2 rounded-md bg-stone-200/60 animate-pulse mt-auto" />
                 </div>
             </article>
-        </m.div>
+        </Motion.div>
     );
 }
