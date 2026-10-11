@@ -11,7 +11,7 @@ Closes #
 - [ ] 
 - [ ] 
 
-## 🧪 Pruebas realizadas
+## Pruebas realizadas
 
 - [ ] Verifiqué el funcionamiento de los cambios.
 - [ ] Ejecuté las pruebas correspondientes.
@@ -22,10 +22,10 @@ Closes #
 
 <!-- Describí cómo probar los cambios. -->
 
-## 📸 Capturas de pantalla (frontend)
+## Capturas de pantalla (frontend)
 <!-- Si hay cambios visuales, agregá capturas del antes y después. -->
 
-## ✅ Checklist
+## Checklist
 
 - [ ] El código sigue las convenciones del proyecto.
 - [ ] No incluí credenciales, tokens ni información sensible.
