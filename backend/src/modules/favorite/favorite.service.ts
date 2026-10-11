@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../../lib/prisma.js";
 
 export async function listFavorites(userId: number) {
   return prisma.favorite.findMany({ where: { userId }, include: { product: true } });
