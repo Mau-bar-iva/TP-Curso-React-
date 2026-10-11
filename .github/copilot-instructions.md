@@ -21,6 +21,8 @@ Este proyecto utiliza:
 - Ejecutar los tests relevantes después de modificar código.
 - No crear Issues duplicadas.
 - No modificar código cuando el usuario solicite únicamente análisis.
+- Utilizar las mejores prácticas de programación, diseño, seguridad y privacidad.
+- No introducir código que pueda comprometer la seguridad o privacidad de los usuarios.
 
 # ModeaVelour — Directrices de Diseño y Frontend para GitHub Copilot
 

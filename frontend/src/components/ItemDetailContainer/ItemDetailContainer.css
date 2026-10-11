@@ -8,15 +8,6 @@
     gap: 3.5rem;
 }
 
-.count-container {
-    width: 100%;
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-    align-items: flex-end;
-    margin-top: 20px;
-}
-
 .suggest-container {
     width: 100%;
     display: flex;

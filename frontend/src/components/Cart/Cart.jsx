@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import CheckoutButton from './CheckoutButton';
-import { IconTrash, IconTrash as IconTrashSimple, IconShoppingBag, IconChevronRight, IconLock, IconTruck } from '../Icons';
+import { IconTrash, IconShoppingBag, IconChevronRight, IconLock, IconTruck } from '../Icons';
 import { useCartContext } from '../../context/CartContext/useCartContext';
 
 const currency = new Intl.NumberFormat('en-US', {
@@ -8,21 +8,14 @@ const currency = new Intl.NumberFormat('en-US', {
   currency: 'USD',
 });
 
-const IconBag = (props) => <IconShoppingBag {...props} className={props.className || 'h-6 w-6'} />;
-
-const IconLockLocal = (props) => <IconLock {...props} className={props.className || 'h-4 w-4'} />;
-
-// reuse IconTrash from lucide-react via Icons index
-const IconTrashLocal = (props) => <IconTrash {...props} className={props.className || 'h-4 w-4'} />;
-const IconTrashSimpleLocal = IconTrashLocal;
-
-const IconChevronLocal = ({ direction = 'right', ...props }) => (
+const ShoppingBagIcon = (props) => <IconShoppingBag {...props} className={props.className || 'h-6 w-6'} />;
+const SecureLockIcon = (props) => <IconLock {...props} className={props.className || 'h-4 w-4'} />;
+const TrashIcon = (props) => <IconTrash {...props} className={props.className || 'h-4 w-4'} />;
+const ChevronIcon = ({ direction = 'right', ...props }) => (
   <IconChevronRight {...props} className={`${props.className || 'h-4 w-4'} ${direction === 'left' ? 'rotate-180' : ''}`} />
 );
-
-const IconShield = (props) => <IconLock {...props} className={props.className || 'h-4 w-4'} />;
-const IconTruckLocal = (props) => <IconTruck {...props} className={props.className || 'h-4 w-4'} />;
-const IconReturn = (props) => <IconChevronRight {...props} className={props.className || 'h-4 w-4'} />;
+const TruckIcon = (props) => <IconTruck {...props} className={props.className || 'h-4 w-4'} />;
+const ReturnChevronIcon = (props) => <IconChevronRight {...props} className={props.className || 'h-4 w-4'} />;
 
 export const Cart = () => {
   const navigate = useNavigate();
@@ -69,7 +62,7 @@ export const Cart = () => {
       <section className="mx-auto w-full max-w-[1200px] px-4 py-10 sm:px-6 lg:px-8">
         <div className="rounded-[32px] border border-[#E7E1D6] bg-[#F7F4EF] px-6 py-10 text-center shadow-[0_20px_60px_rgba(34,29,23,0.04)] sm:px-10 lg:px-14">
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-[#E7E1D6] bg-white text-[#221D17]">
-            <IconBag />
+            <ShoppingBagIcon />
           </div>
 
           <p className="mt-6 text-[10px] font-medium uppercase tracking-[0.24em] text-stone-500">Your bag</p>
@@ -84,7 +77,7 @@ export const Cart = () => {
             className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#1A1714] px-6 py-3 text-[10px] font-medium uppercase tracking-[0.18em] text-white transition hover:bg-[#2a2522]"
           >
             Discover collection
-            <IconChevronRight />
+            <ChevronIcon />
           </button>
         </div>
       </section>
@@ -108,7 +101,7 @@ export const Cart = () => {
           }}
           className="inline-flex items-center gap-2 rounded-full border border-[#E7E1D6] bg-white px-3 py-2 text-[10px] font-medium uppercase tracking-[0.18em] text-stone-600 transition hover:border-stone-300 hover:text-[#221D17]"
         >
-          <IconTrashLocal />
+          <TrashIcon />
           Clear cart
         </button>
       </div>
@@ -226,7 +219,7 @@ export const Cart = () => {
                       onClick={(event) => deleteItem(event, product.id)}
                       className="inline-flex items-center gap-2 rounded-full border border-[#E7E1D6] bg-white px-3 py-2 text-[10px] font-medium uppercase tracking-[0.18em] text-stone-600 transition hover:border-stone-300 hover:text-[#221D17]"
                     >
-                      <IconTrash />
+                      <TrashIcon />
                       Delete
                     </button>
                   </div>
@@ -273,15 +266,15 @@ export const Cart = () => {
 
             <div className="mt-5 space-y-3 border-t border-[#E7E1D6] pt-5 text-xs text-stone-600">
               <div className="flex items-center gap-2">
-                <IconShield />
+                <SecureLockIcon />
                 <span>SSL encrypted transaction</span>
               </div>
               <div className="flex items-center gap-2">
-                <IconTruck />
+                <TruckIcon />
                 <span>Tracked delivery</span>
               </div>
               <div className="flex items-center gap-2">
-                <IconReturn />
+                <ReturnChevronIcon />
                 <span>30-day exchange policy</span>
               </div>
             </div>

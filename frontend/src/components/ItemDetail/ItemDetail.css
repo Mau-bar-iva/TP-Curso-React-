@@ -233,41 +233,6 @@
   margin-top: .4rem;
 }
 
-.product-button-container .count-container {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: .75rem;
-  width: 100%;
-}
-
-/* Override robusto: hasta tener Count.jsx a la vista, forzamos
-   el CTA a los colores de marca sin importar el estado disabled interno */
-.product-button-container .count-container .btn-add {
-  width: 100%;
-  height: 3.2rem;
-  cursor: pointer;
-  border: none;
-  background: var(--mv-ink) !important;
-  color: #fff !important;
-  opacity: 1 !important;
-  font-family: 'Work Sans', sans-serif;
-  font-weight: 600;
-  letter-spacing: .03em;
-  padding: 0 10px;
-  transition: background .2s ease;
-}
-
-.product-button-container .count-container .btn-add:hover {
-  background: #000 !important;
-}
-
-.product-button-container .count-container .count-buttons .btn {
-  cursor: pointer;
-  height: 40px;
-  width: 34px;
-  border: 1px solid var(--mv-line);
-  background: #fff;
-}
 
 .detail-trust {
   list-style: none;

@@ -22,8 +22,6 @@ export const CartProvider = ({ children }) => {
     }
   }, [cart]);
 
-  //Cambiamos la logica de las funciones SI usamos el Count para agregar "cantidad"
-
   const exists = (id) => {
     const exist = cart.some((p) => p.id === id);
     return exist;
