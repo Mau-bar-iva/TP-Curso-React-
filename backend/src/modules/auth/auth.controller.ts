@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
+import asyncHandler from "../../utils/asyncHandler.js";
 import { loginService } from "./auth.service.js";
 
-export async function login(req: Request, res: Response) {
+export const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body as { email?: string; password?: string };
 
   if (!email || !password) {
@@ -26,9 +27,9 @@ export async function login(req: Request, res: Response) {
       email: user.email,
       isAdmin: user.isAdmin,
     });
-}
+});
 
-export function logout(_req: Request, res: Response) {
+export const logout = asyncHandler((_req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,
     sameSite: "strict",
@@ -40,4 +41,4 @@ export function logout(_req: Request, res: Response) {
     success: true,
     message: "Sesión cerrada correctamente",
   });
-}
+});
