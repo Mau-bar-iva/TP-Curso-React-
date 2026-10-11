@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IconLoader, IconLock as IconLockLucide } from '../Icons';
+import { IconLoader } from '../Icons';
 
 const Spinner = ({ color = '#FFF' }) => (
     <IconLoader className="animate-spin h-5 w-5" stroke={color} />
@@ -39,5 +39,3 @@ export default function CheckoutButton({ onCheckout }) {
         </button>
     );
 }
-
-const IconLock = ({ className = 'h-4 w-4' }) => <IconLockLucide className={className} />;
