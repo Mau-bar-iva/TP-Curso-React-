@@ -46,6 +46,12 @@ app.use(express.json());
 // Permite leer cookies
 app.use(cookieParser());
 
+// Logging de trazabilidad antes de resolver rutas
+app.use((req, _res, next) => {
+  logger.info(`${req.method} ${req.path}`);
+  next();
+});
+
 // Rutas de autenticación
 app.use("/api/auth", authRoutes);
 // Rutas de órdenes
@@ -65,11 +71,5 @@ app.use(notFoundHandler);
 
 // Global error handler
 app.use(errorHandler);
-
-// basic request logging
-app.use((req, _res, next) => {
-  logger.info(`${req.method} ${req.path}`);
-  next();
-});
 
 export default app;

@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
+import asyncHandler from "../../utils/asyncHandler.js";
 import createOrderService from "./order.service.js";
 
-export async function createOrderController(req: Request, res: Response) {
+export const createOrderController = asyncHandler(async (req: Request, res: Response) => {
     const user = (req as any).user;
     const items = req.body.items as Array<any>;
 
@@ -16,8 +17,8 @@ export async function createOrderController(req: Request, res: Response) {
         if (e && e.code === "INSUFFICIENT_STOCK") {
             return res.status(409).json({ message: "Insufficient stock for one or more items" });
         }
-        return res.status(500).json({ message: "Internal server error" });
+        throw e;
     }
-}
+});
 
 export default createOrderController;
