@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import { ADMIN_SEED } from '../src/data/adminSeed.js'
 
 const prisma = new PrismaClient()
@@ -82,7 +82,7 @@ async function main() {
             { name: 'City Movement', slug: 'city-movement', description: 'Performance silhouettes for day-to-night routines.', type: 'editorial', isFeatured: false },
         ];
 
-    const createdProducts: Array<{ id: number; sku: string | null; price: number }> = [];
+    const createdProducts: Array<{ id: number; sku: string | null; title: string; price: Prisma.Decimal | number }> = [];
 
     const createdCollections = await Promise.all(
         customCollections.map(async (collection) => prisma.collection.upsert({
@@ -148,7 +148,12 @@ async function main() {
             }
         });
 
-        createdProducts.push(product);
+        createdProducts.push({
+            id: product.id,
+            sku: product.sku,
+            title: product.title,
+            price: product.price,
+        });
     }
 
     const collectionsBySlug = new Map(createdCollections.map((collection) => [collection.slug, collection]));
@@ -190,17 +195,29 @@ async function main() {
 
     // create a sample order for admin
     if (createdProducts.length >= 2) {
-        const order = await prisma.order.create({
+        const subtotal = Number(createdProducts[0].price) + Number(createdProducts[1].price);
+        await prisma.order.create({
             data: {
                 userId: admin.id,
-                total: createdProducts[0].price + createdProducts[1].price,
+                orderNumber: `ORD-${Date.now()}-SEED`,
+                total: new Prisma.Decimal(subtotal.toFixed(2)),
                 items: {
                     create: [
-                        { productId: createdProducts[0].id, quantity: 1, unitPrice: createdProducts[0].price },
-                        { productId: createdProducts[1].id, quantity: 1, unitPrice: createdProducts[1].price }
-                    ]
-                }
-            }
+                        {
+                            productId: createdProducts[0].id,
+                            productTitle: createdProducts[0].title,
+                            quantity: 1,
+                            unitPrice: new Prisma.Decimal(Number(createdProducts[0].price).toFixed(2)),
+                        },
+                        {
+                            productId: createdProducts[1].id,
+                            productTitle: createdProducts[1].title,
+                            quantity: 1,
+                            unitPrice: new Prisma.Decimal(Number(createdProducts[1].price).toFixed(2)),
+                        },
+                    ],
+                },
+            },
         });
     }
 

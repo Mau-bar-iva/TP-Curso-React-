@@ -2,9 +2,15 @@ import type { Prisma } from "@prisma/client";
 import prisma from "../../lib/prisma.js";
 
 type ProductWithVariants = Prisma.ProductGetPayload<{ include: { variants: true } }>;
-type ProductVariantView = ProductWithVariants["variants"][number] & {
+type ProductVariantView = Omit<ProductWithVariants["variants"][number], "price"> & {
+  price: number;
   color?: string;
   sizes?: string[];
+};
+
+const toNumber = (value: number | string | Prisma.Decimal | null | undefined) => {
+  if (value === null || value === undefined) return undefined;
+  return Number(value);
 };
 
 const normalizeProduct = (product: ProductWithVariants) => {
@@ -37,9 +43,10 @@ const normalizeProduct = (product: ProductWithVariants) => {
 
   const category = [...categoryValues];
   const variants: ProductVariantView[] = (product.variants ?? []).map((rawVariant, index) => {
-    const variant = rawVariant as ProductVariantView;
+    const variant = rawVariant as unknown as ProductVariantView;
     return {
       ...variant,
+      price: Number(variant.price),
       color: variant.color ?? colors[(product.id + index) % colors.length],
       sizes: Array.isArray(variant.sizes) && variant.sizes.length > 0
         ? variant.sizes
@@ -47,28 +54,35 @@ const normalizeProduct = (product: ProductWithVariants) => {
     };
   });
 
-  const oldPrice = typeof product.oldPrice === "number" ? product.oldPrice : undefined;
+  const oldPrice = toNumber(product.oldPrice);
 
   return {
     ...product,
+    price: Number(product.price),
+    oldPrice,
     name: product.title ?? "Product",
     brand: product.brand ?? "ModeaVelour",
     category,
     subCategory: subCategory || undefined,
     season,
     collection: product.collection ?? "editorial",
-    oldPrice,
     variants,
   };
 };
 
 export async function listProducts() {
-  const products = await prisma.product.findMany({ include: { variants: true } });
+  const products = await prisma.product.findMany({
+    where: { isActive: true },
+    include: { variants: true },
+  });
   return products.map(normalizeProduct);
 }
 
 export async function getProductById(id: number) {
-  const product = await prisma.product.findUnique({ where: { id }, include: { variants: true } });
+  const product = await prisma.product.findUnique({
+    where: { id, isActive: true },
+    include: { variants: true },
+  });
   if (!product) return null;
   return normalizeProduct(product);
 }
