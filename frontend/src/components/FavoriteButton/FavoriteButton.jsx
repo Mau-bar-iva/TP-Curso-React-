@@ -1,27 +1,15 @@
-import type { MouseEvent } from 'react';
-import { AnimatePresence, motion as Motion, useReducedMotion, type Variants } from 'framer-motion';
+import { AnimatePresence, motion as Motion, useReducedMotion } from 'framer-motion';
 import { Heart } from 'lucide-react';
-
-
-type FavoriteButtonSize = 'sm' | 'md';
-
-interface FavoriteButtonProps {
-    isFavorite?: boolean;
-    onToggle?: () => void;
-    size?: FavoriteButtonSize;
-    label?: string;
-    className?: string;
-}
 
 // "sm" para cards, "md" para el detalle de producto.
 // En "sm" ampliamos el área táctil con un pseudo-elemento (36px visibles → 48px de toque)
 // para cumplir el mínimo recomendado en mobile sin agrandar el botón visualmente.
-const SIZE_STYLES: Record<FavoriteButtonSize, { button: string; icon: string }> = {
+const SIZE_STYLES = {
     sm: { button: 'h-10 w-10 before:absolute before:-inset-1', icon: 'h-5 w-5' },
     md: { button: 'h-11 w-11', icon: 'h-[22px] w-[22px]' },
 };
 
-const heartVariants: Variants = {
+const heartVariants = {
     inactive: { scale: 1 },
     active: {
         scale: [1, 1.3, 1],
@@ -35,19 +23,19 @@ export default function FavoriteButton({
     size = 'sm',
     label = 'Guardar en favoritos',
     className = '',
-}: FavoriteButtonProps) {
+}) {
     const shouldReduce = useReducedMotion();
     const styles = SIZE_STYLES[size];
 
-
-    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    const handleClick = (event) => {
         // El botón vive dentro de <Link> en las cards: evitamos la navegación
         // y que el click llegue a la card.
         event.preventDefault();
         event.stopPropagation();
-        onToggle?.();
+        if (onToggle) {
+            onToggle();
+        }
     };
-
 
     return (
         <Motion.button
@@ -63,7 +51,6 @@ export default function FavoriteButton({
                 : 'border-stone-200/80 text-stone-600 hover:border-[#A63D34]/40 hover:text-[#A63D34]'
                 } ${className}`}
         >
-            {/* Anillo sutil que se expande al guardar. initial={false}: no se dispara al montar */}
             <AnimatePresence initial={false}>
                 {isFavorite && !shouldReduce && (
                     <Motion.span
