@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import type { Prisma } from "@prisma/client";
 import prisma from "../../lib/prisma.js";
 
 export interface OrderItemInput {
@@ -9,7 +10,9 @@ export interface OrderItemInput {
 
 const GUEST_EMAIL = "guest@modeavelour.local";
 
-async function getGuestUserId(tx: any) {
+type InsufficientStockError = Error & { code?: string };
+
+async function getGuestUserId(tx: Prisma.TransactionClient) {
     const guestUser = await tx.user.upsert({
         where: { email: GUEST_EMAIL },
         update: {},
@@ -35,7 +38,7 @@ export async function createOrderService(userId: number | undefined, items: Orde
                 const variant = await tx.productVariant.findUnique({ where: { id: it.variantId } });
                 if (!variant) throw new Error(`Variant ${it.variantId} not found`);
                 if (variant.stock < it.quantity) {
-                    const err: any = new Error("Insufficient stock");
+                    const err = new Error("Insufficient stock") as InsufficientStockError;
                     err.code = "INSUFFICIENT_STOCK";
                     throw err;
                 }
@@ -43,7 +46,7 @@ export async function createOrderService(userId: number | undefined, items: Orde
                 const product = await tx.product.findUnique({ where: { id: it.productId } });
                 if (!product) throw new Error(`Product ${it.productId} not found`);
                 if (product.stock < it.quantity) {
-                    const err: any = new Error("Insufficient stock");
+                    const err = new Error("Insufficient stock") as InsufficientStockError;
                     err.code = "INSUFFICIENT_STOCK";
                     throw err;
                 }
@@ -52,9 +55,15 @@ export async function createOrderService(userId: number | undefined, items: Orde
 
         for (const it of items) {
             if (it.variantId) {
-                await tx.productVariant.update({ where: { id: it.variantId }, data: { stock: { decrement: it.quantity } } as any });
+                await tx.productVariant.update({
+                    where: { id: it.variantId },
+                    data: { stock: { decrement: it.quantity } },
+                });
             } else {
-                await tx.product.update({ where: { id: it.productId }, data: { stock: { decrement: it.quantity } } as any });
+                await tx.product.update({
+                    where: { id: it.productId },
+                    data: { stock: { decrement: it.quantity } },
+                });
             }
         }
 
@@ -62,16 +71,18 @@ export async function createOrderService(userId: number | undefined, items: Orde
             const acc = await accP;
             if (it.variantId) {
                 const variant = await tx.productVariant.findUnique({ where: { id: it.variantId } });
-                return acc + (variant!.price * it.quantity);
+                return acc + ((variant?.price ?? 0) * it.quantity);
             }
             const product = await tx.product.findUnique({ where: { id: it.productId } });
-            return acc + (product!.price * it.quantity);
+            return acc + ((product?.price ?? 0) * it.quantity);
         }, Promise.resolve(0));
 
         const order = await tx.order.create({ data: { userId: finalUserId, total, status: "confirmed" } });
 
         for (const it of items) {
-            const unitPrice = it.variantId ? (await tx.productVariant.findUnique({ where: { id: it.variantId } }))!.price : (await tx.product.findUnique({ where: { id: it.productId } }))!.price;
+            const unitPrice = it.variantId
+                ? (await tx.productVariant.findUnique({ where: { id: it.variantId } }))?.price ?? 0
+                : (await tx.product.findUnique({ where: { id: it.productId } }))?.price ?? 0;
             await tx.orderItem.create({ data: { orderId: order.id, productId: it.productId, quantity: it.quantity, unitPrice } });
         }
 
