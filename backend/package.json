@@ -10,7 +10,9 @@
     "test": "vitest run",
     "prisma:init": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev --name init",
-    "prisma:seed": "tsx prisma/seed.ts"
+    "prisma:seed": "tsx prisma/seed.ts",
+    "seed:images:check": "tsx scripts/validateSeedImages.ts",
+    "seed:check": "tsx scripts/checkSeed.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
