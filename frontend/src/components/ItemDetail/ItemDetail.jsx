@@ -1,36 +1,17 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCartContext } from '../../context/CartContext/useCartContext';
+import { useFavoriteToggle } from '../../context/FavoriteContext/useFavoriteToggle.js';
+import { getSwatchColor } from '../../utils/colors';
+import { formatCurrency } from '../../utils/formatters';
 import { notify } from '../../utils/toast';
 import FavoriteButton from '../FavoriteButton/FavoriteButton';
-import { useFavoriteToggle } from '../../context/FavoriteContext/useFavoriteToggle.js';
 
 const TRUST_ITEMS = [
   { label: 'Envío 24/48hs', icon: '🚚' },
   { label: 'Devolución 30 días', icon: '↩️' },
   { label: 'Pago seguro', icon: '🔒' },
 ];
-
-const formatPrice = (value) =>
-  new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(Number(value || 0));
-
-const getSwatchColor = (colorName) => {
-  const value = String(colorName || '').toLowerCase();
-
-  if (value.includes('black')) return '#1D1B1A';
-  if (value.includes('white') || value.includes('ivory')) return '#F2EBE1';
-  if (value.includes('beige') || value.includes('sand') || value.includes('tan')) return '#C9A98A';
-  if (value.includes('brown') || value.includes('camel')) return '#8F6E52';
-  if (value.includes('navy') || value.includes('blue')) return '#2B3C57';
-  if (value.includes('olive') || value.includes('green')) return '#6A715A';
-  if (value.includes('red') || value.includes('coral')) return '#C96C5A';
-  if (value.includes('grey') || value.includes('gray')) return '#A7A39C';
-  if (value.includes('pink')) return '#D7A7A2';
-  return '#D5C4AF';
-};
 
 export const ItemDetail = ({ detail = {} }) => {
   const { addItem } = useCartContext();
@@ -328,12 +309,12 @@ export const ItemDetail = ({ detail = {} }) => {
                   <p className="text-[10px] uppercase tracking-[0.18em] text-stone-500">Total</p>
                   <div className="flex items-end gap-3">
                     <p className="font-serif text-4xl font-medium text-stone-900">
-                      {formatPrice(detail.price)}
+                      {formatCurrency(detail.price)}
                     </p>
 
                     {detail.oldPrice && (
                       <p className="text-base text-stone-400 line-through">
-                        {formatPrice(detail.oldPrice)}
+                        {formatCurrency(detail.oldPrice)}
                       </p>
                     )}
 
