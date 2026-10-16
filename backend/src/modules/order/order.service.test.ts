@@ -3,7 +3,9 @@ import { buildOrderNumber, toMoney } from "./order.service.js";
 
 describe("order.service pricing and ordering helpers", () => {
     it("genera un número de pedido legible y estable", () => {
-        expect(buildOrderNumber(123)).toBe("ORD-20261012-000123");
+        const fixedDate = new Date("2026-10-12T00:00:00.000Z");
+
+        expect(buildOrderNumber(123, fixedDate)).toBe("ORD-20261012-000123");
     });
 
     it("mantiene precisión decimal en valores monetarios", () => {
