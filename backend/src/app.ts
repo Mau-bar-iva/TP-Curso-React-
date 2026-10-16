@@ -6,6 +6,7 @@ import orderRoutes from "./modules/order/order.routes.js";
 import productRoutes from "./modules/product/product.routes.js";
 import favoriteRoutes from "./modules/favorite/favorite.routes.js";
 import logger from "./utils/logger.js";
+import prisma from "./lib/prisma.js";
 import { errorHandler, notFoundHandler } from "./middleware/error.middleware.js";
 import { allowedOrigins, isProduction } from "./config/index.js";
 
@@ -60,6 +61,16 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/products", productRoutes);
 // Rutas de favoritos
 app.use("/api/favorites", favoriteRoutes);
+
+app.get("/health", async (_req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.status(200).json({ status: "healthy", database: "connected" });
+  } catch (error) {
+    logger.error("Healthcheck failed", { err: error instanceof Error ? error.message : String(error) });
+    res.status(503).json({ status: "unhealthy", database: "disconnected" });
+  }
+});
 
 /* ---------- Ruta de prueba ---------- */
 app.get("/", (req, res) => {
