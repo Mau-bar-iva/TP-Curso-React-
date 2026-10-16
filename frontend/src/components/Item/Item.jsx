@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import FavoriteButton from '../FavoriteButton/FavoriteButton';
+import { formatCurrency } from '../../utils/formatters';
+import { getSwatchColor } from '../../utils/colors';
 
 export const Item = ({
   name,
@@ -82,7 +84,7 @@ export const Item = ({
               <li
                 key={c}
                 className="h-3.5 w-3.5 rounded-full border border-stone-200"
-                style={{ backgroundColor: c }}
+                style={{ backgroundColor: getSwatchColor(c) }}
                 title={c}
               />
             ))}
@@ -94,8 +96,8 @@ export const Item = ({
 
         <div className="mt-auto flex items-end justify-between gap-2">
           <div className="flex items-end gap-2">
-            <p className="font-nunito text-[1.4rem] font-medium leading-none text-stone-900 tabular-nums font-nunito">${price}</p>
-            {discount && <p className="text-xs text-stone-500 line-through">${oldPrice}</p>}
+            <p className="font-nunito text-[1.4rem] font-medium leading-none text-stone-900 tabular-nums font-nunito">{formatCurrency(price)}</p>
+            {discount && <p className="text-xs text-stone-500 line-through">{formatCurrency(oldPrice)}</p>}
           </div>
         </div>
       </div>

@@ -1,20 +1,5 @@
 import { useMemo } from 'react';
-
-const getSwatchColor = (colorName) => {
-    const value = String(colorName || '').toLowerCase();
-
-    if (value.includes('black')) return '#1b1b1b';
-    if (value.includes('white') || value.includes('ivory')) return '#F4EFE8';
-    if (value.includes('beige') || value.includes('sand') || value.includes('tan')) return '#C7A98B';
-    if (value.includes('brown') || value.includes('camel')) return '#8D6B4F';
-    if (value.includes('navy') || value.includes('blue')) return '#2D4266';
-    if (value.includes('olive') || value.includes('green')) return '#6A715A';
-    if (value.includes('red') || value.includes('coral')) return '#C86759';
-    if (value.includes('gray') || value.includes('grey')) return '#9EA3A1';
-    if (value.includes('pink')) return '#D9A4A0';
-    if (value.includes('gold')) return '#C6A15B';
-    return '#D8C7B2';
-};
+import { getSwatchColor } from '../../utils/colors';
 
 /* Grupo de filtros con checkboxes, reutilizado por Brands y Colores */
 function CheckboxFilterGroup({
