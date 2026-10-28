@@ -1,3 +1,4 @@
+import { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import { AuthProvider } from "./context/AuthContext/AuthProvider.jsx";
@@ -7,14 +8,18 @@ import { CartProvider } from "./context/CartContext/CartProvider";
 import { Cart } from "./components/Cart/Cart";
 import { FavoriteProvider } from "./context/FavoriteContext/FavoriteProvider.jsx";
 import Favorite from "./components/Favorite/Favorite.jsx";
-import { ProductFormContainer } from "./components/AdminComponents/ProductFormContainer/ProductFormContainer";
 import RutaProtegida from "./components/RutaProtegida/RutaProtegida.jsx";
-import Login from "./components/Login/Login.jsx";
 import { MainLayout } from "./layouts/MainLayout";
 import { AdminLayout } from "./layouts/AdminLayout.jsx";
 import Home from "./components/Home/Home.jsx";
 import OffersPage from "./components/OffersPage/OffersPage.jsx";
 import CheckoutSuccessPage from "./components/CheckoutSuccess/CheckoutSuccessPage.jsx";
+
+const Login = lazy(() => import("./components/Login/Login.jsx"));
+const ProductFormContainer = lazy(async () => {
+  const module = await import("./components/AdminComponents/ProductFormContainer/ProductFormContainer.jsx");
+  return { default: module.ProductFormContainer };
+});
 
 function App() {
   return (
@@ -43,13 +48,22 @@ function App() {
               </Route>
 
               <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<Login />} />
+                <Route
+                  index
+                  element={
+                    <Suspense fallback={<div className="flex min-h-[40vh] items-center justify-center text-sm uppercase tracking-[0.2em] text-stone-500">Cargando panel…</div>}>
+                      <Login />
+                    </Suspense>
+                  }
+                />
                 <Route
                   path="alta-productos"
                   element={
-                    <RutaProtegida role="admin">
-                      <ProductFormContainer />
-                    </RutaProtegida>
+                    <Suspense fallback={<div className="flex min-h-[40vh] items-center justify-center text-sm uppercase tracking-[0.2em] text-stone-500">Cargando panel…</div>}>
+                      <RutaProtegida role="admin">
+                        <ProductFormContainer />
+                      </RutaProtegida>
+                    </Suspense>
                   }
                 />
               </Route>

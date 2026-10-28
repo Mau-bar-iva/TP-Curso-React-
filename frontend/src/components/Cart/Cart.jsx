@@ -149,6 +149,8 @@ export const Cart = () => {
                   <img
                     src={product.imageUrl || '/assets/logo.png'}
                     alt={product.name}
+                    width={256}
+                    height={256}
                     className="h-full w-full object-cover"
                   />
                 </div>

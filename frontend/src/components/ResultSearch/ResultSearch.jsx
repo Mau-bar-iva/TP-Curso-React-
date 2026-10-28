@@ -87,6 +87,8 @@ export default function ResultSearch({ search }) {
                                                     <img
                                                         src={product.imageUrl || '/assets/logo.png'}
                                                         alt={product.name}
+                                                        width={80}
+                                                        height={80}
                                                         className="h-full w-full object-contain"
                                                     />
                                                 </div>
