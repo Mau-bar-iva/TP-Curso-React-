@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "./CartContext";
+import { reconcileCartItems } from "./cartRevalidation";
 import { notify } from "../../utils/toast";
+import { getProducts } from "../../services/products";
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState(() => {
@@ -20,6 +22,44 @@ export const CartProvider = ({ children }) => {
     } catch (error) {
       console.error("Cart localStorage error:", error);
     }
+  }, [cart]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const revalidateCart = async () => {
+      try {
+        const catalog = await getProducts();
+        if (!isMounted) return;
+
+        const sanitizedCart = reconcileCartItems(cart, catalog);
+        const hasChanges =
+          sanitizedCart.length !== cart.length ||
+          sanitizedCart.some((item, index) => {
+            const previous = cart[index];
+            return !previous || item.id !== previous.id || item.quantity !== previous.quantity || Number(item.price) !== Number(previous.price || 0);
+          });
+
+        if (hasChanges) {
+          setCart(sanitizedCart);
+
+          if (sanitizedCart.length < cart.length) {
+            notify({
+              message: "Productos sin stock o no disponibles fueron removidos del carrito.",
+              type: "info",
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Cart revalidation error:", error);
+      }
+    };
+
+    revalidateCart();
+
+    return () => {
+      isMounted = false;
+    };
   }, [cart]);
 
   const exists = (id) => {
@@ -74,7 +114,11 @@ export const CartProvider = ({ children }) => {
   };
 
   const updateQuantity = (id, quantity) => {
-    const nextQuantity = Math.max(1, Number(quantity) || 1);
+    const targetProduct = cart.find((product) => product.id === id);
+    const stockLimit = Number(targetProduct?.stock || 0);
+    const nextQuantity = stockLimit > 0
+      ? Math.min(Math.max(1, Number(quantity) || 1), stockLimit)
+      : Math.max(1, Number(quantity) || 1);
 
     setCart((currentCart) =>
       currentCart
@@ -97,7 +141,7 @@ export const CartProvider = ({ children }) => {
   /*                               Calcular total                               */
   /* -------------------------------------------------------------------------- */
   const total = () => {
-    const total = cart.reduce((acc, p) => acc + p.price * p.quantity, 0);
+    const total = cart.reduce((acc, p) => acc + Number(p.price || 0) * Number(p.quantity || 1), 0);
 
     return Math.round(total * 100) / 100;
   };
@@ -109,12 +153,25 @@ export const CartProvider = ({ children }) => {
     }
 
     try {
+      const catalog = await getProducts();
+      const sanitizedCart = reconcileCartItems(cart, catalog);
+
+      if (!sanitizedCart.length) {
+        setCart([]);
+        notify({ message: "Tu carrito está vacío o los productos ya no están disponibles.", type: "error" });
+        return;
+      }
+
+      if (sanitizedCart.length !== cart.length || sanitizedCart.some((item, index) => item.id !== cart[index]?.id || item.quantity !== cart[index]?.quantity)) {
+        setCart(sanitizedCart);
+      }
+
       const response = await fetch("http://localhost:3001/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          items: cart.map((item) => ({
+          items: sanitizedCart.map((item) => ({
             productId: Number(item.id),
             quantity: Number(item.quantity) || 1,
           })),
@@ -129,7 +186,7 @@ export const CartProvider = ({ children }) => {
         return;
       }
 
-      const purchasedItems = [...cart];
+      const purchasedItems = [...sanitizedCart];
       setCart([]);
       try {
         localStorage.setItem("modeavelour_cart", JSON.stringify([]));

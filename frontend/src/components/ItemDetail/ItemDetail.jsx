@@ -165,6 +165,8 @@ export const ItemDetail = ({ detail = {} }) => {
             <img
               src={imageGallery[selectedImage] || detail.imageUrl}
               alt={detail.name}
+              width={1000}
+              height={1000}
               className="aspect-[5/5] w-full rounded-[24px] object-cover transform-gpu"
               loading="lazy"
               decoding="async"
@@ -187,6 +189,8 @@ export const ItemDetail = ({ detail = {} }) => {
                   <img
                     src={image}
                     alt={`${detail.name} vista ${index + 1}`}
+                    width={200}
+                    height={200}
                     className="aspect-square w-full object-cover"
                   />
                 </button>

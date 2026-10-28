@@ -50,6 +50,8 @@ export const Item = ({
           <img
             src={imageUrl || fallbackImage}
             alt={description || name}
+            width={480}
+            height={600}
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105 transform-gpu"
             loading="lazy"
             decoding="async"
